@@ -169,3 +169,115 @@ exports.createBooking = async (req, res) => {
         client.release();
     }
 };
+
+
+// ==========================================
+// PUBLIC: ЗАЙНЯТІ ДАТИ ДЛЯ КОНКРЕТНОГО КВИТКА
+// ==========================================
+// FIX: раніше зайнятість дат/часу була захардкоджена на фронтенді
+// (Set із номерами днів місяця, без прив'язки до реальних бронювань).
+// Тепер фронтенд запитує реальні зайняті дати для обраного квитка.
+exports.getBusyDates = async (req, res) => {
+    const { product_id } = req.query;
+
+    if (!product_id) {
+        return res.status(400).json({ success: false, message: "Не вказано product_id" });
+    }
+
+    try {
+        const result = await pool.query(
+            `SELECT DISTINCT booking_date
+             FROM bookings
+             WHERE product_id = $1 AND status != 'cancelled'`,
+            [product_id]
+        );
+
+        const busyDates = result.rows.map((row) => {
+            const date = new Date(row.booking_date);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, "0");
+            const day = String(date.getDate()).padStart(2, "0");
+            return `${year}-${month}-${day}`;
+        });
+
+        return res.status(200).json({ success: true, busyDates });
+
+    } catch (error) {
+        console.error("Помилка отримання зайнятих дат:", error.message);
+        return res.status(500).json({ success: false, message: "Помилка сервера при перевірці дат" });
+    }
+};
+
+
+// ==========================================
+// ADMIN: СПИСОК УСІХ БРОНЮВАНЬ (з часовими слотами)
+// ==========================================
+exports.getAllBookings = async (req, res) => {
+    try {
+        const bookingsRes = await pool.query(
+            "SELECT * FROM bookings ORDER BY id DESC;"
+        );
+        const bookings = bookingsRes.rows;
+
+        if (bookings.length > 0) {
+            const bookingIds = bookings.map((b) => b.id);
+            const timesRes = await pool.query(
+                `SELECT id, booking_id, start_time, end_time
+                 FROM booking_times
+                 WHERE booking_id = ANY($1::bigint[])
+                 ORDER BY start_time ASC`,
+                [bookingIds]
+            );
+
+            const timesByBookingId = {};
+            for (const slot of timesRes.rows) {
+                if (!timesByBookingId[slot.booking_id]) timesByBookingId[slot.booking_id] = [];
+                timesByBookingId[slot.booking_id].push(slot);
+            }
+
+            for (const booking of bookings) {
+                booking.times = timesByBookingId[booking.id] || [];
+            }
+        }
+
+        return res.status(200).json({
+            success: true,
+            count: bookings.length,
+            data: bookings
+        });
+
+    } catch (error) {
+        console.error("Помилка отримання бронювань адміном:", error.message);
+        return res.status(500).json({ success: false, message: "Помилка сервера при завантаженні бронювань" });
+    }
+};
+
+
+// ==========================================
+// ADMIN: ВИДАЛЕННЯ БРОНЮВАННЯ (напр. тестових записів)
+// ==========================================
+exports.deleteBooking = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const result = await pool.query(
+            "DELETE FROM bookings WHERE id = $1 RETURNING id",
+            [id]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ success: false, message: "Бронювання не знайдено" });
+        }
+
+        // booking_times видаляться автоматично через ON DELETE CASCADE
+
+        return res.status(200).json({
+            success: true,
+            message: "Бронювання видалено"
+        });
+
+    } catch (error) {
+        console.error("Помилка видалення бронювання:", error.message);
+        return res.status(500).json({ success: false, message: "Внутрішня помилка сервера при видаленні" });
+    }
+};

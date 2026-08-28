@@ -19,7 +19,7 @@ const showAddedAnimation = function (image) {
 
     setTimeout(() => {
 
-        image.src = "/WOL/IMG/confirmed.png";
+        image.src = "/frontend/IMG/confirmed.png";
 
         image.classList.remove("is-changing");
         image.classList.add("is-added");

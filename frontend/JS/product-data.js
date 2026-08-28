@@ -1,12 +1,12 @@
-const placeholderProduct = "/WOL/IMG/lavender__hydr.png";
-const placeholderImage = "/WOL/IMG/lavender_surprise.png";
+const placeholderProduct = "/frontend/IMG/lavender__hydr.png";
+const placeholderImage = "/frontend/IMG/lavender_surprise.png";
 
 const bouquettes = [
     {
     name: "Букети",
     description: "",
     price:"100грн",
-    image: "/WOL/IMG/bouquettes.png",
+    image: "/frontend/IMG/bouquettes.png",
     icon: "",
     alt: "Букети",
     priceValue: 100
@@ -16,7 +16,7 @@ const bouquettes = [
     name: "Букет Лаванди",
     description: "Букетик карпатської лаванди",
     price:"100грн",
-    image: "/WOL/IMG/bouquette.png",
+    image: "/frontend/IMG/bouquette.png",
     icon: "",
     alt: "Букети",
     priceValue: 100
@@ -31,7 +31,7 @@ const honey = [
     name: "Меди",
     description: "(100г)",
     price:"Від 100грн",
-    image:  "/WOL/IMG/honey.jpg",
+    image:  "/frontend/IMG/honey.jpg",
     icon: "",
     alt: "Меди",
 
@@ -46,7 +46,7 @@ const candles = [
     name: "Свічки",
     description: "(80г)",
     price:"Від 100грн",
-    image: "/WOL/IMG/candle.png",
+    image: "/frontend/IMG/candle.png",
     icon: "",
     alt: "Свічки",
 
@@ -59,7 +59,7 @@ const tea = [
     name: "Чаї",
     description: "(100г)",
     price:"Від 100грн",
-    image: "/WOL/IMG/teas.png",
+    image: "/frontend/IMG/teas.png",
     icon: "",
     alt: "Чай",
 
@@ -72,7 +72,7 @@ const soaps = [
     name: "Мила",
     description: "(100 г)",
     price:"Від 150грн",
-    image: "/WOL/IMG/soap_big.png",
+    image: "/frontend/IMG/soap_big.png",
     icon: "",
     alt: " Гідролати",
   },
@@ -81,7 +81,7 @@ const soaps = [
     name: "Маленьке Мило",
     description: "Для обличчя та тіла (100 г)",
     price: "125 грн",
-    image: "/WOL/IMG/soap_small.png",
+    image: "/frontend/IMG/soap_small.png",
     icon: "",
     alt: " Гідролат Лаванди",
     priceValue: 125
@@ -91,7 +91,7 @@ const soaps = [
     name: "Велике Мило",
     description: "Для обличчя та тіла (100 г)",
     price: "150 грн",
-    image:"/WOL/IMG/soap_big.png",
+    image:"/frontend/IMG/soap_big.png",
     icon: "",
     alt: " Гідролат Лаванди",
     priceValue: 150
@@ -104,7 +104,7 @@ const oils = [
     name: "Олії",
     description: "(5 мг)",
     price:"Від 250грн",
-    image: "/WOL/IMG/oil.png",
+    image: "/frontend/IMG/oil.png",
     icon: "",
     alt: " Гідролати"
   },
@@ -116,7 +116,7 @@ const hydrolats = [
     name: "Гідролати",
     description: "(100 г)",
     price:"Від 100грн",
-    image: "/WOL/IMG/lavender__title.png",
+    image: "/frontend/IMG/lavender__title.png",
     icon: "",
     alt: " Гідролати"
   },
@@ -125,8 +125,8 @@ const hydrolats = [
     name: "Гідролат Лаванди",
     description: "Для обличчя та тіла (100 г)",
     price: "125 грн",
-    image: "/WOL/IMG/lavender__hydr.png",
-    icon: "/WOL/IMG/hidr_lav.png",
+    image: "/frontend/IMG/lavender__hydr.png",
+    icon: "/frontend/IMG/hidr_lav.png",
     alt: " Гідролат Лаванди",
     priceValue: 125
   },
@@ -135,8 +135,8 @@ const hydrolats = [
     name:"Гідролат Кропиви",
     description:"Звужує пори та знімає запалення",
     price: "150грн",
-    image: "/WOL/IMG/kropyva__hydr.png" ,
-    icon:  "/WOL/IMG/hidr_krop.png",
+    image: "/frontend/IMG/kropyva__hydr.png" ,
+    icon:  "/frontend/IMG/hidr_krop.png",
     alt: " Гідролат Кропиви",
     priceValue: 150
   },
@@ -145,8 +145,8 @@ const hydrolats = [
     name:"Гідролат Чистотілу",
     description:"Для лиця та тіла",
     price: "150грн",
-    image: "/WOL/IMG/chystotil__hydr.png" ,
-    icon:  "/WOL/IMG/hidr_chys.png",
+    image: "/frontend/IMG/chystotil__hydr.png" ,
+    icon:  "/frontend/IMG/hidr_chys.png",
     alt: " Гідролат Чистотілу",
     priceValue: 150
   }

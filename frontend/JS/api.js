@@ -61,6 +61,12 @@ const createBooking = function (payload) {
     });
 };
 
+// FIX: раніше зайнятість дат бронювання була захардкоджена на фронтенді.
+// Тепер реально запитуємо в бекенду, які дати вже зайняті для цього квитка.
+const fetchBusyDates = function (productId) {
+    return apiRequest(`/booking/busy-dates?product_id=${productId}`, { method: "GET" });
+};
+
 
 // ----------------------------
 // ADMIN: АВТОРИЗАЦІЯ
@@ -135,4 +141,17 @@ const adminUpdateProduct = function (productId, payload) {
 
 const adminDeleteProduct = function (productId) {
     return adminRequest(`/products/${productId}`, { method: "DELETE" });
+};
+
+
+// ----------------------------
+// ADMIN: БРОНЮВАННЯ
+// ----------------------------
+
+const adminGetBookings = function () {
+    return adminRequest("/booking/admin", { method: "GET" });
+};
+
+const adminDeleteBooking = function (bookingId) {
+    return adminRequest(`/booking/admin/${bookingId}`, { method: "DELETE" });
 };

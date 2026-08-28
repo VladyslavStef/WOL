@@ -1,986 +1,940 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ua">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/WOL/CSS/normalize.css">
-    <link rel="stylesheet" href="/WOL/CSS/home.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
-    <title>WOL</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/frontend/CSS/normalize.css" />
+    <link rel="stylesheet" href="/frontend/CSS/home.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+      rel="stylesheet"
+    />
+    <title>WonderOfLavender</title>
     <script>
-    (() => {
-        if(window.__bhldScript)return;window.__bhldScript=true;
-        const d=document,s=d.createElement("script");s.type="module";
-        s.src="https://w.behold.so/widget.js";setTimeout(()=>{d.head.append(s);},0);
-    })();
+      (() => {
+        if (window.__bhldScript) return;
+        window.__bhldScript = true;
+        const d = document,
+          s = d.createElement("script");
+        s.type = "module";
+        s.src = "https://w.behold.so/widget.js";
+        setTimeout(() => {
+          d.head.append(s);
+        }, 0);
+      })();
     </script>
-</head>
-<body>
+  </head>
+  <body>
     <header class="header">
-        <nav class="navbar">
-            <div class="navbar__container">
-                <img src="/WOL/IMG/LOGO.svg" alt="logo" class="logo">
-                <ul class="navbar__list">
-                    <li class="navbar__list-item">
-                        <a href="catalogue.html" class="navbar__list-link">Каталог товарів</a> 
-                    </li>
-                    <li class="navbar__list-item">
-                         <a href="main.html#About"class="navbar__list-link">Про нас</a>
-                    </li>
-                    <li class="navbar__list-item">
-                         <a href="https://maps.app.goo.gl/8smmAgbKspLwSDC56" target="_blank" rel="noopener noreferrer" class="navbar__list-link">Наша локація</a>
-                    </li>
-                    <li class="navbar__list-item">
-                        <a href="#" class="navbar__list-link booking-open">Забронювати візит</a>
-                    </li>
-                </ul>
-                <button class="icon-button" type="button" aria-label="Відкрити кошик">
-                    <img src="/WOL/IMG/koshyk.png" alt="shop" class="shop">
-                    <span class="basket-count">0</span>
-                </button>
-            </div>
-        </nav>
+      <nav class="navbar">
+        <div class="navbar__container">
+          <img src="/frontend/IMG/LOGO.svg" alt="logo" class="logo" />
+          <ul class="navbar__list">
+            <li class="navbar__list-item">
+              <a href="catalogue.html" class="navbar__list-link"
+                >Каталог товарів</a
+              >
+            </li>
+            <li class="navbar__list-item">
+              <a href="main.html#About" class="navbar__list-link">Про нас</a>
+            </li>
+            <li class="navbar__list-item">
+              <a
+                href="https://maps.app.goo.gl/8smmAgbKspLwSDC56"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="navbar__list-link"
+                >Наша локація</a
+              >
+            </li>
+            <li class="navbar__list-item">
+              <a href="#" class="navbar__list-link booking-open"
+                >Забронювати візит</a
+              >
+            </li>
+          </ul>
+          <button class="icon-button" type="button" aria-label="Відкрити кошик">
+            <img src="/frontend/IMG/koshyk.png" alt="shop" class="shop" />
+            <span class="basket-count">0</span>
+          </button>
+        </div>
+      </nav>
     </header>
     <main class="main">
-<template id="basket-item-template">
-    <article class="basket-item">
-
-        <div class="basket-item__left">
-            <img class="basket-item__image" src="" alt="">
+      <template id="basket-item-template">
+        <article class="basket-item">
+          <div class="basket-item__left">
+            <img class="basket-item__image" src="" alt="" />
 
             <div class="basket-item__quantity">
-                <button class="basket-item-button basket-item--minus" type="button"></button>
+              <button
+                class="basket-item-button basket-item--minus"
+                type="button"
+              ></button>
 
-                <span class="basket-item__count">1</span>
+              <span class="basket-item__count">1</span>
 
-                <button
-                    class="basket-item-button basket-item--plus"
-                    type="button">
-                </button>
+              <button
+                class="basket-item-button basket-item--plus"
+                type="button"
+              ></button>
             </div>
 
             <div class="basket-item__delete-confirm">
-                <span>Видалити товар?</span>
+              <span>Видалити товар?</span>
 
-                <div class="basket-item__delete-actions">
-                    <button class="basket-item__delete-yes" type="button">
-                        Так
-                    </button>
+              <div class="basket-item__delete-actions">
+                <button class="basket-item__delete-yes" type="button">
+                  Так
+                </button>
 
-                    <button class="basket-item__delete-no" type="button">
-                        Ні
-                    </button>
-                </div>
+                <button class="basket-item__delete-no" type="button">Ні</button>
+              </div>
             </div>
 
-            <button class="basket-item__remove" type="button">
-                Видалити
-            </button>
-        </div>
+            <button class="basket-item__remove" type="button">Видалити</button>
+          </div>
 
-        <div class="basket-item__info">
+          <div class="basket-item__info">
             <h3 class="basket-item__name"></h3>
             <p class="basket-item__price"></p>
-        </div>
-
-    </article>
-</template>
-<section class="modal modal-basket">
-
-    <div class="modal__container modal-basket__container">
-
-        <!-- СПІЛЬНИЙ ФОН МОДАЛКИ -->
-        <img
-            src="/WOL/IMG/Layer 1.png"
+          </div>
+        </article>
+      </template>
+      <section class="modal modal-basket">
+        <div class="modal__container modal-basket__container">
+          <!-- СПІЛЬНИЙ ФОН МОДАЛКИ -->
+          <img
+            src="/frontend/IMG/Layer 1.png"
             alt=""
             class="modal__bg basket-bg"
-        >
+          />
 
-        <!-- СПІЛЬНА КНОПКА ЗАКРИТТЯ -->
-        <button
+          <!-- СПІЛЬНА КНОПКА ЗАКРИТТЯ -->
+          <button
             class="modal__close close"
             type="button"
             aria-label="Закрити"
-        ></button>
+          ></button>
 
-
-        <!-- ========================================
+          <!-- ========================================
              КРОК 0 — КОШИК
         ======================================== -->
 
-        <div class="basket-view">
-
+          <div class="basket-view">
             <div class="heading-modal">
+              <span class="heading-modal__heading"> Кошик </span>
 
-                <span class="heading-modal__heading">
-                    Кошик
-                </span>
-
-                <img
-                    src="/WOL/IMG/deco hero.svg"
-                    alt=""
-                    class="deco"
-                >
-
+              <img src="/frontend/IMG/deco hero.svg" alt="" class="deco" />
             </div>
-
 
             <div class="basket-items">
-                <!-- товари додає JS -->
+              <!-- товари додає JS -->
             </div>
-
 
             <div class="footer-modal">
+              <img src="/frontend/IMG/deco hero.svg" alt="" class="deco" />
 
-                <img
-                    src="/WOL/IMG/deco hero.svg"
-                    alt=""
-                    class="deco"
-                >
-
-                <button
-                    class="button-container__button-modal"
-                    type="button"
-                >
-                    <span>Підтвердити</span>
-                </button>
-
+              <button class="button-container__button-modal" type="button">
+                <span>Підтвердити</span>
+              </button>
             </div>
+          </div>
 
-        </div>
-
-
-        <!-- ========================================
+          <!-- ========================================
              CHECKOUT
         ======================================== -->
 
-        <div class="checkout-view">
-
-
+          <div class="checkout-view">
             <!-- ====================================
                  КРОК 1 — ПІДСУМОК + ДАНІ
             ==================================== -->
 
             <div class="checkout-summary">
+              <h2>Оформлення замовлення</h2>
 
-                <h2>
-                    Оформлення замовлення
-                </h2>
+              <div class="checkout-items">
+                <!-- список додає JS -->
+              </div>
 
+              <p class="checkout-total">
+                Разом:
 
-                <div class="checkout-items">
-                    <!-- список додає JS -->
-                </div>
+                <span class="checkout-total__value"> 0 грн </span>
+              </p>
 
+              <form class="checkout-form">
+                <input
+                  type="text"
+                  name="customerName"
+                  placeholder="Ваше ім’я"
+                  required
+                />
 
-                <p class="checkout-total">
+                <span class="name-error"></span>
 
-                    Разом:
+                <input
+                  type="tel"
+                  name="customerNumber"
+                  placeholder="Номер телефону"
+                  required
+                />
 
-                    <span class="checkout-total__value">
-                        0 грн
-                    </span>
+                <span class="phone-error"></span>
 
-                </p>
+                <button type="submit">Продовжити</button>
+              </form>
 
-
-                <form class="checkout-form">
-
-                    <input
-                        type="text"
-                        name="customerName"
-                        placeholder="Ваше ім’я"
-                        required
-                    >
-
-                    <span class="name-error"></span>
-
-
-                    <input
-                        type="tel"
-                        name="customerNumber"
-                        placeholder="Номер телефону"
-                        required
-                    >
-
-                    <span class="phone-error"></span>
-
-
-                    <button type="submit">
-                        Продовжити
-                    </button>
-
-                </form>
-
-
-                <button
-                    class="checkout-back"
-                    type="button"
-                >
-                    Назад до кошика
-                </button>
-
+              <button class="checkout-back" type="button">
+                Назад до кошика
+              </button>
             </div>
-
 
             <!-- ====================================
                  КРОК 2 — ВИБІР ОПЛАТИ
             ==================================== -->
 
             <div class="payment-view">
+              <h2>Спосіб оплати</h2>
 
-                <h2>
-                    Спосіб оплати
-                </h2>
+              <div class="checkout-payment">
+                <label class="checkout-payment__option">
+                  <input type="radio" name="paymentMethod" value="online" />
 
+                  <span> Онлайн карткою </span>
+                </label>
 
-                <div class="checkout-payment">
+                <label class="checkout-payment__option">
+                  <input type="radio" name="paymentMethod" value="cash" />
 
-                    <label class="checkout-payment__option">
+                  <span> При отриманні </span>
+                </label>
+              </div>
 
-                        <input
-                            type="radio"
-                            name="paymentMethod"
-                            value="online"
-                        >
+              <span class="payment-error"></span>
 
-                        <span>
-                            Онлайн карткою
-                        </span>
+              <form class="payment-form">
+                <button type="submit">Підтвердити замовлення</button>
+              </form>
 
-                    </label>
-
-
-                    <label class="checkout-payment__option">
-
-                        <input
-                            type="radio"
-                            name="paymentMethod"
-                            value="cash"
-                        >
-
-                        <span>
-                            При отриманні
-                        </span>
-
-                    </label>
-
-                </div>
-
-
-                <span class="payment-error"></span>
-
-
-                <form class="payment-form">
-
-                    <button type="submit">
-                        Підтвердити замовлення
-                    </button>
-
-                </form>
-
-
-                <button
-                    class="payment-back"
-                    type="button"
-                >
-                    Назад
-                </button>
-
+              <button class="payment-back" type="button">Назад</button>
             </div>
-
 
             <!-- ====================================
                  КРОК 3 — ФІНАЛЬНЕ ПІДТВЕРДЖЕННЯ
             ==================================== -->
 
             <div class="order-confirmation-view">
+              <h2>Ваше замовлення</h2>
 
-                <h2>
-                    Ваше замовлення
-                </h2>
+              <div class="order-confirmation__items">
+                <!-- список додає JS -->
+              </div>
 
-
-                <div class="order-confirmation__items">
-                    <!-- список додає JS -->
-                </div>
-
-
-                <div class="order-confirmation__customer">
-
-                    <p>
-                        Ім’я:
-                        <span class="order-confirmation__name"></span>
-                    </p>
-
-                    <p>
-                        Телефон:
-                        <span class="order-confirmation__phone"></span>
-                    </p>
-
-                    <p>
-                        Спосіб оплати:
-                        <span class="order-confirmation__payment"></span>
-                    </p>
-
-                </div>
-
-
-                <p class="order-confirmation__total">
-
-                    Разом:
-
-                    <span class="order-confirmation__total-value">
-                        0 грн
-                    </span>
-
+              <div class="order-confirmation__customer">
+                <p>
+                  Ім’я:
+                  <span class="order-confirmation__name"></span>
                 </p>
 
+                <p>
+                  Телефон:
+                  <span class="order-confirmation__phone"></span>
+                </p>
 
-                <button
-                    class="order-confirmation__action"
-                    type="button"
-                >
-                    Продовжити
-                </button>
+                <p>
+                  Спосіб оплати:
+                  <span class="order-confirmation__payment"></span>
+                </p>
+              </div>
 
+              <p class="order-confirmation__total">
+                Разом:
 
-                <button
-                    class="order-confirmation__back"
-                    type="button"
-                >
-                    Назад
-                </button>
+                <span class="order-confirmation__total-value"> 0 грн </span>
+              </p>
 
+              <button class="order-confirmation__action" type="button">
+                Продовжити
+              </button>
+
+              <button class="order-confirmation__back" type="button">
+                Назад
+              </button>
             </div>
-
+          </div>
         </div>
+      </section>
 
-    </div>
+      <section class="modal modal-booking" aria-hidden="true">
+        <div class="modal__container modal-booking__container">
+          <img src="/frontend/IMG/Layer 1.png" alt="" class="modal__bg" />
 
-</section>
-
-<section
-    class="modal modal-booking"
-    aria-hidden="true"
->
-    <div class="modal__container modal-booking__container">
-
-        <img
-            src="/WOL/IMG/Layer 1.png"
-            alt=""
-            class="modal__bg"
-        >
-
-        <button
+          <button
             class="modal__close booking-close"
             type="button"
             aria-label="Закрити"
-        ></button>
+          ></button>
 
-
-        <!-- ========================================
+          <!-- ========================================
              КРОК 1 — ВИБІР КВИТКА
         ======================================== -->
 
-        <div class="booking-view booking-type-view is-active">
+          <div class="booking-view booking-type-view is-active">
+            <h2 class="booking-view__title">Придбати квитки</h2>
 
-            <h2 class="booking-view__title">
-                Придбати квитки
-            </h2>
+            <img
+              src="/frontend/IMG/deco hero.svg"
+              alt=""
+              class="booking-heading__decor"
+            />
 
-            <img src="/WOL/IMG/deco hero.svg" alt="" class="booking-heading__decor">
-            
-            <p class="booking-view__subtitle">
-                Оберіть тип квитка
-            </p>
-
+            <p class="booking-view__subtitle">Оберіть тип квитка</p>
 
             <div class="booking-tickets-list">
-                <!-- квитки вставляє JS -->
+              <!-- квитки вставляє JS -->
             </div>
+          </div>
 
-        </div>
-
-
-        <!-- ========================================
+          <!-- ========================================
              КРОК 2 — ДАТА
         ======================================== -->
 
-        <div class="booking-view booking-date-view">
-
-            <h2 class="booking-view__title">
-                Оберіть дату
-            </h2>
-
+          <div class="booking-view booking-date-view">
+            <h2 class="booking-view__title">Оберіть дату</h2>
 
             <p class="booking-selected-type"></p>
 
-
             <div class="booking-calendar">
+              <div class="booking-month-row">
+                <button
+                  class="booking-month-nav booking-month-prev"
+                  type="button"
+                >
+                  ←
+                </button>
 
-                <div class="booking-month-row">
+                <h3 class="booking-month"></h3>
 
-                    <button
-                        class="booking-month-nav booking-month-prev"
-                        type="button"
-                    >
-                        ←
-                    </button>
+                <button
+                  class="booking-month-nav booking-month-next"
+                  type="button"
+                >
+                  →
+                </button>
+              </div>
 
+              <div class="booking-weekdays">
+                <span>Пн</span>
+                <span>Вт</span>
+                <span>Ср</span>
+                <span>Чт</span>
+                <span>Пт</span>
+                <span>Сб</span>
+                <span>Нд</span>
+              </div>
 
-                    <h3 class="booking-month"></h3>
+              <div class="booking-days">
+                <!-- календар створює JS -->
+              </div>
 
+              <div class="booking-legend">
+                <span>
+                  <i class="booking-legend__dot booking-legend__dot--free"></i>
+                  Вільні
+                </span>
 
-                    <button
-                        class="booking-month-nav booking-month-next"
-                        type="button"
-                    >
-                        →
-                    </button>
-
-                </div>
-
-
-                <div class="booking-weekdays">
-
-                    <span>Пн</span>
-                    <span>Вт</span>
-                    <span>Ср</span>
-                    <span>Чт</span>
-                    <span>Пт</span>
-                    <span>Сб</span>
-                    <span>Нд</span>
-
-                </div>
-
-
-                <div class="booking-days">
-                    <!-- календар створює JS -->
-                </div>
-
-
-                <div class="booking-legend">
-
-                    <span>
-                        <i class="booking-legend__dot booking-legend__dot--free"></i>
-                        Вільні
-                    </span>
-
-                    <span>
-                        <i class="booking-legend__dot booking-legend__dot--busy"></i>
-                        Зайняті
-                    </span>
-
-                </div>
-
+                <span>
+                  <i class="booking-legend__dot booking-legend__dot--busy"></i>
+                  Зайняті
+                </span>
+              </div>
             </div>
-
 
             <span class="booking-error booking-date-error"></span>
 
-
             <div class="booking-actions">
+              <button class="modal-button booking-back--type" type="button">
+                Назад
+              </button>
 
-                <button
-                    class="modal-button booking-back--type"
-                    type="button"
-                >
-                    Назад
-                </button>
-
-                <button
-                    class="modal-button booking-date-next"
-                    type="button"
-                >
-                    Продовжити
-                </button>
-
+              <button class="modal-button booking-date-next" type="button">
+                Продовжити
+              </button>
             </div>
+          </div>
 
-        </div>
-
-
-        <!-- ========================================
+          <!-- ========================================
              КРОК 3 — ЧАС
         ======================================== -->
 
-        <div class="booking-view booking-time-view">
-
-            <h2 class="booking-view__title">
-                Оберіть час
-            </h2>
-
+          <div class="booking-view booking-time-view">
+            <h2 class="booking-view__title">Оберіть час</h2>
 
             <p class="booking-selected-date"></p>
 
-
             <div class="booking-times">
-
-                <div class="booking-time-list">
-                    <!-- час створює JS -->
-                </div>
-
+              <div class="booking-time-list">
+                <!-- час створює JS -->
+              </div>
             </div>
-
 
             <span class="booking-error booking-time-error"></span>
 
-
             <div class="booking-actions">
+              <button class="modal-button booking-back--date" type="button">
+                Назад
+              </button>
 
-                <button
-                    class="modal-button booking-back--date"
-                    type="button"
-                >
-                    Назад
-                </button>
-
-                <button
-                    class="modal-button booking-time-next"
-                    type="button"
-                >
-                    Продовжити
-                </button>
-
+              <button class="modal-button booking-time-next" type="button">
+                Продовжити
+              </button>
             </div>
+          </div>
 
-        </div>
-
-
-        <!-- ========================================
+          <!-- ========================================
              КРОК 4 — КІЛЬКІСТЬ + ДАНІ
         ======================================== -->
 
-        <div class="booking-view booking-details-view">
-
-            <h2 class="booking-view__title">
-                Ваші дані
-            </h2>
-
+          <div class="booking-view booking-details-view">
+            <h2 class="booking-view__title">Ваші дані</h2>
 
             <p class="booking-selected-time"></p>
 
-
             <div class="booking-tickets">
+              <span class="booking-tickets__label">
+                Кількість відвідувачів
+              </span>
 
-                <span class="booking-tickets__label">
-                    Кількість відвідувачів
-                </span>
+              <div class="booking-counter">
+                <button
+                  class="booking-counter__button booking-counter__minus"
+                  type="button"
+                >
+                  −
+                </button>
 
+                <span class="booking-counter__value"> 1 </span>
 
-                <div class="booking-counter">
+                <button
+                  class="booking-counter__button booking-counter__plus"
+                  type="button"
+                >
+                  +
+                </button>
+              </div>
 
-                    <button
-                        class="booking-counter__button booking-counter__minus"
-                        type="button"
-                    >
-                        −
-                    </button>
-
-
-                    <span class="booking-counter__value">
-                        1
-                    </span>
-
-
-                    <button
-                        class="booking-counter__button booking-counter__plus"
-                        type="button"
-                    >
-                        +
-                    </button>
-
-                </div>
-
-
-                <p class="booking-price">
-                    Разом:
-                    <span class="booking-price__value">
-                        0 грн
-                    </span>
-                </p>
-
+              <p class="booking-price">
+                Разом:
+                <span class="booking-price__value"> 0 грн </span>
+              </p>
             </div>
 
-
             <form class="booking-form">
+              <input
+                type="text"
+                name="bookingName"
+                placeholder="Ваше ім’я"
+                required
+              />
 
-                <input
-                    type="text"
-                    name="bookingName"
-                    placeholder="Ваше ім’я"
-                    required
-                >
+              <span class="booking-error booking-name-error"></span>
 
-                <span class="booking-error booking-name-error"></span>
+              <input
+                type="tel"
+                name="bookingPhone"
+                placeholder="Номер телефону"
+                required
+              />
 
+              <span class="booking-error booking-phone-error"></span>
 
-                <input
-                    type="tel"
-                    name="bookingPhone"
-                    placeholder="Номер телефону"
-                    required
-                >
+              <div class="booking-actions">
+                <button class="modal-button booking-back--time" type="button">
+                  Назад
+                </button>
 
-                <span class="booking-error booking-phone-error"></span>
-
-
-                <div class="booking-actions">
-
-                    <button
-                        class="modal-button booking-back--time"
-                        type="button"
-                    >
-                        Назад
-                    </button>
-
-
-                    <button
-                        class="modal-button"
-                        type="submit"
-                    >
-                        Продовжити
-                    </button>
-
-                </div>
-
+                <button class="modal-button" type="submit">Продовжити</button>
+              </div>
             </form>
+          </div>
 
-        </div>
-
-
-        <!-- ========================================
+          <!-- ========================================
              КРОК 5 — ПІДТВЕРДЖЕННЯ
         ======================================== -->
 
-        <div class="booking-view booking-confirmation-view">
-
-            <h2 class="booking-view__title">
-                Ваше бронювання
-            </h2>
-
+          <div class="booking-view booking-confirmation-view">
+            <h2 class="booking-view__title">Ваше бронювання</h2>
 
             <div class="booking-confirmation">
+              <p>
+                Квиток:
+                <span class="booking-confirmation__type"></span>
+              </p>
 
-                <p>
-                    Квиток:
-                    <span class="booking-confirmation__type"></span>
-                </p>
+              <p>
+                Дата:
+                <span class="booking-confirmation__date"></span>
+              </p>
 
+              <p>
+                Час:
+                <span class="booking-confirmation__time"></span>
+              </p>
 
-                <p>
-                    Дата:
-                    <span class="booking-confirmation__date"></span>
-                </p>
+              <p>
+                Відвідувачів:
+                <span class="booking-confirmation__quantity"></span>
+              </p>
 
+              <p>
+                Ім’я:
+                <span class="booking-confirmation__name"></span>
+              </p>
 
-                <p>
-                    Час:
-                    <span class="booking-confirmation__time"></span>
-                </p>
+              <p>
+                Телефон:
+                <span class="booking-confirmation__phone"></span>
+              </p>
 
-
-                <p>
-                    Відвідувачів:
-                    <span class="booking-confirmation__quantity"></span>
-                </p>
-
-
-                <p>
-                    Ім’я:
-                    <span class="booking-confirmation__name"></span>
-                </p>
-
-
-                <p>
-                    Телефон:
-                    <span class="booking-confirmation__phone"></span>
-                </p>
-
-
-                <p>
-                    Разом:
-                    <span class="booking-confirmation__total"></span>
-                </p>
-
+              <p>
+                Разом:
+                <span class="booking-confirmation__total"></span>
+              </p>
             </div>
-
 
             <div class="booking-actions">
+              <button class="modal-button booking-back--details" type="button">
+                Назад
+              </button>
 
-                <button
-                    class="modal-button booking-back--details"
-                    type="button"
-                >
-                    Назад
-                </button>
-
-
-                <button
-                    class="modal-button booking-confirmation__action"
-                    type="button"
-                >
-                    Підтвердити бронювання
-                </button>
-
+              <button
+                class="modal-button booking-confirmation__action"
+                type="button"
+              >
+                Підтвердити бронювання
+              </button>
             </div>
-
+          </div>
         </div>
+      </section>
 
-    </div>
-</section>
-
-
-<!-- ========================================
+      <!-- ========================================
      TEMPLATE КВИТКА
 ======================================== -->
 
-<template id="booking-ticket-template">
+      <template id="booking-ticket-template">
+        <article class="booking-ticket">
+          <div class="booking-ticket__image-wrap">
+            <img src="" alt="" class="booking-ticket__image" />
+          </div>
 
-    <article class="booking-ticket">
-
-        <div class="booking-ticket__image-wrap">
-
-            <img
-                src=""
-                alt=""
-                class="booking-ticket__image"
-            >
-
-        </div>
-
-
-        <div class="booking-ticket__info">
-
+          <div class="booking-ticket__info">
             <h3 class="booking-ticket__time"></h3>
 
             <p class="booking-ticket__description"></p>
+          </div>
 
-        </div>
-
-
-        <div class="booking-ticket__side">
-
+          <div class="booking-ticket__side">
             <span class="booking-ticket__price"></span>
 
-
-            <button
-                class="booking-ticket__button"
-                type="button"
-            >
-                Забронювати
+            <button class="booking-ticket__button" type="button">
+              Забронювати
             </button>
-
+          </div>
+        </article>
+      </template>
+      <section class="hero">
+        <img src="/frontend/IMG/hero.png" alt="hero" class="hero__bg" />
+        <div class="hero__container">
+          <h1 class="hero__heading">Wonder Of LAVENDER</h1>
+          <img src="/frontend/IMG/deco hero.svg" alt="decor" />
+          <span class="hero__subheading">
+            Лавандове поле в колисці Карпат. Домашня продукція
+          </span>
+          <span class="hero__handwritten"> З любов’ю до природи. </span>
         </div>
+      </section>
+      <section class="info">
+        <div class="info__container">
+          <article class="info__article">
+            <img
+              src="/frontend/IMG/lavender__info.svg"
+              alt="info_img"
+              class="info__article-icon"
+            />
+            <div class="info__article-text">
+              <h2 class="info__title">Натуральні інгредієнти</h2>
+              <span class="info__text">У кожному продукті</span>
+            </div>
+          </article>
+          <article class="info__article">
+            <img
+              src="/frontend/IMG/hands__info.svg"
+              alt="info_img"
+              class="info__article-icon"
+            />
+            <div class="info__article-text">
+              <h2 class="info__title">Ручна робота</h2>
+              <span class="info__text">Створено вручну з любов’ю</span>
+            </div>
+          </article>
+          <article class="info__article">
+            <img
+              src="/frontend/IMG/leaf__info.svg"
+              alt="info_img"
+              class="info__article-icon"
+            />
+            <div class="info__article-text">
+              <h2 class="info__title">Екологічне пакування</h2>
+              <span class="info__text">Дбаємо про вас і про довкілля</span>
+            </div>
+          </article>
+          <article class="info__article info__article--tight">
+            <img
+              src="/frontend/IMG/glass__info.svg"
+              alt="info_img"
+              class="info__article-icon"
+            />
+            <div class="info__article-text">
+              <h2 class="info__title info__title--tight">Натуральний аромат</h2>
+              <span class="info__text"
+                >Гармонія аромату лаванди та турботи</span
+              >
+            </div>
+          </article>
+        </div>
+      </section>
+      <section class="sell">
+        <h2 class="sell__title">НАШІ ТОП ПРОДУКТИ</h2>
+        <div class="sell__article__container">
+          <article class="sell__article" data-category="hydrolats">
+            <div class="sell__media">
+              <div class="sell__icon-holder">
+                <img src="" alt="" class="sell__article-icon" />
+                <img
+                  src=""
+                  alt=""
+                  class="sell__article-icon sell__article-icon--next"
+                />
+              </div>
+              <img
+                src="/frontend/IMG/lavender__title.png"
+                alt="placeholder"
+                class="hydrolat-image"
+              />
+              <img
+                src=""
+                alt="next"
+                class="hydrolat-image hydrolat-image--under"
+              />
+              <button
+                class="sell__article-nav sell__article-nav--previous is-hidden"
+              >
+                <img src="/frontend/IMG/arrow.png" alt="arrow" class="arrow" />
+              </button>
+              <button class="sell__article-nav sell__article-nav--next">
+                <img
+                  src="/frontend/IMG/arrow.png"
+                  alt="arrow"
+                  class="arrow arrow--flipped"
+                />
+              </button>
+            </div>
+            <div class="sell__article__info">
+              <div class="sell__article__info__text">
+                <h3 class="sell__article__info-title">Гідролати</h3>
+                <span class="sell__article__info-description">(100г)</span>
+                <span class="sell__article__info-price">Від 100грн</span>
+              </div>
+              <button
+                class="sell__article-info-basket"
+                type="button"
+                aria-label="Додати товар у кошик"
+              >
+                <img
+                  src="/frontend/IMG/addtobasket.png"
+                  alt="img"
+                  class="button__image is-hidden"
+                />
+              </button>
+            </div>
+          </article>
 
-    </article>
+          <article class="sell__article" data-category="oils">
+            <div class="sell__media">
+              <div class="sell__icon-holder">
+                <img src="" alt="" class="sell__article-icon" />
+                <img
+                  src=""
+                  alt=""
+                  class="sell__article-icon sell__article-icon--next"
+                />
+              </div>
+              <img
+                src="/frontend/IMG/lavender__title.png"
+                alt="placeholder"
+                class="hydrolat-image"
+              />
+              <img
+                src=""
+                alt="placeholder"
+                class="hydrolat-image hydrolat-image--under"
+              />
+              <button
+                class="sell__article-nav sell__article-nav--previous is-hidden"
+              >
+                <img src="/frontend/IMG/arrow.png" alt="arrow" class="arrow" />
+              </button>
+              <button class="sell__article-nav sell__article-nav--next">
+                <img
+                  src="/frontend/IMG/arrow.png"
+                  alt="arrow"
+                  class="arrow arrow--flipped"
+                />
+              </button>
+            </div>
+            <div class="sell__article__info">
+              <div class="sell__article__info__text">
+                <h3 class="sell__article__info-title">Гідролати</h3>
+                <span class="sell__article__info-description">(100г)</span>
+                <span class="sell__article__info-price">Від 100грн</span>
+              </div>
+              <button
+                class="sell__article-info-basket"
+                type="button"
+                aria-label="Додати товар у кошик"
+              >
+                <img
+                  src="/frontend/IMG/addtobasket.png"
+                  alt="img"
+                  class="button__image is-hidden"
+                />
+              </button>
+            </div>
+          </article>
 
-</template>
-        <section class="hero">
-            <img src="/WOL/IMG/hero.png" alt="hero" class="hero__bg">
-            <div class="hero__container">
-                <h1 class="hero__heading">
-                    Wonder Of LAVENDER
-                </h1>
-                    <img src="/WOL/IMG/deco hero.svg" alt="decor">
-                <span class="hero__subheading">
-                    Лавандове поле в колисці Карпат. Домашня продукція
-                </span>
-                <span class="hero__handwritten">
-                    З любов’ю до природи.
-                </span>
+          <article class="sell__article" data-category="soaps">
+            <div class="sell__media">
+              <div class="sell__icon-holder">
+                <img src="" alt="" class="sell__article-icon" />
+                <img
+                  src=""
+                  alt=""
+                  class="sell__article-icon sell__article-icon--next"
+                />
+              </div>
+              <img
+                src="/frontend/IMG/lavender__title.png"
+                alt="placeholder"
+                class="hydrolat-image"
+              />
+              <img
+                src=""
+                alt="next"
+                class="hydrolat-image hydrolat-image--under"
+              />
+              <button
+                class="sell__article-nav sell__article-nav--previous is-hidden"
+              >
+                <img src="/frontend/IMG/arrow.png" alt="arrow" class="arrow" />
+              </button>
+              <button class="sell__article-nav sell__article-nav--next">
+                <img
+                  src="/frontend/IMG/arrow.png"
+                  alt="arrow"
+                  class="arrow arrow--flipped"
+                />
+              </button>
             </div>
-        </section>
-        <section class="info">
-            <div class="info__container">
-                <article class="info__article ">
-                    <img src="/WOL/IMG/lavender__info.svg" alt="info_img" class="info__article-icon">
-                    <div class="info__article-text">
-                        <h2 class="info__title">Натуральні інгредієнти</h2>
-                        <span class="info__text">У кожному продукті</span>
-                    </div>
-                </article>
-                <article class="info__article">
-                    <img src="/WOL/IMG/hands__info.svg" alt="info_img" class="info__article-icon">
-                    <div class="info__article-text">
-                        <h2 class="info__title">Ручна робота</h2>
-                        <span class="info__text">Створено вручну з любов’ю</span>
-                    </div>
-                </article>
-                <article class="info__article">
-                    <img src="/WOL/IMG/leaf__info.svg" alt="info_img" class="info__article-icon">
-                    <div class="info__article-text">
-                        <h2 class="info__title">Екологічне пакування</h2>
-                        <span class="info__text">Дбаємо про вас і про довкілля</span>
-                    </div>
-                </article>
-                <article class="info__article info__article--tight">
-                    <img src="/WOL/IMG/glass__info.svg" alt="info_img" class="info__article-icon">
-                    <div class="info__article-text">
-                        <h2 class="info__title info__title--tight">Натуральний аромат</h2>
-                        <span class="info__text">Гармонія аромату лаванди та турботи</span>
-                    </div>
-                </article>
+            <div class="sell__article__info">
+              <div class="sell__article__info__text">
+                <h3 class="sell__article__info-title">Гідролати</h3>
+                <span class="sell__article__info-description">(100г)</span>
+                <span class="sell__article__info-price">Від 100грн</span>
+              </div>
+              <button
+                class="sell__article-info-basket"
+                type="button"
+                aria-label="Додати товар у кошик"
+              >
+                <img
+                  src="/frontend/IMG/addtobasket.png"
+                  alt="img"
+                  class="button__image is-hidden"
+                />
+              </button>
             </div>
-        </section>
-        <section class="sell">
-            <h2 class="sell__title">НАШІ ТОП ПРОДУКТИ</h2>
-            <div class="sell__article__container">
-                <article class="sell__article" data-category="hydrolats">
-                    <div class="sell__media">
-                        <div class="sell__icon-holder">
-                         <img src="" alt="" class="sell__article-icon">
-                         <img src="" alt="" class="sell__article-icon sell__article-icon--next">
-                        </div>
-                        <img src="/WOL/IMG/lavender__title.png" alt="placeholder" class="hydrolat-image ">
-                        <img src="" alt="next" class="hydrolat-image hydrolat-image--under ">
-                        <button class="sell__article-nav sell__article-nav--previous is-hidden"><img src="/WOL/IMG/arrow.png" alt="arrow" class="arrow"></button>
-                        <button class="sell__article-nav sell__article-nav--next"><img src="/WOL/IMG/arrow.png" alt="arrow" class="arrow arrow--flipped"></button>
-                    </div>
-                    <div class="sell__article__info">
-                        <div class="sell__article__info__text">
-                            <h3 class="sell__article__info-title">Гідролати</h3>
-                            <span class="sell__article__info-description">(100г)</span>
-                            <span class="sell__article__info-price">Від 100грн</span>
-                        </div>
-                        <button
-                        class="sell__article-info-basket"
-                        type="button"
-                        aria-label="Додати товар у кошик"
-                        >
-                            <img src="/WOL/IMG/addtobasket.png" alt="img" class="button__image is-hidden">
-                        </button>
-                    </div>    
-                </article>
-
-                 <article class="sell__article" data-category="oils">
-                    <div class="sell__media">
-                        <div class="sell__icon-holder">
-                         <img src="" alt="" class="sell__article-icon">
-                         <img src="" alt="" class="sell__article-icon sell__article-icon--next">
-                        </div>
-                        <img src="/WOL/IMG/lavender__title.png" alt="placeholder" class="hydrolat-image ">
-                        <img src="" alt="placeholder" class="hydrolat-image hydrolat-image--under ">
-                        <button class="sell__article-nav sell__article-nav--previous is-hidden"><img src="/WOL/IMG/arrow.png" alt="arrow" class="arrow"></button>
-                        <button class="sell__article-nav sell__article-nav--next"><img src="/WOL/IMG/arrow.png" alt="arrow" class="arrow arrow--flipped"></button>
-                    </div>
-                    <div class="sell__article__info">
-                        <div class="sell__article__info__text">
-                            <h3 class="sell__article__info-title">Гідролати</h3>
-                            <span class="sell__article__info-description">(100г)</span>
-                            <span class="sell__article__info-price">Від 100грн</span>
-                        </div>
-                        <button
-                        class="sell__article-info-basket"
-                        type="button"
-                        aria-label="Додати товар у кошик"
-                        >
-                            <img src="/WOL/IMG/addtobasket.png" alt="img" class="button__image is-hidden">
-                        </button>
-                    </div>    
-                </article>
-
-                <article class="sell__article"  data-category="soaps">
-                    <div class="sell__media">
-                        <div class="sell__icon-holder">
-                         <img src="" alt="" class="sell__article-icon">
-                         <img src="" alt="" class="sell__article-icon sell__article-icon--next">
-                        </div>
-                        <img src="/WOL/IMG/lavender__title.png" alt="placeholder" class="hydrolat-image" >
-                        <img src="" alt="next" class="hydrolat-image hydrolat-image--under ">
-                        <button class="sell__article-nav sell__article-nav--previous is-hidden"><img src="/WOL/IMG/arrow.png" alt="arrow" class="arrow"></button>
-                        <button class="sell__article-nav sell__article-nav--next"><img src="/WOL/IMG/arrow.png" alt="arrow" class="arrow arrow--flipped"></button>
-                    </div>
-                    <div class="sell__article__info">
-                        <div class="sell__article__info__text">
-                            <h3 class="sell__article__info-title">Гідролати</h3>
-                            <span class="sell__article__info-description">(100г)</span>
-                            <span class="sell__article__info-price">Від 100грн</span>
-                        </div>
-                        <button
-                        class="sell__article-info-basket"
-                        type="button"
-                        aria-label="Додати товар у кошик"
-                        >
-                            <img src="/WOL/IMG/addtobasket.png" alt="img" class="button__image is-hidden">
-                        </button>
-                    </div>    
-                </article>
+          </article>
+        </div>
+        <div class="sell__decor">
+          <img
+            src="/frontend/IMG/deco__sell.svg"
+            alt="deco__sell deco__sell--left"
+            class="deco__sell deco__sell--left"
+          />
+          <img
+            src="/frontend/IMG/deco__sell.svg"
+            alt="deco__sell deco__sell--right"
+            class="deco__sell deco__sell--right"
+          />
+        </div>
+        <a href="catalogue.html" class="sell__link"><span>До каталогу</span></a>
+      </section>
+      <section class="slider" id="About">
+        <div class="slider__wrapper">
+          <div class="slider__gradient"></div>
+          <img
+            src="/frontend/IMG/decor slider.svg"
+            alt="slder_deco"
+            class="slider__decor"
+          />
+          <div class="slider__textholder">
+            <div class="slider__textholder-heading">
+              <h2 class="slider__textholder-header">
+                НАШЕ<br />ЛАВАНДОВЕ ПОЛЕ
+              </h2>
+              <img
+                src="/frontend/IMG/story__deco 1.svg"
+                alt="slider__textholder-decor"
+                class="slider__textholder-decor"
+              />
             </div>
-            <div class="sell__decor">
-                <img src="/WOL/IMG/deco__sell.svg" alt="deco__sell deco__sell--left" class="deco__sell deco__sell--left">
-                <img src="/WOL/IMG/deco__sell.svg" alt="deco__sell deco__sell--right" class="deco__sell deco__sell--right">
+            <p class="slider__textholder-paragraph">
+              Наше лавандове поле народилося з&nbsp;мрії, натхненої безкрайніми
+              пурпуровими полями Великобританії. Перші саджанці
+              ми&nbsp;вирощували на&nbsp;підвіконні, дбайливо доглядаючи
+              за&nbsp;кожним маленьким паростком. Сьогодні лаванда росте серед
+              Карпатських гір, де&nbsp;її&nbsp;зігріває сонце, напуває дощ
+              і&nbsp;гойдає свіжий гірський вітер. Це&nbsp;місце, створене
+              з&nbsp;любов&rsquo;ю, терпінням і&nbsp;вірою в&nbsp;те,
+              що&nbsp;одного дня гори вкриються прекрасним фіолетовим цвітом.
+            </p>
+            <div class="slider__textholder-contacts">
+              <span class="slider__textholder-info">+380-096-917-817-3</span>
+              <span class="slider__textholder-info"
+                >wonderoflavender@gmail.com</span
+              >
             </div>
-           <a href="catalogue.html" class="sell__link"><span>До каталогу</span></a>
-        </section>
-        <section class="slider" id="About">
-            <div class="slider__wrapper">
-                <div class="slider__gradient"></div>
-                <img src="/WOL/IMG/decor slider.svg" alt="slder_deco" class="slider__decor">
-                <div class="slider__textholder">
-                    <div class="slider__textholder-heading">
-                        <h2 class="slider__textholder-header">НАШЕ<br>ЛАВАНДОВЕ ПОЛЕ</h2>
-                        <img src="/WOL/IMG/story__deco 1.svg" alt="slider__textholder-decor" class="slider__textholder-decor">
-                    </div>
-                    <p class="slider__textholder-paragraph">Наше лавандове поле народилося з&nbsp;мрії, натхненої безкрайніми пурпуровими полями Великобританії. Перші саджанці ми&nbsp;вирощували на&nbsp;підвіконні, дбайливо доглядаючи за&nbsp;кожним маленьким паростком. Сьогодні лаванда росте серед Карпатських гір, де&nbsp;її&nbsp;зігріває сонце, напуває дощ і&nbsp;гойдає свіжий гірський вітер. Це&nbsp;місце, створене з&nbsp;любов&rsquo;ю, терпінням і&nbsp;вірою в&nbsp;те, що&nbsp;одного дня гори вкриються прекрасним фіолетовим цвітом.</p>
-                    <div class="slider__textholder-contacts">
-                        <span class="slider__textholder-info">+380-096-917-817-3</span>
-                        <span class="slider__textholder-info">wonderoflavender@gmail.com</span>
-                    </div>
-                </div>
-                <button class="slider__button"><img src="/WOL/IMG/arrow.svg" alt="arrow" class="slider__button-image"></button>
-                <div class="slider__photos">
-                    <img src="/WOL/IMG/1.png" alt="1" class="slider__photos-item">
-                    <img src="/WOL/IMG/2.png" alt="2" class="slider__photos-item slider__photos-item--next">
-                </div>
-            </div>
-        </section>
-        <section class="socials">
-            <h2 class="socials__heading">СТЕЖТЕ ЗА НАМИ В СОЦІАЛЬНИХ МЕРЕЖАХ</h2>
-            <div class="socials__decor">
-                <img src="/WOL/IMG/deco__sell.svg" alt="1" class="socials__decor-item socials__decor-item--left">
-                <img src="/WOL/IMG/deco__sell.svg" alt="2" class="socials__decor-item socials__decor-item--right">
-            </div>
-            <behold-widget feed-id="1ZtLwLSbVKgQJIQYzXJz"></behold-widget>
-        </section>
+          </div>
+          <button class="slider__button">
+            <img
+              src="/frontend/IMG/arrow.svg"
+              alt="arrow"
+              class="slider__button-image"
+            />
+          </button>
+          <div class="slider__photos">
+            <img
+              src="/frontend/IMG/1.png"
+              alt="1"
+              class="slider__photos-item"
+            />
+            <img
+              src="/frontend/IMG/2.png"
+              alt="2"
+              class="slider__photos-item slider__photos-item--next"
+            />
+          </div>
+        </div>
+      </section>
+      <section class="socials">
+        <h2 class="socials__heading">СТЕЖТЕ ЗА НАМИ В СОЦІАЛЬНИХ МЕРЕЖАХ</h2>
+        <div class="socials__decor">
+          <img
+            src="/frontend/IMG/deco__sell.svg"
+            alt="1"
+            class="socials__decor-item socials__decor-item--left"
+          />
+          <img
+            src="/frontend/IMG/deco__sell.svg"
+            alt="2"
+            class="socials__decor-item socials__decor-item--right"
+          />
+        </div>
+        <behold-widget feed-id="1ZtLwLSbVKgQJIQYzXJz"></behold-widget>
+      </section>
     </main>
     <footer class="footer">
-        <div class="footer__container">
-            <img src="/WOL/IMG/Author.png" alt="auth" class="author">
-            <div class="introduce">
-                <div class="introduce__textholder">
-                    <h2 class="introduce__textholder-about">ПРО НАС</h2>
-                    <img src="/WOL/IMG/deco footer.svg" alt="foo" class="introduce__textholder-deco">
-                    <span class="introduce__textholder-greeting">Привіт, я Тетяна</span>
-                    <p class="introduce__textholder-paragraph">Ми&nbsp;з&nbsp;моєю сім&rsquo;єю власники лавандового поля та&nbsp;бренду Wonder of&nbsp;lavender (Лавандове диво). </p>
-                    <p class="introduce__textholder-paragraph">Ми&nbsp;створюємо екологічні, косметичні засоби з&nbsp;любов&rsquo;ю, для вас та&nbsp;себе. Користуючись нашими засобами для догляду, ваше тіло почуватиметься в&nbsp;гармонії з&nbsp;природою.Наша мрія - створювати та&nbsp;поширювати красу всюди, де&nbsp;ми&nbsp;можемо.</p>
-                </div>
-                <div class="introduce__socialsholder">
-                    <a href="https://www.instagram.com/qr/" class="socials__link" target="_blank" rel="noopener noreferrer"><img src="/WOL/IMG/inst.png" alt="inst" class="icon"></a>
-                    <a href="https://www.facebook.com/share/1837bnRDsu/" class="socials__link" target="_blank" rel="noopener noreferrer"><img src="/WOL/IMG/fcb.png" alt="fcb" class="icon"></a>
-                    <a href="https://www.youtube.com/@WonderOfLavender" class="socials__link" target="_blank" rel="noopener noreferrer"><img src="/WOL/IMG/ytb.png" alt="ytb" class="icon"></a>
-                </div>
-            </div>
-            <img src="/WOL/IMG/foo deco.png" alt="foo_deco" class="foo__deco">
+      <div class="footer__container">
+        <img src="/frontend/IMG/Author.png" alt="auth" class="author" />
+        <div class="introduce">
+          <div class="introduce__textholder">
+            <h2 class="introduce__textholder-about">ПРО НАС</h2>
+            <img
+              src="/frontend/IMG/deco footer.svg"
+              alt="foo"
+              class="introduce__textholder-deco"
+            />
+            <span class="introduce__textholder-greeting">Привіт, я Тетяна</span>
+            <p class="introduce__textholder-paragraph">
+              Ми&nbsp;з&nbsp;моєю сім&rsquo;єю власники лавандового поля
+              та&nbsp;бренду Wonder of&nbsp;lavender (Лавандове диво).
+            </p>
+            <p class="introduce__textholder-paragraph">
+              Ми&nbsp;створюємо екологічні, косметичні засоби
+              з&nbsp;любов&rsquo;ю, для вас та&nbsp;себе. Користуючись нашими
+              засобами для догляду, ваше тіло почуватиметься в&nbsp;гармонії
+              з&nbsp;природою.Наша мрія - створювати та&nbsp;поширювати красу
+              всюди, де&nbsp;ми&nbsp;можемо.
+            </p>
+          </div>
+          <div class="introduce__socialsholder">
+            <a
+              href="https://www.instagram.com/qr/"
+              class="socials__link"
+              target="_blank"
+              rel="noopener noreferrer"
+              ><img src="/frontend/IMG/inst.png" alt="inst" class="icon"
+            /></a>
+            <a
+              href="https://www.facebook.com/share/1837bnRDsu/"
+              class="socials__link"
+              target="_blank"
+              rel="noopener noreferrer"
+              ><img src="/frontend/IMG/fcb.png" alt="fcb" class="icon"
+            /></a>
+            <a
+              href="https://www.youtube.com/@WonderOfLavender"
+              class="socials__link"
+              target="_blank"
+              rel="noopener noreferrer"
+              ><img src="/frontend/IMG/ytb.png" alt="ytb" class="icon"
+            /></a>
+          </div>
         </div>
+        <img
+          src="/frontend/IMG/foo deco.png"
+          alt="foo_deco"
+          class="foo__deco"
+        />
+      </div>
     </footer>
-<script src="/WOL/JS/config.js"></script>
-<script src="/WOL/JS/api.js"></script>
-<script src="/WOL/JS/category-groups.js"></script>
-<script src="/WOL/JS/main.js"></script>
-<script src="/WOL/JS/basket.js"></script>
-<script src="/WOL/JS/booking.js"></script>
-</body>
+    <script src="/frontend/JS/config.js"></script>
+    <script src="/frontend/JS/api.js"></script>
+    <script src="/frontend/JS/category-groups.js"></script>
+    <script src="/frontend/JS/main.js"></script>
+    <script src="/frontend/JS/basket.js"></script>
+    <script src="/frontend/JS/booking.js"></script>
+  </body>
 </html>

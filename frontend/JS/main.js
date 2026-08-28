@@ -27,7 +27,7 @@ const showAddedAnimation = function (image) {
 
     setTimeout(() => {
 
-        image.src = "/WOL/IMG/confirmed.png";
+        image.src = "/frontend/IMG/confirmed.png";
 
         image.classList.remove("is-changing");
         image.classList.add("is-added");
@@ -425,15 +425,15 @@ initTopProducts();
 // ========================================
 
 const allPhotos = [
-    "/WOL/IMG/1.png",
-    "/WOL/IMG/2.png",
-    "/WOL/IMG/3.png",
-    "/WOL/IMG/4.png",
-    "/WOL/IMG/5.png",
-    "/WOL/IMG/6.png",
-    "/WOL/IMG/7.png",
-    "/WOL/IMG/8.png",
-    "/WOL/IMG/9.png"
+    "/frontend/IMG/1.png",
+    "/frontend/IMG/2.png",
+    "/frontend/IMG/3.png",
+    "/frontend/IMG/4.png",
+    "/frontend/IMG/5.png",
+    "/frontend/IMG/6.png",
+    "/frontend/IMG/7.png",
+    "/frontend/IMG/8.png",
+    "/frontend/IMG/9.png"
 ];
 
 

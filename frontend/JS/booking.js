@@ -74,26 +74,18 @@ let bookingTickets = [];
 
 
 // ========================================
-// DEMO AVAILABILITY
+// AVAILABILITY (реальні дані з бекенду)
 // ========================================
+// FIX: раніше тут були захардкоджені Set з номерами днів місяця
+// (bookingBusyDays) і назвами часових проміжків (bookingBusyTimes),
+// що взагалі не залежало від реальних бронювань і навіть мало логічну
+// помилку — перевірка йшла тільки по числу дня, тобто "5-те число
+// будь-якого місяця" вважалось зайнятим у КОЖНОМУ місяці.
+// Тепер зайняті дати запитуються з бекенду окремо для кожного квитка
+// (GET /booking/busy-dates?product_id=...) і зберігаються як рядки
+// формату YYYY-MM-DD, щоб коректно порівнювати дати з різних місяців.
 
-// Пізніше ці дані замінить backend.
-
-const bookingBusyDays =
-    new Set([
-        5,
-        11,
-        17,
-        23,
-        28
-    ]);
-
-const bookingBusyTimes =
-    new Set([
-        "12:00–13:00",
-        "16:00–17:00",
-        "19:00–20:00"
-    ]);
+let bookingBusyDatesSet = new Set();
 
 
 // ========================================
@@ -637,7 +629,7 @@ const renderBookingTickets =
 
                 button.addEventListener(
                     "click",
-                    () => {
+                    async () => {
 
                         bookingState.ticket = ticket;
 
@@ -650,6 +642,19 @@ const renderBookingTickets =
 
                         bookingSelectedType.textContent =
                             `${ticket.time} · ${ticket.description}`;
+
+
+                        // FIX: тягнемо реальні зайняті дати саме для цього
+                        // квитка перед показом календаря, замість
+                        // захардкодженого списку.
+                        bookingBusyDatesSet = new Set();
+
+                        try {
+                            const response = await fetchBusyDates(ticket.productId);
+                            bookingBusyDatesSet = new Set(response.busyDates || []);
+                        } catch (error) {
+                            console.error("Не вдалося завантажити зайняті дати:", error.message);
+                        }
 
 
                         renderBookingCalendar();
@@ -802,8 +807,8 @@ const renderBookingCalendar =
 
 
             const isBusy =
-                bookingBusyDays.has(
-                    day
+                bookingBusyDatesSet.has(
+                    formatBookingDateForBackend(date)
                 );
 
 
@@ -978,9 +983,6 @@ const renderBookingTimes = function () {
             time;
 
 
-        const isBusy =
-            bookingBusyTimes.has(time);
-
         const isSelected =
             bookingState.times.includes(time);
 
@@ -995,10 +997,10 @@ const renderBookingTimes = function () {
             );
         }
 
-        if (
-            isBusy ||
-            (limitReached && !isSelected)
-        ) {
+        // FIX: часові проміжки більше не блокуються окремим списком —
+        // якщо дата обрана, вона за визначенням вільна (недоступні дати
+        // вже відфільтровані в календарі), тож усі часи на ній доступні.
+        if (limitReached && !isSelected) {
 
             button.disabled = true;
         }

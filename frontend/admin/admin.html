@@ -40,6 +40,7 @@
         <nav class="admin-tabs">
             <button type="button" class="admin-tab is-active" data-tab="products">Товари</button>
             <button type="button" class="admin-tab" data-tab="orders">Замовлення</button>
+            <button type="button" class="admin-tab" data-tab="bookings">Бронювання</button>
         </nav>
 
         <!-- ---------------- PRODUCTS TAB ---------------- -->
@@ -129,10 +130,29 @@
             </table>
         </section>
 
+        <!-- ---------------- BOOKINGS TAB ---------------- -->
+        <section class="admin-tab-panel" id="bookingsPanel">
+
+            <div class="admin-toolbar">
+                <button type="button" id="refreshBookingsButton">Оновити список</button>
+            </div>
+
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th><th>Код</th><th>Клієнт</th><th>Телефон</th>
+                        <th>Квиток</th><th>Дата</th><th>Час</th>
+                        <th>Відвідувачів</th><th>Сума</th><th>Статус</th><th></th>
+                    </tr>
+                </thead>
+                <tbody id="bookingsTableBody"></tbody>
+            </table>
+        </section>
+
     </section>
 
-    <script src="../WOL/JS/config.js"></script>
-    <script src="../WOL/JS/api.js"></script>
+    <script src="../JS/config.js"></script>
+    <script src="../JS/api.js"></script>
     <script src="admin.js"></script>
 </body>
 </html>

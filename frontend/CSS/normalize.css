@@ -1393,7 +1393,7 @@ body.modal-open {
 
     transform: translateX(-50%);
 
-    background-image: url("/WOL/IMG/deco hero.svg");
+    background-image: url("/frontend/IMG/deco hero.svg");
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;

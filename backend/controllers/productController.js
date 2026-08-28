@@ -64,7 +64,7 @@ exports.getAllProducts = async (req, res) => {
 exports.createProduct = async (req, res) => {
     const {
         title, description, price, currency, image_url, icon_url, 
-        category, product_type, pricing_mode, stock, sort_order, 
+        category, display_group, product_type, pricing_mode, stock, sort_order, 
         is_active
     } = req.body;
 
@@ -91,6 +91,14 @@ exports.createProduct = async (req, res) => {
     const pType = product_type || 'physical';
     if (!validTypes.includes(pType)) {
         return res.status(400).json({ success: false, message: "Тип продукту може бути лише 'physical' або 'ticket'" });
+    }
+
+    // FIX: display_group ніде не читався і не записувався — вибір групи
+    // каталогу (products/seedlings) в адмінці не мав жодного ефекту.
+    const validDisplayGroups = ['products', 'seedlings'];
+    const dGroup = display_group || 'products';
+    if (!validDisplayGroups.includes(dGroup)) {
+        return res.status(400).json({ success: false, message: "Група каталогу може бути лише 'products' або 'seedlings'" });
     }
 
     // Валідація режиму розрахунку ціни для квитків
@@ -127,9 +135,9 @@ exports.createProduct = async (req, res) => {
         const queryText = `
             INSERT INTO products (
                 slug, sku, title, description, price, currency, 
-                image_url, icon_url, category, product_type, pricing_mode, 
+                image_url, icon_url, category, display_group, product_type, pricing_mode, 
                 stock, sort_order, is_active, created_by_admin_id
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
             RETURNING *;
         `;
 
@@ -143,6 +151,7 @@ exports.createProduct = async (req, res) => {
             image_url || null,
             icon_url || null,
             category || null,
+            dGroup,
             pType,
             pMode,
             productStock,
@@ -187,7 +196,7 @@ exports.updateProduct = async (req, res) => {
     const { id } = req.params; // Отримуємо ID з URL лінку
     const {
         title, description, price, currency, image_url, icon_url, 
-        category, product_type, pricing_mode, stock, sort_order, 
+        category, display_group, product_type, pricing_mode, stock, sort_order, 
         is_active
     } = req.body;
 
@@ -199,6 +208,11 @@ exports.updateProduct = async (req, res) => {
         return res.status(400).json({ success: false, message: "Необхідно вказати ID адміна, який здійснює оновлення (updated_by_admin_id)" });
     }
 
+    // FIX: display_group ігнорувався тут так само, як і в createProduct.
+    if (display_group !== undefined && !['products', 'seedlings'].includes(display_group)) {
+        return res.status(400).json({ success: false, message: "Група каталогу може бути лише 'products' або 'seedlings'" });
+    }
+
     try {
         // Перевіряємо чи товар взагалі існує
         const checkRes = await pool.query("SELECT * FROM products WHERE id = $1", [id]);
@@ -206,18 +220,23 @@ exports.updateProduct = async (req, res) => {
             return res.status(404).json({ success: false, message: "Товар для оновлення не знайдено" });
         }
 
-        // Якщо прийшла нова назва або новий slug — валідуємо його
-        if (slug) slug = slugify(slug);
-        else if (title && !slug) slug = slugify(title);
-        else slug = checkRes.rows[0].slug;
+        // FIX: раніше slug перегенерувався з title ПРИ КОЖНОМУ редагуванні,
+        // навіть якщо назву товару не змінювали. Це могло випадково
+        // зіштовхнутися з чужим slug і завалити оновлення помилкою 23505.
+        // Тепер slug змінюється лише якщо його передали явно.
+        if (slug) {
+            slug = slugify(slug);
+        } else {
+            slug = checkRes.rows[0].slug;
+        }
 
         const queryText = `
             UPDATE products 
             SET slug = $1, sku = $2, title = $3, description = $4, price = $5, 
                 currency = $6, image_url = $7, icon_url = $8, category = $9, 
-                product_type = $10, pricing_mode = $11, stock = $12, 
-                sort_order = $13, is_active = $14, updated_by_admin_id = $15
-            WHERE id = $16
+                display_group = $10, product_type = $11, pricing_mode = $12, stock = $13, 
+                sort_order = $14, is_active = $15, updated_by_admin_id = $16
+            WHERE id = $17
             RETURNING *;
         `;
 
@@ -231,6 +250,7 @@ exports.updateProduct = async (req, res) => {
             image_url !== undefined ? image_url : checkRes.rows[0].image_url,
             icon_url !== undefined ? icon_url : checkRes.rows[0].icon_url,
             category !== undefined ? category : checkRes.rows[0].category,
+            display_group !== undefined ? display_group : checkRes.rows[0].display_group,
             product_type !== undefined ? product_type : checkRes.rows[0].product_type,
             pricing_mode !== undefined ? pricing_mode : checkRes.rows[0].pricing_mode,
             stock !== undefined ? (stock !== null ? parseInt(stock) : null) : checkRes.rows[0].stock,

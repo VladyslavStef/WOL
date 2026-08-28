@@ -13,6 +13,7 @@ const logoutButton = document.getElementById("logoutButton");
 const tabs = document.querySelectorAll(".admin-tab");
 const productsPanel = document.getElementById("productsPanel");
 const ordersPanel = document.getElementById("ordersPanel");
+const bookingsPanel = document.getElementById("bookingsPanel");
 
 const createProductForm = document.getElementById("createProductForm");
 const createProductError = document.getElementById("createProductError");
@@ -21,6 +22,9 @@ const productsTableBody = document.getElementById("productsTableBody");
 
 const refreshOrdersButton = document.getElementById("refreshOrdersButton");
 const ordersTableBody = document.getElementById("ordersTableBody");
+
+const refreshBookingsButton = document.getElementById("refreshBookingsButton");
+const bookingsTableBody = document.getElementById("bookingsTableBody");
 
 let editingProductId = null;
 
@@ -35,6 +39,7 @@ const showDashboard = function () {
 
     loadProducts();
     loadOrders();
+    loadBookings();
 };
 
 const showLogin = function () {
@@ -87,6 +92,7 @@ tabs.forEach((tab) => {
 
         productsPanel.classList.toggle("is-active", target === "products");
         ordersPanel.classList.toggle("is-active", target === "orders");
+        bookingsPanel.classList.toggle("is-active", target === "bookings");
     });
 });
 
@@ -296,6 +302,88 @@ const loadOrders = async function () {
 };
 
 refreshOrdersButton.addEventListener("click", loadOrders);
+
+
+// ========================================
+// BOOKINGS
+// ========================================
+
+const formatBookingTimes = function (times) {
+
+    if (!times || times.length === 0) {
+        return "—";
+    }
+
+    return times
+        .map((slot) => `${slot.start_time.slice(0, 5)}–${slot.end_time.slice(0, 5)}`)
+        .join(", ");
+};
+
+const formatBookingDateShort = function (dateString) {
+
+    const date = new Date(dateString);
+    return date.toLocaleDateString("uk-UA");
+};
+
+const renderBookingsTable = function (bookings) {
+
+    bookingsTableBody.innerHTML = "";
+
+    if (bookings.length === 0) {
+        bookingsTableBody.innerHTML = `<tr><td colspan="11">Бронювань немає.</td></tr>`;
+        return;
+    }
+
+    bookings.forEach((booking) => {
+
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+            <td>${booking.id}</td>
+            <td>${booking.booking_code}</td>
+            <td>${booking.customer_name}</td>
+            <td>${booking.customer_phone}</td>
+            <td>${booking.product_title}</td>
+            <td>${formatBookingDateShort(booking.booking_date)}</td>
+            <td>${formatBookingTimes(booking.times)}</td>
+            <td>${booking.visitors}</td>
+            <td>${booking.total_price} грн</td>
+            <td>${booking.status}</td>
+            <td><button type="button" class="admin-btn-delete">Видалити</button></td>
+        `;
+
+        row.querySelector(".admin-btn-delete").addEventListener("click", async () => {
+
+            if (!confirm(`Видалити бронювання "${booking.booking_code}"? Цю дію не можна скасувати.`)) {
+                return;
+            }
+
+            try {
+                await adminDeleteBooking(booking.id);
+                loadBookings();
+            } catch (error) {
+                alert(`Не вдалося видалити бронювання: ${error.message}`);
+            }
+        });
+
+        bookingsTableBody.append(row);
+    });
+};
+
+const loadBookings = async function () {
+
+    bookingsTableBody.innerHTML = `<tr><td colspan="11">Завантаження...</td></tr>`;
+
+    try {
+        const response = await adminGetBookings();
+        renderBookingsTable(response.data || []);
+
+    } catch (error) {
+        bookingsTableBody.innerHTML = `<tr><td colspan="11">Помилка: ${error.message}</td></tr>`;
+    }
+};
+
+refreshBookingsButton.addEventListener("click", loadBookings);
 
 
 // ========================================
