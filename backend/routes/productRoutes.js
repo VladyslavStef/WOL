@@ -1,15 +1,23 @@
 const express = require("express");
 const router = express.Router();
-const { getAllProducts, createProduct, updateProduct, deleteProduct } = require("../controllers/productController");
+const {
+    getAllProducts,
+    getAllProductsAdmin, // FIX: новий контролер для адмінського списку
+    createProduct,
+    updateProduct,
+    deleteProduct
+} = require("../controllers/productController");
 
-// Імпортуємо наш файл-охоронець з папки middleware
 const adminAuth = require("../middleware/authSecurity");
 
-// Клієнтська вітрина (Магазин): Відкритий доступ для всіх покупців (БЕЗ middleware)
+// Клієнтська вітрина — лише активні товари, без авторизації
 router.get("/", getAllProducts);
 
-router.post("/", adminAuth, createProduct);       // Створення нового товару
-router.put("/:id", adminAuth, updateProduct);     // Редагування за його ID
-router.delete("/:id", adminAuth, deleteProduct);  // Повне видалення за ID
+// FIX: новий маршрут для адмінки — повертає ВСІ товари, включно з неактивними
+router.get("/admin", adminAuth, getAllProductsAdmin);
+
+router.post("/", adminAuth, createProduct);
+router.put("/:id", adminAuth, updateProduct);
+router.delete("/:id", adminAuth, deleteProduct);
 
 module.exports = router;

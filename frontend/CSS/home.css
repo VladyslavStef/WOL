@@ -257,6 +257,15 @@
 
 }
 
+.slider__textholder-info{
+  color: #FBF9FB;
+  width: fit-content;
+}
+
+.slider__textholder-contacts > .navbar__list-link::after{
+  background: var(--neutral-bg);
+}
+
 .slider__textholder-contacts{
   display: flex;
   flex-direction: column;

@@ -76,7 +76,7 @@ const showAddedAnimation = function (image) {
     image.classList.add("is-changing");
 
     setTimeout(() => {
-        image.src = "/frontend/IMG/confirmed.png";
+        image.src = "../IMG/confirmed.png";
         image.classList.remove("is-changing");
         image.classList.add("is-added");
     }, 200);

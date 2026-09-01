@@ -11,14 +11,21 @@ const loginError = document.getElementById("loginError");
 const logoutButton = document.getElementById("logoutButton");
 
 const tabs = document.querySelectorAll(".admin-tab");
+const categoriesPanel = document.getElementById("categoriesPanel");
 const productsPanel = document.getElementById("productsPanel");
 const ordersPanel = document.getElementById("ordersPanel");
 const bookingsPanel = document.getElementById("bookingsPanel");
+
+const createCategoryForm = document.getElementById("createCategoryForm");
+const createCategoryError = document.getElementById("createCategoryError");
+const refreshCategoriesButton = document.getElementById("refreshCategoriesButton");
+const categoriesTableBody = document.getElementById("categoriesTableBody");
 
 const createProductForm = document.getElementById("createProductForm");
 const createProductError = document.getElementById("createProductError");
 const refreshProductsButton = document.getElementById("refreshProductsButton");
 const productsTableBody = document.getElementById("productsTableBody");
+const productCategorySelect = document.getElementById("productCategorySelect");
 
 const refreshOrdersButton = document.getElementById("refreshOrdersButton");
 const ordersTableBody = document.getElementById("ordersTableBody");
@@ -27,16 +34,25 @@ const refreshBookingsButton = document.getElementById("refreshBookingsButton");
 const bookingsTableBody = document.getElementById("bookingsTableBody");
 
 let editingProductId = null;
+let editingCategoryId = null;
+
+// Кешований останній список категорій — щоб не тягнути з бекенду щоразу
+// при відкритті форми товару, і щоб select завжди відображав актуальний стан
+let cachedCategories = [];
 
 
 // ========================================
 // VIEW SWITCHING
 // ========================================
 
-const showDashboard = function () {
+const showDashboard = async function () {
     loginView.classList.add("is-hidden");
     dashboardView.classList.remove("is-hidden");
 
+    // Категорії мають завантажитись ПЕРШИМИ — і для таблиці категорій,
+    // і для select у формі товару, і щоб таблиця товарів одразу показувала
+    // назву категорії, а не "без категорії" до довантаження.
+    await loadCategories();
     loadProducts();
     loadOrders();
     loadBookings();
@@ -90,6 +106,7 @@ tabs.forEach((tab) => {
 
         const target = tab.dataset.tab;
 
+        categoriesPanel.classList.toggle("is-active", target === "categories");
         productsPanel.classList.toggle("is-active", target === "products");
         ordersPanel.classList.toggle("is-active", target === "orders");
         bookingsPanel.classList.toggle("is-active", target === "bookings");
@@ -98,8 +115,192 @@ tabs.forEach((tab) => {
 
 
 // ========================================
+// CATEGORIES
+// ========================================
+
+const populateProductCategorySelect = function () {
+
+    const currentValue = productCategorySelect.value;
+
+    productCategorySelect.innerHTML = `<option value="">— оберіть категорію —</option>`;
+
+    cachedCategories.forEach((category) => {
+
+        const option = document.createElement("option");
+        option.value = category.id;
+        option.textContent = `${category.name} (${category.display_group})`;
+        productCategorySelect.append(option);
+    });
+
+    if (currentValue) {
+        productCategorySelect.value = currentValue;
+    }
+};
+
+const renderCategoriesTable = function (categories) {
+
+    categoriesTableBody.innerHTML = "";
+
+    if (categories.length === 0) {
+        categoriesTableBody.innerHTML = `<tr><td colspan="7">Категорій ще немає.</td></tr>`;
+        return;
+    }
+
+    categories.forEach((category) => {
+
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+            <td>${category.id}</td>
+            <td>${category.name}</td>
+            <td>${category.slug}</td>
+            <td>${category.display_group}</td>
+            <td>${category.sort_order}</td>
+            <td>${category.is_active ? "так" : "ні"}</td>
+            <td>
+                <button type="button" class="admin-btn-edit">Редагувати</button>
+                <button type="button" class="admin-btn-toggle">${category.is_active ? "Вимкнути" : "Увімкнути"}</button>
+                <button type="button" class="admin-btn-delete">Видалити</button>
+            </td>
+        `;
+
+        row.querySelector(".admin-btn-edit").addEventListener("click", () => {
+            fillCategoryFormForEdit(category);
+        });
+
+        row.querySelector(".admin-btn-toggle").addEventListener("click", async () => {
+
+            try {
+                // КРИТИЧНО: PUT торкається ЛИШЕ рядка categories — жоден
+                // товар цієї категорії при цьому не змінюється і не чіпається.
+                await adminUpdateCategory(category.id, { is_active: !category.is_active });
+                loadCategories();
+            } catch (error) {
+                alert(`Не вдалося змінити активність категорії: ${error.message}`);
+            }
+        });
+
+        row.querySelector(".admin-btn-delete").addEventListener("click", async () => {
+
+            if (!confirm(`Видалити категорію "${category.name}"?`)) {
+                return;
+            }
+
+            try {
+                await adminDeleteCategory(category.id);
+                loadCategories();
+            } catch (error) {
+                // Бекенд навмисно забороняє видалення, якщо є прив'язані товари —
+                // повідомлення про це прийде прямо з API.
+                alert(`Не вдалося видалити категорію: ${error.message}`);
+            }
+        });
+
+        categoriesTableBody.append(row);
+    });
+};
+
+const loadCategories = async function () {
+
+    categoriesTableBody.innerHTML = `<tr><td colspan="7">Завантаження...</td></tr>`;
+
+    try {
+        const response = await adminGetCategories();
+        cachedCategories = response.data || [];
+        renderCategoriesTable(cachedCategories);
+        populateProductCategorySelect();
+
+    } catch (error) {
+        categoriesTableBody.innerHTML = `<tr><td colspan="7">Помилка: ${error.message}</td></tr>`;
+    }
+};
+
+const fillCategoryFormForEdit = function (category) {
+
+    editingCategoryId = category.id;
+
+    createCategoryForm.name.value = category.name || "";
+    createCategoryForm.slug.value = category.slug || "";
+    createCategoryForm.description.value = category.description || "";
+    createCategoryForm.price_label.value = category.price_label || "";
+    createCategoryForm.alt.value = category.alt || "";
+    createCategoryForm.display_group.value = category.display_group || "products";
+    createCategoryForm.sort_order.value = category.sort_order ?? 0;
+    createCategoryForm.image_url.value = category.image_url || "";
+    createCategoryForm.icon_url.value = category.icon_url || "";
+    createCategoryForm.is_active.checked = Boolean(category.is_active);
+
+    createCategoryForm.querySelector("button[type=submit]").textContent =
+        "Зберегти зміни";
+
+    createCategoryForm.closest("details").open = true;
+    createCategoryForm.scrollIntoView({ behavior: "smooth" });
+};
+
+const resetCategoryForm = function () {
+
+    editingCategoryId = null;
+    createCategoryForm.reset();
+    createCategoryForm.querySelector("button[type=submit]").textContent =
+        "Створити категорію";
+};
+
+const buildCategoryPayload = function (formData) {
+
+    return {
+        name: formData.get("name"),
+        slug: formData.get("slug") || undefined,
+        description: formData.get("description") || null,
+        price_label: formData.get("price_label") || null,
+        alt: formData.get("alt") || null,
+        display_group: formData.get("display_group"),
+        sort_order: Number(formData.get("sort_order") || 0),
+        image_url: formData.get("image_url") || null,
+        icon_url: formData.get("icon_url") || null,
+        is_active: formData.get("is_active") === "on"
+    };
+};
+
+createCategoryForm.addEventListener("submit", async (event) => {
+
+    event.preventDefault();
+
+    createCategoryError.textContent = "";
+
+    const formData = new FormData(createCategoryForm);
+    const payload = buildCategoryPayload(formData);
+
+    try {
+
+        if (editingCategoryId) {
+            // КРИТИЧНО: редагування категорії тут НЕ надсилає й НЕ може
+            // вплинути на жодне поле товару — payload містить лише
+            // поля categories.
+            await adminUpdateCategory(editingCategoryId, payload);
+        } else {
+            await adminCreateCategory(payload);
+        }
+
+        resetCategoryForm();
+        loadCategories();
+
+    } catch (error) {
+        createCategoryError.textContent = error.message;
+    }
+});
+
+refreshCategoriesButton.addEventListener("click", loadCategories);
+
+
+// ========================================
 // PRODUCTS
 // ========================================
+
+const getCategoryNameById = function (categoryId) {
+
+    const category = cachedCategories.find((item) => item.id === categoryId);
+    return category ? category.name : "— без категорії —";
+};
 
 const renderProductsTable = function (products) {
 
@@ -112,7 +313,7 @@ const renderProductsTable = function (products) {
         row.innerHTML = `
             <td>${product.id}</td>
             <td>${product.title}</td>
-            <td>${product.category || "—"}</td>
+            <td>${getCategoryNameById(product.category_id)}</td>
             <td>${product.display_group || "—"}</td>
             <td>${product.price} грн</td>
             <td>${product.stock === null ? "—" : product.stock}</td>
@@ -150,7 +351,9 @@ const loadProducts = async function () {
     productsTableBody.innerHTML = `<tr><td colspan="8">Завантаження...</td></tr>`;
 
     try {
-        const response = await fetchAllProducts();
+        // FIX: раніше було fetchAllProducts() — публічний ендпоінт,
+        // який ховає деактивовані товари від адміна.
+        const response = await adminGetProducts();
         renderProductsTable(response.data || []);
 
     } catch (error) {
@@ -163,9 +366,11 @@ const fillFormForEdit = function (product) {
     editingProductId = product.id;
 
     createProductForm.title.value = product.title || "";
+    createProductForm.slug.value = product.slug || "";
     createProductForm.description.value = product.description || "";
     createProductForm.price.value = product.price || "";
-    createProductForm.category.value = product.category || "";
+    createProductForm.alt.value = product.alt || "";
+    createProductForm.category_id.value = product.category_id || "";
     createProductForm.display_group.value = product.display_group || "products";
     createProductForm.product_type.value = product.product_type || "physical";
     createProductForm.pricing_mode.value = product.pricing_mode || "";
@@ -193,12 +398,18 @@ const resetProductForm = function () {
 const buildProductPayload = function (formData) {
 
     const pricingMode = formData.get("pricing_mode");
+    const categoryIdRaw = formData.get("category_id");
 
     return {
         title: formData.get("title"),
+        slug: formData.get("slug") || undefined,
         description: formData.get("description") || null,
         price: Number(formData.get("price")),
-        category: formData.get("category") || null,
+        alt: formData.get("alt") || null,
+        // FIX: категорія тепер обирається через реальний category_id
+        // (select, заповнений з GET /categories/admin), а не вільним
+        // текстом — одруківка більше не може "загубити" товар з вітрини.
+        category_id: categoryIdRaw ? Number(categoryIdRaw) : null,
         display_group: formData.get("display_group"),
         product_type: formData.get("product_type"),
         pricing_mode: pricingMode ? pricingMode : null,

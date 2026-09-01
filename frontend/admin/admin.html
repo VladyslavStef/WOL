@@ -38,13 +38,65 @@
         </header>
 
         <nav class="admin-tabs">
-            <button type="button" class="admin-tab is-active" data-tab="products">Товари</button>
+            <button type="button" class="admin-tab is-active" data-tab="categories">Категорії</button>
+            <button type="button" class="admin-tab" data-tab="products">Товари</button>
             <button type="button" class="admin-tab" data-tab="orders">Замовлення</button>
             <button type="button" class="admin-tab" data-tab="bookings">Бронювання</button>
         </nav>
 
+        <!-- ---------------- CATEGORIES TAB ---------------- -->
+        <section class="admin-tab-panel is-active" id="categoriesPanel">
+
+            <details class="admin-create-box">
+                <summary>+ Додати категорію</summary>
+
+                <form class="admin-form" id="createCategoryForm">
+
+                    <label>Назва <input type="text" name="name" required></label>
+                    <label>Slug (необов'язково) <input type="text" name="slug" placeholder="автоматично з назви"></label>
+                    <label>Опис <input type="text" name="description"></label>
+                    <label>Текст ціни <input type="text" name="price_label" placeholder="напр. Від 100 грн"></label>
+                    <label>Alt (для зображення) <input type="text" name="alt"></label>
+
+                    <label>
+                        Група каталогу
+                        <select name="display_group">
+                            <option value="products">products</option>
+                            <option value="seedlings">seedlings</option>
+                        </select>
+                    </label>
+
+                    <label>Порядок сортування <input type="number" name="sort_order" value="0"></label>
+                    <label>URL обкладинки <input type="text" name="image_url"></label>
+                    <label>URL іконки <input type="text" name="icon_url"></label>
+
+                    <label class="admin-checkbox">
+                        <input type="checkbox" name="is_active" checked> Активна
+                    </label>
+
+                    <span class="admin-error" id="createCategoryError"></span>
+
+                    <button type="submit">Створити категорію</button>
+                </form>
+            </details>
+
+            <div class="admin-toolbar">
+                <button type="button" id="refreshCategoriesButton">Оновити список</button>
+            </div>
+
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th><th>Назва</th><th>Slug</th><th>Група</th>
+                        <th>Порядок</th><th>Активна</th><th></th>
+                    </tr>
+                </thead>
+                <tbody id="categoriesTableBody"></tbody>
+            </table>
+        </section>
+
         <!-- ---------------- PRODUCTS TAB ---------------- -->
-        <section class="admin-tab-panel is-active" id="productsPanel">
+        <section class="admin-tab-panel" id="productsPanel">
 
             <details class="admin-create-box">
                 <summary>+ Додати товар</summary>
@@ -54,7 +106,15 @@
                     <label>Назва <input type="text" name="title" required></label>
                     <label>Опис <input type="text" name="description"></label>
                     <label>Ціна (грн) <input type="number" name="price" min="0" step="0.01" required></label>
-                    <label>Категорія <input type="text" name="category" placeholder="напр. hydrolats" required></label>
+                    <label>Slug (необов'язково) <input type="text" name="slug" placeholder="автоматично з назви"></label>
+                    <label>Alt (для зображення) <input type="text" name="alt"></label>
+
+                    <label>
+                        Категорія
+                        <select name="category_id" id="productCategorySelect" required>
+                            <option value="">— оберіть категорію —</option>
+                        </select>
+                    </label>
 
                     <label>
                         Група каталогу
@@ -151,8 +211,8 @@
 
     </section>
 
-    <script src="../JS/config.js"></script>
-    <script src="../JS/api.js"></script>
+    <script src="/frontend/JS/config.js"></script>
+    <script src="/frontend/JS/api.js"></script>
     <script src="admin.js"></script>
 </body>
 </html>

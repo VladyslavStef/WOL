@@ -31,16 +31,17 @@ const slugify = (text) => {
         .replace(/^-+|-+$/g, '');       // Прибираємо дефіси на початку/кінці
 };
 
+// ... CYRILLIC_MAP, transliterate, slugify — без змін ...
+
 // ==========================================
-// 1. READ: Отримання товарів для клієнтів
+// 1a. READ: публічна вітрина (тільки активні)
 // ==========================================
 exports.getAllProducts = async (req, res) => {
     try {
-        // Запит для вітрини: тільки активні, сортування за пріоритетом адміна, потім за назвою
         const queryText = `
             SELECT id, slug, sku, title, description, price, currency, 
-                   image_url, icon_url, category, product_type, pricing_mode, 
-                   stock, sort_order, created_at, updated_at
+                   image_url, icon_url, category, display_group, product_type, pricing_mode, 
+                   stock, sort_order, is_active, created_at, updated_at
             FROM products 
             WHERE is_active = true 
             ORDER BY sort_order ASC, title ASC;
@@ -59,7 +60,37 @@ exports.getAllProducts = async (req, res) => {
 };
 
 // ==========================================
-// 2. CREATE: Додавання нового товару (Адмінка)
+// 1b. READ: адмінська вітрина (активні + неактивні)
+// FIX: раніше адмінка ходила на публічний GET /products, який фільтрує
+// WHERE is_active = true — деактивований товар зникав з адмінки без
+// можливості повернути. Тепер окремий захищений маршрут без цього фільтра.
+// ==========================================
+exports.getAllProductsAdmin = async (req, res) => {
+    try {
+        const queryText = `
+            SELECT id, slug, sku, title, description, price, currency, 
+                   image_url, icon_url, category, display_group, product_type, pricing_mode, 
+                   stock, sort_order, is_active, created_at, updated_at
+            FROM products 
+            ORDER BY sort_order ASC, title ASC;
+        `;
+        const result = await pool.query(queryText);
+
+        return res.status(200).json({
+            success: true,
+            count: result.rows.length,
+            data: result.rows
+        });
+    } catch (error) {
+        console.error("Помилка READ products (admin):", error.message);
+        return res.status(500).json({ success: false, message: "Внутрішня помилка сервера при отриманні списку товарів" });
+    }
+};
+
+// ==========================================
+// 2. CREATE
+// FIX: додано display_group — раніше поле приходило з форми і губилося,
+// новий товар завжди отримував дефолт 'products' незалежно від вибору адміна.
 // ==========================================
 exports.createProduct = async (req, res) => {
     const {
@@ -70,10 +101,8 @@ exports.createProduct = async (req, res) => {
 
     const created_by_admin_id = req.admin.id; 
 
-
     let { slug, sku } = req.body;
 
-    // --- Крок A: Сувора валідація бізнес-правил ---
     if (!title || typeof title !== "string" || !title.trim()) {
         return res.status(400).json({ success: false, message: "Назва товару є обов'язковою" });
     }
@@ -86,22 +115,19 @@ exports.createProduct = async (req, res) => {
         return res.status(400).json({ success: false, message: "Ідентифікатор адміністратора (created_by_admin_id) обов'язковий" });
     }
 
-    // Валідація типу продукту за обмеженням CHECK в БД
     const validTypes = ['physical', 'ticket'];
     const pType = product_type || 'physical';
     if (!validTypes.includes(pType)) {
         return res.status(400).json({ success: false, message: "Тип продукту може бути лише 'physical' або 'ticket'" });
     }
 
-    // FIX: display_group ніде не читався і не записувався — вибір групи
-    // каталогу (products/seedlings) в адмінці не мав жодного ефекту.
+    // FIX: валідація display_group за тим самим CHECK, що і в БД
     const validDisplayGroups = ['products', 'seedlings'];
     const dGroup = display_group || 'products';
     if (!validDisplayGroups.includes(dGroup)) {
         return res.status(400).json({ success: false, message: "Група каталогу може бути лише 'products' або 'seedlings'" });
     }
 
-    // Валідація режиму розрахунку ціни для квитків
     let pMode = pricing_mode || null;
     if (pType === 'ticket' && !pMode) {
         return res.status(400).json({ success: false, message: "Для квитків обов'язково вказувати pricing_mode ('person' або 'hour')" });
@@ -110,27 +136,21 @@ exports.createProduct = async (req, res) => {
         return res.status(400).json({ success: false, message: "Неправильний режим ціноутворення. Дозволено: 'person' або 'hour'" });
     }
 
-    // Перевірка кількості на складі
     let productStock = stock !== undefined ? parseInt(stock) : null;
     if (productStock !== null && productStock < 0) {
         return res.status(400).json({ success: false, message: "Кількість на складі не може бути від'ємною" });
     }
 
-    // Автоматична генерація slug, якщо адмін залишив поле порожнім
     if (!slug || !slug.trim()) {
         slug = slugify(title);
     } else {
         slug = slugify(slug);
     }
 
-    // FIX: захист від порожнього slug (наприклад, назва складається лише
-    // з символів/емодзі, які не транслітеруються) — інакше INSERT впаде
-    // на NOT NULL/UNIQUE обмеженні slug.
     if (!slug) {
         slug = `product-${Date.now()}`;
     }
 
-    // --- Крок B: Запис у PostgreSQL ---
     try {
         const queryText = `
             INSERT INTO products (
@@ -169,8 +189,6 @@ exports.createProduct = async (req, res) => {
 
     } catch (error) {
         console.error("Помилка CREATE product:", error.message);
-        
-        // Обробка порушення унікальності (помилка унікального індексу в Postgres)
         if (error.code === '23505') {
             if (error.detail.includes('slug')) {
                 return res.status(400).json({ success: false, message: "Товар з таким унікальним URL (slug) вже існує" });
@@ -179,21 +197,20 @@ exports.createProduct = async (req, res) => {
                 return res.status(400).json({ success: false, message: "Товар з таким артикулом (SKU) вже існує" });
             }
         }
-        
-        // Обробка помилки зовнішнього ключа (якщо адміна з таким ID немає в базі)
         if (error.code === '23503') {
             return res.status(400).json({ success: false, message: "Вказаного адміністратора (created_by_admin_id) не існує в системі" });
         }
-
         return res.status(500).json({ success: false, message: "Помилка сервера при збереженні товару" });
     }
 };
 
 // ==========================================
-// 3. UPDATE: Редагування товару (Адмінка)
+// 3. UPDATE
+// FIX: додано display_group у деструктуризацію та в UPDATE-запит —
+// раніше зміна групи каталогу через адмінку взагалі не зберігалась.
 // ==========================================
 exports.updateProduct = async (req, res) => {
-    const { id } = req.params; // Отримуємо ID з URL лінку
+    const { id } = req.params;
     const {
         title, description, price, currency, image_url, icon_url, 
         category, display_group, product_type, pricing_mode, stock, sort_order, 
@@ -208,26 +225,19 @@ exports.updateProduct = async (req, res) => {
         return res.status(400).json({ success: false, message: "Необхідно вказати ID адміна, який здійснює оновлення (updated_by_admin_id)" });
     }
 
-    // FIX: display_group ігнорувався тут так само, як і в createProduct.
-    if (display_group !== undefined && !['products', 'seedlings'].includes(display_group)) {
-        return res.status(400).json({ success: false, message: "Група каталогу може бути лише 'products' або 'seedlings'" });
-    }
-
     try {
-        // Перевіряємо чи товар взагалі існує
         const checkRes = await pool.query("SELECT * FROM products WHERE id = $1", [id]);
         if (checkRes.rows.length === 0) {
             return res.status(404).json({ success: false, message: "Товар для оновлення не знайдено" });
         }
 
-        // FIX: раніше slug перегенерувався з title ПРИ КОЖНОМУ редагуванні,
-        // навіть якщо назву товару не змінювали. Це могло випадково
-        // зіштовхнутися з чужим slug і завалити оновлення помилкою 23505.
-        // Тепер slug змінюється лише якщо його передали явно.
-        if (slug) {
-            slug = slugify(slug);
-        } else {
-            slug = checkRes.rows[0].slug;
+        if (slug) slug = slugify(slug);
+        else if (title && !slug) slug = slugify(title);
+        else slug = checkRes.rows[0].slug;
+
+        // FIX: валідація display_group, якщо його передали
+        if (display_group !== undefined && !['products', 'seedlings'].includes(display_group)) {
+            return res.status(400).json({ success: false, message: "Група каталогу може бути лише 'products' або 'seedlings'" });
         }
 
         const queryText = `
@@ -261,8 +271,7 @@ exports.updateProduct = async (req, res) => {
         ];
 
         const result = await pool.query(queryText, values);
-        
-        // Завдяки вашому тригеру trg_products_updated_at в БД, поле updated_at оновиться автоматично!
+
         return res.status(200).json({
             success: true,
             message: "Товар успішно оновлено",
@@ -279,40 +288,24 @@ exports.updateProduct = async (req, res) => {
 };
 
 // ==========================================
-// 4. DELETE: Видалення товару (Адмінка)
+// 4. DELETE — без змін
 // ==========================================
 exports.deleteProduct = async (req, res) => {
     const { id } = req.params;
-
     try {
         const result = await pool.query("DELETE FROM products WHERE id = $1 RETURNING id", [id]);
-
         if (result.rows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: "Товар не знайдено у базі даних"
-            });
+            return res.status(404).json({ success: false, message: "Товар не знайдено у базі даних" });
         }
-
-        return res.status(200).json({
-            success: true,
-            message: "Товар повністю видалено з каталогу"
-        });
-
+        return res.status(200).json({ success: true, message: "Товар повністю видалено з каталогу" });
     } catch (error) {
         console.error("Помилка DELETE product:", error.message);
-
-        // Захист цілісності зв'язків (якщо товар вже купили або забронювали)
         if (error.code === '23503') {
             return res.status(400).json({
                 success: false,
-                message: "Неможливо видалити цей товар, оскільки він зафіксований в існуючих замовленнях або бронюваннях поля. Рекомендуємо замість видалення просто вимкнути його через параметр is_active = false."
+                message: "Неможливо видалити цей товар, оскільки він зафіксований в існуючих замовленнях або бронюваннях. Рекомендуємо замість видалення просто вимкнути його через параметр is_active = false."
             });
         }
-
-        return res.status(500).json({
-            success: false,
-            message: "Внутрішня помилка сервера при спробі видалення"
-        });
+        return res.status(500).json({ success: false, message: "Внутрішня помилка сервера при спробі видалення" });
     }
 };

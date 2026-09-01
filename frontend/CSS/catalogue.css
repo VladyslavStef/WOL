@@ -32,11 +32,15 @@
 .hero__bg{
     position: absolute;
     top: 0;
-    right: 0;
+    left: 0;
 
     z-index: -1;
 
     object-fit: cover;
+    
+    width: auto;
+    height: auto;
+
 }
 
 .hero__button-container{
@@ -123,6 +127,16 @@
 
 .sell__article__container{
     gap: 7.5rem;
+
+}
+
+.sell__article__container > .catalog-empty{
+    color: var(--text-color);
+
+    font-size: var(--secondary-heading);
+    
+    white-space: nowrap;
+    margin: 0  auto;
 }
 
 .sell__decor{

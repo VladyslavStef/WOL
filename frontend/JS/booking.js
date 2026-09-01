@@ -20,7 +20,7 @@ const bookingTicketTemplates = [
         category: "day-ticket",
 
         image:
-            "/WOL/IMG/Layer 3.png",
+            "/frontend/IMG/Layer 3.png",
 
         title:
             "Денний квиток",
@@ -49,7 +49,7 @@ const bookingTicketTemplates = [
         category: "evening-ticket",
 
         image:
-            "/WOL/IMG/Layer 2.png",
+            "/frontend/IMG/Layer 2.png",
 
         title:
             "Вечірній квиток",
