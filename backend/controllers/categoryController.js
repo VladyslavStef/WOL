@@ -1,153 +1,108 @@
 const pool = require("../config/db");
+const { slugify } = require("../utils/slugify");
 
-// Той самий транслітератор, що й у productController.js — навмисно
-// продубльований тут, щоб не створювати нову спільну залежність між
-// контролерами на цьому етапі (низький ризик, легко винести пізніше).
-const CYRILLIC_MAP = {
-    а: "a", б: "b", в: "v", г: "h", ґ: "g", д: "d", е: "e", є: "ie",
-    ж: "zh", з: "z", и: "y", і: "i", ї: "i", й: "i", к: "k", л: "l",
-    м: "m", н: "n", о: "o", п: "p", р: "r", с: "s", т: "t", у: "u",
-    ф: "f", х: "kh", ц: "ts", ч: "ch", ш: "sh", щ: "shch", ь: "",
-    ю: "iu", я: "ia", ы: "y", э: "e", ъ: ""
-};
+function mapCategory(c) {
+    return {
+        id: c.id,
+        slug: c.slug,
+        name: c.name,
+        description: c.description,
+        priceLabel: c.price_label,
+        image: c.image_url,
+        icon: c.icon_url,
+        alt: c.alt,
+        displayGroup: c.display_group,
+        sortOrder: c.sort_order,
+        isActive: c.is_active,
+        products: c.products || []
+    };
+}
 
-const transliterate = (text) => {
-    return text
-        .toString()
-        .toLowerCase()
-        .split("")
-        .map((char) => (CYRILLIC_MAP[char] !== undefined ? CYRILLIC_MAP[char] : char))
-        .join("");
-};
-
-const slugify = (text) => {
-    return transliterate(text)
-        .trim()
-        .replace(/\s+/g, '-')
-        .replace(/[^\w\-]+/g, '')
-        .replace(/\-\-+/g, '-')
-        .replace(/^-+|-+$/g, '');
-};
-
-// FIX: після повного ресету БД на чисту модель categories → products
-// (окремий db.sql) старих "category-as-product" рядків більше НЕ ІСНУЄ
-// фізично — їх ніколи не створює новий сідинг. Список-виключення
-// (LEGACY_CATEGORY_PLACEHOLDER_SLUGS), що раніше був тут, прибрано —
-// він був мертвим кодом старої моделі й міг ввести в оману майбутню
-// розробку. Товари фільтруються ВИКЛЮЧНО за product_type='physical'
-// і category_id — жодних текстових винятків.
+function mapProductForCategory(p) {
+    return {
+        id: p.id,
+        slug: p.slug,
+        title: p.title,
+        description: p.description,
+        price: Number(p.price),
+        currency: p.currency,
+        image: p.image_url,
+        icon: p.icon_url,
+        alt: p.alt,
+        categoryId: p.category_id,
+        productType: p.product_type,
+        pricingMode: p.pricing_mode,
+        stock: p.stock,
+        sortOrder: p.sort_order,
+        isActive: p.is_active
+    };
+}
 
 // ==========================================
-// GET /categories — каталог: категорії з вкладеними товарами
+// 1a. READ: публічний список категорій з вкладеними товарами
+// (єдиний запит для всього каталогу — саме те, що очікує catalogue.js)
 // ==========================================
 exports.getAllCategories = async (req, res) => {
     try {
-        const categoriesRes = await pool.query(
-            `SELECT id, slug, name, description, price_label, image_url, icon_url, alt, display_group, sort_order
-             FROM categories
-             WHERE is_active = true
-             ORDER BY display_group, sort_order`
-        );
-
+        const categoriesRes = await pool.query(`
+            SELECT id, slug, name, description, price_label, image_url, icon_url, alt,
+                   display_group, sort_order, is_active
+            FROM categories
+            WHERE is_active = true
+            ORDER BY sort_order ASC, name ASC;
+        `);
         const categories = categoriesRes.rows;
 
-        let productsByCategoryId = {};
-
         if (categories.length > 0) {
-            const categoryIds = categories.map((category) => category.id);
+            const categoryIds = categories.map((c) => c.id);
+            const productsRes = await pool.query(`
+                SELECT id, slug, title, description, price, currency, image_url, icon_url,
+                       alt, category_id, product_type, pricing_mode, stock, sort_order, is_active
+                FROM products
+                WHERE category_id = ANY($1::bigint[]) AND is_active = true
+                ORDER BY sort_order ASC, title ASC;
+            `, [categoryIds]);
 
-            const productsRes = await pool.query(
-                `SELECT id, category_id, slug, title, description, price, currency,
-                        image_url, icon_url, alt, sort_order
-                 FROM products
-                 WHERE category_id = ANY($1::bigint[])
-                   AND product_type = 'physical'
-                   AND is_active = true
-                 ORDER BY sort_order ASC`,
-                [categoryIds]
-            );
-
+            const byCategoryId = {};
             for (const product of productsRes.rows) {
-                if (!productsByCategoryId[product.category_id]) {
-                    productsByCategoryId[product.category_id] = [];
-                }
-                productsByCategoryId[product.category_id].push({
-                    id: product.id,
-                    slug: product.slug,
-                    name: product.title,
-                    description: product.description,
-                    price: Number(product.price),
-                    currency: product.currency,
-                    image: product.image_url,
-                    icon: product.icon_url,
-                    alt: product.alt || product.title,
-                    priceValue: Number(product.price),
-                    sortOrder: product.sort_order
-                });
+                if (!byCategoryId[product.category_id]) byCategoryId[product.category_id] = [];
+                byCategoryId[product.category_id].push(mapProductForCategory(product));
+            }
+            for (const category of categories) {
+                category.products = byCategoryId[category.id] || [];
             }
         }
 
-        const data = categories.map((category) => ({
-            id: category.id,
-            slug: category.slug,
-            name: category.name,
-            description: category.description,
-            priceLabel: category.price_label,
-            image: category.image_url,
-            icon: category.icon_url,
-            alt: category.alt,
-            displayGroup: category.display_group,
-            sortOrder: category.sort_order,
-            products: productsByCategoryId[category.id] || []
-        }));
-
-        return res.status(200).json({
-            success: true,
-            count: data.length,
-            data
-        });
-
+        return res.status(200).json({ success: true, count: categories.length, data: categories.map(mapCategory) });
     } catch (error) {
-        console.error("Помилка отримання каталогу категорій:", error.message);
-        return res.status(500).json({ success: false, message: "Помилка сервера при отриманні категорій" });
+        console.error("Помилка READ categories:", error.message);
+        return res.status(500).json({ success: false, message: "Внутрішня помилка сервера при отриманні категорій" });
     }
 };
 
-
 // ==========================================
-// ADMIN: повний список категорій (включно з неактивними)
+// 1b. READ: адмінський список категорій (активні + неактивні, без товарів)
 // ==========================================
 exports.getAllCategoriesAdmin = async (req, res) => {
     try {
-        const result = await pool.query(
-            `SELECT id, slug, name, description, price_label, image_url, icon_url, alt,
-                    display_group, sort_order, is_active, created_at, updated_at
-             FROM categories
-             ORDER BY display_group, sort_order`
-        );
-
-        return res.status(200).json({
-            success: true,
-            count: result.rows.length,
-            data: result.rows
-        });
-
+        const result = await pool.query(`
+            SELECT id, slug, name, description, price_label, image_url, icon_url, alt,
+                   display_group, sort_order, is_active, created_at, updated_at
+            FROM categories
+            ORDER BY sort_order ASC, name ASC;
+        `);
+        return res.status(200).json({ success: true, count: result.rows.length, data: result.rows.map(mapCategory) });
     } catch (error) {
         console.error("Помилка READ categories (admin):", error.message);
-        return res.status(500).json({ success: false, message: "Помилка сервера при отриманні категорій" });
+        return res.status(500).json({ success: false, message: "Внутрішня помилка сервера при отриманні списку категорій" });
     }
 };
 
-
 // ==========================================
-// ADMIN: створення категорії
+// 2. CREATE
 // ==========================================
 exports.createCategory = async (req, res) => {
-    const {
-        name, description, price_label, image_url, icon_url, alt,
-        display_group, sort_order, is_active
-    } = req.body;
-
+    const { name, description, price_label, image_url, icon_url, alt, display_group, sort_order, is_active } = req.body;
     const created_by_admin_id = req.admin.id;
     let { slug } = req.body;
 
@@ -155,49 +110,27 @@ exports.createCategory = async (req, res) => {
         return res.status(400).json({ success: false, message: "Назва категорії є обов'язковою" });
     }
 
-    const validDisplayGroups = ['products', 'seedlings'];
     const dGroup = display_group || 'products';
-    if (!validDisplayGroups.includes(dGroup)) {
+    if (!['products', 'seedlings'].includes(dGroup)) {
         return res.status(400).json({ success: false, message: "Група каталогу може бути лише 'products' або 'seedlings'" });
     }
 
-    if (!slug || !slug.trim()) {
-        slug = slugify(name);
-    } else {
-        slug = slugify(slug);
-    }
-    if (!slug) {
-        slug = `category-${Date.now()}`;
-    }
+    slug = (slug && slug.trim()) ? slugify(slug) : slugify(name);
+    if (!slug) slug = `category-${Date.now()}`;
 
     try {
-        const result = await pool.query(
-            `INSERT INTO categories (
-                slug, name, description, price_label, image_url, icon_url, alt,
-                display_group, sort_order, is_active, created_by_admin_id
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
-            RETURNING *`,
-            [
-                slug,
-                name.trim(),
-                description || null,
-                price_label || null,
-                image_url || null,
-                icon_url || null,
-                alt || name.trim(),
-                dGroup,
-                sort_order !== undefined ? parseInt(sort_order) : 0,
-                is_active !== undefined ? Boolean(is_active) : true,
-                created_by_admin_id
-            ]
-        );
-
-        return res.status(201).json({
-            success: true,
-            message: "Категорію успішно створено",
-            data: result.rows[0]
-        });
-
+        const result = await pool.query(`
+            INSERT INTO categories (slug, name, description, price_label, image_url, icon_url, alt, display_group, sort_order, is_active, created_by_admin_id)
+            VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+            RETURNING *;
+        `, [
+            slug, name.trim(), description || null, price_label || null,
+            image_url || null, icon_url || null, alt || null, dGroup,
+            sort_order !== undefined ? parseInt(sort_order) : 0,
+            is_active !== undefined ? Boolean(is_active) : true,
+            created_by_admin_id
+        ]);
+        return res.status(201).json({ success: true, message: "Категорію створено", data: mapCategory(result.rows[0]) });
     } catch (error) {
         console.error("Помилка CREATE category:", error.message);
         if (error.code === '23505') {
@@ -207,64 +140,50 @@ exports.createCategory = async (req, res) => {
     }
 };
 
-
 // ==========================================
-// ADMIN: редагування категорії
-// КРИТИЧНО: чіпає ЛИШЕ рядок у categories. Жоден запит тут не
-// торкається таблиці products — товари категорії лишаються незмінними.
+// 3. UPDATE
 // ==========================================
 exports.updateCategory = async (req, res) => {
     const { id } = req.params;
-    const {
-        name, description, price_label, image_url, icon_url, alt,
-        display_group, sort_order, is_active
-    } = req.body;
-
+    const { name, description, price_label, image_url, icon_url, alt, display_group, sort_order, is_active } = req.body;
     let { slug } = req.body;
-
-    if (display_group !== undefined && !['products', 'seedlings'].includes(display_group)) {
-        return res.status(400).json({ success: false, message: "Група каталогу може бути лише 'products' або 'seedlings'" });
-    }
 
     try {
         const checkRes = await pool.query("SELECT * FROM categories WHERE id = $1", [id]);
         if (checkRes.rows.length === 0) {
             return res.status(404).json({ success: false, message: "Категорію не знайдено" });
         }
+        const existing = checkRes.rows[0];
 
-        if (slug) {
-            slug = slugify(slug);
-        } else {
-            slug = checkRes.rows[0].slug;
+        if (display_group !== undefined && !['products', 'seedlings'].includes(display_group)) {
+            return res.status(400).json({ success: false, message: "Група каталогу може бути лише 'products' або 'seedlings'" });
         }
 
-        const result = await pool.query(
-            `UPDATE categories
-             SET slug = $1, name = $2, description = $3, price_label = $4, image_url = $5,
-                 icon_url = $6, alt = $7, display_group = $8, sort_order = $9, is_active = $10
-             WHERE id = $11
-             RETURNING *`,
-            [
-                slug,
-                name !== undefined ? name.trim() : checkRes.rows[0].name,
-                description !== undefined ? description : checkRes.rows[0].description,
-                price_label !== undefined ? price_label : checkRes.rows[0].price_label,
-                image_url !== undefined ? image_url : checkRes.rows[0].image_url,
-                icon_url !== undefined ? icon_url : checkRes.rows[0].icon_url,
-                alt !== undefined ? alt : checkRes.rows[0].alt,
-                display_group !== undefined ? display_group : checkRes.rows[0].display_group,
-                sort_order !== undefined ? parseInt(sort_order) : checkRes.rows[0].sort_order,
-                is_active !== undefined ? Boolean(is_active) : checkRes.rows[0].is_active,
-                id
-            ]
-        );
+        if (slug) slug = slugify(slug);
+        else if (name) slug = slugify(name);
+        else slug = existing.slug;
 
-        return res.status(200).json({
-            success: true,
-            message: "Категорію успішно оновлено",
-            data: result.rows[0]
-        });
+        const result = await pool.query(`
+            UPDATE categories
+            SET slug=$1, name=$2, description=$3, price_label=$4, image_url=$5,
+                icon_url=$6, alt=$7, display_group=$8, sort_order=$9, is_active=$10
+            WHERE id=$11
+            RETURNING *;
+        `, [
+            slug,
+            name !== undefined ? name.trim() : existing.name,
+            description !== undefined ? description : existing.description,
+            price_label !== undefined ? price_label : existing.price_label,
+            image_url !== undefined ? image_url : existing.image_url,
+            icon_url !== undefined ? icon_url : existing.icon_url,
+            alt !== undefined ? alt : existing.alt,
+            display_group !== undefined ? display_group : existing.display_group,
+            sort_order !== undefined ? parseInt(sort_order) : existing.sort_order,
+            is_active !== undefined ? Boolean(is_active) : existing.is_active,
+            id
+        ]);
 
+        return res.status(200).json({ success: true, message: "Категорію оновлено", data: mapCategory(result.rows[0]) });
     } catch (error) {
         console.error("Помилка UPDATE category:", error.message);
         if (error.code === '23505') {
@@ -274,37 +193,20 @@ exports.updateCategory = async (req, res) => {
     }
 };
 
-
 // ==========================================
-// ADMIN: видалення категорії
-// Захист: не дозволяє видалити категорію, якщо до неї прив'язані товари —
-// інакше products.category_id занулився б непомітно для адміна
-// (ON DELETE SET NULL), і товари "осиротіли" б без категорії.
+// 4. DELETE
+// ПРИМІТКА: FK products.category_id має ON DELETE SET NULL — видалення
+// категорії НЕ падає з помилкою, товари просто лишаються без категорії
+// (category_id = NULL). Це закладено в схемі, а не баг.
 // ==========================================
 exports.deleteCategory = async (req, res) => {
     const { id } = req.params;
-
     try {
-        const linkedProducts = await pool.query(
-            "SELECT count(*)::int AS count FROM products WHERE category_id = $1",
-            [id]
-        );
-
-        if (linkedProducts.rows[0].count > 0) {
-            return res.status(400).json({
-                success: false,
-                message: `Неможливо видалити категорію: до неї прив'язано ${linkedProducts.rows[0].count} товар(ів). Спершу перепризначте або видаліть ці товари.`
-            });
-        }
-
         const result = await pool.query("DELETE FROM categories WHERE id = $1 RETURNING id", [id]);
-
         if (result.rows.length === 0) {
             return res.status(404).json({ success: false, message: "Категорію не знайдено" });
         }
-
-        return res.status(200).json({ success: true, message: "Категорію видалено" });
-
+        return res.status(200).json({ success: true, message: "Категорію видалено. Товари цієї категорії позначені як без категорії." });
     } catch (error) {
         console.error("Помилка DELETE category:", error.message);
         return res.status(500).json({ success: false, message: "Помилка сервера при видаленні категорії" });

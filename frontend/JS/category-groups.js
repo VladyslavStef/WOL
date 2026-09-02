@@ -1,14 +1,9 @@
-// ========================================
-// НОВА МОДЕЛЬ: categories → products
-// ========================================
-// FIX: цей файл раніше хардкодив списки категорій
-// (PRODUCT_CATEGORY_ORDER/SEEDLING_CATEGORY_ORDER) і мав toFrontendProduct()
-// із прапорцем isFirstInCategory, що імітував "перший елемент масиву — це
-// категорія". Це і була стара неправильна модель. Тепер бекенд (GET
-// /categories) сам повертає категорії окремо від товарів, уже відсортовані,
-// і поля вже узгоджені з тим, що очікує рендер — тому тут лишається лише
-// групування по displayGroup і спільна логіка картки категорія→товари.
-
+// ГРУПУВАННЯ ТЕПЕР ПРИХОДИТЬ ГОТОВИМ З БЕКЕНДУ (GET /categories, вкладені products[]).
+// Категорія відображається як "картка" з власним фото/описом (стан -1),
+// товари категорії — наступні слайди (кнопка кошика активна лише на них).
+// FIX: це ЄДИНА версія цього файлу в проєкті. Стара "плоска" модель
+// (buildCategoryArticle/toFrontendItem/групування у масив [header,...products])
+// повністю видалена — вона конфліктувала з цією версією і ламала каталог.
 
 // ----------------------------
 // РОЗБИТТЯ КАТЕГОРІЙ ПО ГРУПІ ВІДОБРАЖЕННЯ
@@ -18,6 +13,9 @@ const filterCategoriesByDisplayGroup = function (categories, displayGroup) {
     return categories.filter((category) => category.displayGroup === displayGroup);
 };
 
+const findCategoryBySlug = function (categories, slug) {
+    return categories.find((category) => category.slug === slug);
+};
 
 // ----------------------------
 // ЧИСТІ ФУНКЦІЇ СТАНУ КАРТКИ (тестуються окремо, без DOM)
@@ -41,13 +39,16 @@ const getCategoryCardStateData = function (category, index) {
 
     const product = (category.products || [])[index];
 
+    // FIX: API повертає товар з полем "title", не "name" — раніше тут
+    // читалось лише product.name, яке завжди undefined -> назва товару
+    // ніколи не показувалась при перемиканні слайдів.
     return {
-        name: product.name,
+        name: product.name || product.title,
         description: product.description || "",
         priceText: `${product.price} грн`,
         image: product.image || "",
         icon: product.icon || "",
-        alt: product.alt || product.name,
+        alt: product.alt || product.name || product.title,
         isCategory: false
     };
 };
@@ -67,7 +68,6 @@ const getCategoryCardNavState = function (category, currentIndex) {
 // ----------------------------
 // СПІЛЬНА АНІМАЦІЯ ДОДАВАННЯ В КОШИК
 // ----------------------------
-// FIX: раніше ця функція була продубльована ідентично в catalogue.js і main.js.
 
 const showAddedAnimation = function (image) {
 
@@ -76,7 +76,7 @@ const showAddedAnimation = function (image) {
     image.classList.add("is-changing");
 
     setTimeout(() => {
-        image.src = "/frontend/IMG/confirmed.png";
+        image.src = "../IMG/confirmed.png";
         image.classList.remove("is-changing");
         image.classList.add("is-added");
     }, 200);
@@ -96,12 +96,10 @@ const showAddedAnimation = function (image) {
 // ----------------------------
 // СПІЛЬНА ЛОГІКА КАРТКИ: категорія ⇄ товари
 // ----------------------------
-// Використовується і в catalogue.js (усі категорії), і в main.js
-// (3 обрані категорії топ-товарів на головній) — та сама поведінка.
 
 const setupCategoryCard = function (article, category) {
 
-    let currentIndex = -1; // ЗАВЖДИ стартуємо з категорії, ніколи не з products[0]
+    let currentIndex = -1; // ЗАВЖДИ стартуємо з категорії
     let isAnimating = false;
     let isBasketAnimating = false;
 
@@ -125,7 +123,6 @@ const setupCategoryCard = function (article, category) {
 
     basketImage.classList.remove("is-hidden");
 
-    // ---- рендер даних у DOM ----
     const renderState = function (data) {
         titleEl.textContent = data.name;
         descriptionEl.textContent = data.description;
@@ -142,20 +139,27 @@ const setupCategoryCard = function (article, category) {
         basketButton.classList.toggle("is-hidden", nav.isCategoryState);
     };
 
-    // ---- ПОЧАТКОВИЙ RENDER: завжди СТАН 1 (категорія) ----
-    // FIX: category.image НІКОЛИ не бере дані з products[0] — тут явно
-    // рендериться getCategoryCardStateData(category, -1), а не products[0].
     renderState(getCategoryCardStateData(category, currentIndex));
     updateControls();
 
-    // ---- ДОДАВАННЯ В КОШИК: лише в товарному стані ----
     basketButton.addEventListener("click", () => {
 
         if (currentIndex === -1) {
             return; // безпека: категорію не можна покласти в кошик
         }
 
-        addToBasket(products[currentIndex]);
+        const product = products[currentIndex];
+
+        // FIX: API віддає товар як {title, price, image, icon, alt, ...} —
+        // а basket.js по всьому коду очікує {name, priceValue, image, alt}.
+        // Без цієї нормалізації кошик показував би NaN грн.
+        addToBasket({
+            id: product.id,
+            name: product.name || product.title,
+            priceValue: Number(product.price),
+            image: product.image,
+            alt: product.alt || product.name || product.title
+        });
 
         if (isBasketAnimating) {
             return;
@@ -169,7 +173,6 @@ const setupCategoryCard = function (article, category) {
         }, 1000);
     });
 
-    // ---- анімація переходу (той самий fade, що й раніше) ----
     const addFadeIn = () => { imageNextEl.classList.add("is-fading-in"); iconNextEl.classList.add("is-fading-in"); };
     const addFadeOut = () => { imageEl.classList.add("is-fading-out"); iconEl.classList.add("is-fading-out"); };
     const removeFadeIn = () => { imageNextEl.classList.remove("is-fading-in"); iconNextEl.classList.remove("is-fading-in"); };
@@ -221,9 +224,6 @@ const setupCategoryCard = function (article, category) {
         if (!nav.canGoPrev) {
             return;
         }
-        // FIX: якщо currentIndex був 0 (перший товар), goToIndex(-1)
-        // повертає саме СТАН категорії — вимога "Повернення ← з першого
-        // товару повинно повертати саме category state".
         goToIndex(currentIndex - 1);
     });
 };

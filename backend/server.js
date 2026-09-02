@@ -23,9 +23,9 @@ app.get("/", (req, res) => {
 app.use("/booking", bookingRoutes);
 
 app.use("/products", require("./routes/productRoutes"));
+app.use("/categories", require("./routes/categoryRoutes"));
 app.use("/orders", require("./routes/orderRoutes"));
 app.use("/auth", require("./routes/authRoutes"));
-app.use("/categories", require("./routes/categoryRoutes"));
 
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);

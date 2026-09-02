@@ -1,218 +1,305 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="uk">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>WOL — Адмін-панель</title>
-    <link rel="stylesheet" href="admin.css">
-</head>
-<body>
-
+    <link rel="stylesheet" href="admin.css" />
+  </head>
+  <body>
     <!-- ======================== LOGIN ======================== -->
     <section class="admin-login-view" id="loginView">
-        <form class="admin-login-form" id="loginForm">
-            <h1>Вхід в адмін-панель</h1>
+      <form class="admin-login-form" id="loginForm">
+        <h1>Вхід в адмін-панель</h1>
 
-            <label>
-                Логін
-                <input type="text" name="name" required>
-            </label>
+        <label>
+          Логін
+          <input type="text" name="name" autocomplete="username" required />
+        </label>
 
-            <label>
-                Пароль
-                <input type="password" name="password" required>
-            </label>
+        <label>
+          Пароль
+          <input type="password" name="password" autocomplete="current-password" required />
+        </label>
 
-            <span class="admin-error" id="loginError"></span>
+        <span class="admin-error" id="loginError"></span>
 
-            <button type="submit">Увійти</button>
-        </form>
+        <button type="submit">Увійти</button>
+      </form>
     </section>
 
     <!-- ======================== DASHBOARD ======================== -->
     <section class="admin-dashboard-view is-hidden" id="dashboardView">
+      <header class="admin-header">
+        <h1>Wonder of Lavender — Адмін</h1>
+        <button type="button" id="logoutButton">Вийти</button>
+      </header>
 
-        <header class="admin-header">
-            <h1>Wonder of Lavender — Адмін</h1>
-            <button type="button" id="logoutButton">Вийти</button>
-        </header>
+      <nav class="admin-tabs">
+        <button type="button" class="admin-tab is-active" data-tab="categories">
+          Категорії
+        </button>
+        <button type="button" class="admin-tab" data-tab="products">
+          Товари
+        </button>
+        <button type="button" class="admin-tab" data-tab="orders">
+          Замовлення
+        </button>
+        <button type="button" class="admin-tab" data-tab="categories">Категорії</button>
+        <button type="button" class="admin-tab" data-tab="bookings">
+          Бронювання
+        </button>
+      </nav>
 
-        <nav class="admin-tabs">
-            <button type="button" class="admin-tab is-active" data-tab="categories">Категорії</button>
-            <button type="button" class="admin-tab" data-tab="products">Товари</button>
-            <button type="button" class="admin-tab" data-tab="orders">Замовлення</button>
-            <button type="button" class="admin-tab" data-tab="bookings">Бронювання</button>
-        </nav>
+      <!-- ---------------- CATEGORIES TAB ---------------- -->
+      <section class="admin-tab-panel is-active" id="categoriesPanel">
+        <details class="admin-create-box">
+          <summary>+ Додати категорію</summary>
 
-        <!-- ---------------- CATEGORIES TAB ---------------- -->
-        <section class="admin-tab-panel is-active" id="categoriesPanel">
+          <form class="admin-form" id="createCategoryForm">
+            <label>Назва <input type="text" name="name" required /></label>
+            <label
+              >Slug (необов'язково)
+              <input type="text" name="slug" placeholder="автоматично з назви"
+            /></label>
+            <label>Опис <input type="text" name="description" /></label>
+            <label
+              >Текст ціни
+              <input
+                type="text"
+                name="price_label"
+                placeholder="напр. Від 100 грн"
+            /></label>
+            <label>Alt (для зображення) <input type="text" name="alt" /></label>
 
-            <details class="admin-create-box">
-                <summary>+ Додати категорію</summary>
+            <label>
+              Група каталогу
+              <select name="display_group">
+                <option value="products">products</option>
+                <option value="seedlings">seedlings</option>
+              </select>
+            </label>
 
-                <form class="admin-form" id="createCategoryForm">
+            <label
+              >Порядок сортування
+              <input type="number" name="sort_order" value="0"
+            /></label>
+            <label>URL обкладинки <input type="text" name="image_url" /></label>
+            <label>URL іконки <input type="text" name="icon_url" /></label>
 
-                    <label>Назва <input type="text" name="name" required></label>
-                    <label>Slug (необов'язково) <input type="text" name="slug" placeholder="автоматично з назви"></label>
-                    <label>Опис <input type="text" name="description"></label>
-                    <label>Текст ціни <input type="text" name="price_label" placeholder="напр. Від 100 грн"></label>
-                    <label>Alt (для зображення) <input type="text" name="alt"></label>
+            <label class="admin-checkbox">
+              <input type="checkbox" name="is_active" checked /> Активна
+            </label>
 
-                    <label>
-                        Група каталогу
-                        <select name="display_group">
-                            <option value="products">products</option>
-                            <option value="seedlings">seedlings</option>
-                        </select>
-                    </label>
+            <span class="admin-error" id="createCategoryError"></span>
 
-                    <label>Порядок сортування <input type="number" name="sort_order" value="0"></label>
-                    <label>URL обкладинки <input type="text" name="image_url"></label>
-                    <label>URL іконки <input type="text" name="icon_url"></label>
+            <button type="submit">Створити категорію</button>
+          </form>
+        </details>
 
-                    <label class="admin-checkbox">
-                        <input type="checkbox" name="is_active" checked> Активна
-                    </label>
+        <div class="admin-toolbar">
+          <button type="button" id="refreshCategoriesButton">
+            Оновити список
+          </button>
+        </div>
 
-                    <span class="admin-error" id="createCategoryError"></span>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Назва</th>
+              <th>Slug</th>
+              <th>Група</th>
+              <th>Порядок</th>
+              <th>Активна</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="categoriesTableBody"></tbody>
+        </table>
+      </section>
 
-                    <button type="submit">Створити категорію</button>
-                </form>
-            </details>
+      <!-- ---------------- PRODUCTS TAB ---------------- -->
+      <section class="admin-tab-panel" id="productsPanel">
+        <details class="admin-create-box">
+          <summary>+ Додати товар</summary>
 
-            <div class="admin-toolbar">
-                <button type="button" id="refreshCategoriesButton">Оновити список</button>
-            </div>
+          <form class="admin-form" id="createProductForm">
+            <label>Назва <input type="text" name="title" required /></label>
+            <label>Опис <input type="text" name="description" /></label>
+            <label
+              >Ціна (грн)
+              <input type="number" name="price" min="0" step="0.01" required
+            /></label>
+            <label
+              >Slug (необов'язково)
+              <input type="text" name="slug" placeholder="автоматично з назви"
+            /></label>
+            <label>Alt (для зображення) <input type="text" name="alt" /></label>
 
-            <table class="admin-table">
-                <thead>
-                    <tr>
-                        <th>ID</th><th>Назва</th><th>Slug</th><th>Група</th>
-                        <th>Порядок</th><th>Активна</th><th></th>
-                    </tr>
-                </thead>
-                <tbody id="categoriesTableBody"></tbody>
-            </table>
-        </section>
+            <label>
+              Категорія
+              <select name="category_id" id="categorySelect" required></select>
+            </label>
 
-        <!-- ---------------- PRODUCTS TAB ---------------- -->
-        <section class="admin-tab-panel" id="productsPanel">
+            <label>
+              Група каталогу
+              <select name="display_group">
+                <option value="products">products</option>
+                <option value="seedlings">seedlings</option>
+              </select>
+            </label>
 
-            <details class="admin-create-box">
-                <summary>+ Додати товар</summary>
+            <label>
+              Тип товару
+              <select name="product_type">
+                <option value="physical">physical</option>
+                <option value="ticket">ticket</option>
+              </select>
+            </label>
 
-                <form class="admin-form" id="createProductForm">
+            <label>
+              Режим ціни (лише для ticket)
+              <select name="pricing_mode">
+                <option value="">—</option>
+                <option value="person">person</option>
+                <option value="hour">hour</option>
+              </select>
+            </label>
 
-                    <label>Назва <input type="text" name="title" required></label>
-                    <label>Опис <input type="text" name="description"></label>
-                    <label>Ціна (грн) <input type="number" name="price" min="0" step="0.01" required></label>
-                    <label>Slug (необов'язково) <input type="text" name="slug" placeholder="автоматично з назви"></label>
-                    <label>Alt (для зображення) <input type="text" name="alt"></label>
+            <label
+              >Залишок на складі <input type="number" name="stock" min="0"
+            /></label>
+            <label
+              >Порядок сортування
+              <input type="number" name="sort_order" value="0"
+            /></label>
+            <label>URL зображення <input type="text" name="image_url" /></label>
+            <label>URL іконки <input type="text" name="icon_url" /></label>
 
-                    <label>
-                        Категорія
-                        <select name="category_id" id="productCategorySelect" required>
-                            <option value="">— оберіть категорію —</option>
-                        </select>
-                    </label>
+            <label class="admin-checkbox">
+              <input type="checkbox" name="is_active" checked /> Активний
+            </label>
 
-                    <label>
-                        Група каталогу
-                        <select name="display_group">
-                            <option value="products">products</option>
-                            <option value="seedlings">seedlings</option>
-                        </select>
-                    </label>
+            <span class="admin-error" id="createProductError"></span>
 
-                    <label>
-                        Тип товару
-                        <select name="product_type">
-                            <option value="physical">physical</option>
-                            <option value="ticket">ticket</option>
-                        </select>
-                    </label>
+            <button type="submit">Створити товар</button>
+          </form>
+        </details>
 
-                    <label>
-                        Режим ціни (лише для ticket)
-                        <select name="pricing_mode">
-                            <option value="">—</option>
-                            <option value="person">person</option>
-                            <option value="hour">hour</option>
-                        </select>
-                    </label>
+        <div class="admin-toolbar">
+          <button type="button" id="refreshProductsButton">
+            Оновити список
+          </button>
+          <span class="admin-note"
+            >Показані лише активні товари (публічний GET /products).</span
+          >
+        </div>
 
-                    <label>Залишок на складі <input type="number" name="stock" min="0"></label>
-                    <label>Порядок сортування <input type="number" name="sort_order" value="0"></label>
-                    <label>URL зображення <input type="text" name="image_url"></label>
-                    <label>URL іконки <input type="text" name="icon_url"></label>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Назва</th>
+              <th>Категорія</th>
+              <th>Група</th>
+              <th>Ціна</th>
+              <th>Склад</th>
+              <th>Активний</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="productsTableBody"></tbody>
+        </table>
+      </section>
 
-                    <label class="admin-checkbox">
-                        <input type="checkbox" name="is_active" checked> Активний
-                    </label>
+      <!-- ---------------- ORDERS TAB ---------------- -->
+      <section class="admin-tab-panel" id="ordersPanel">
+        <div class="admin-toolbar">
+          <button type="button" id="refreshOrdersButton">Оновити список</button>
+        </div>
 
-                    <span class="admin-error" id="createProductError"></span>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Код</th>
+              <th>Клієнт</th>
+              <th>Телефон</th>
+              <th>Сума</th>
+              <th>Статус</th>
+              <th>Оплата</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="ordersTableBody"></tbody>
+        </table>
+      </section>
 
-                    <button type="submit">Створити товар</button>
-                </form>
-            </details>
+      <!-- ---------------- BOOKINGS TAB ---------------- -->
+      <section class="admin-tab-panel" id="bookingsPanel">
+        <div class="admin-toolbar">
+          <button type="button" id="refreshBookingsButton">
+            Оновити список
+          </button>
+        </div>
 
-            <div class="admin-toolbar">
-                <button type="button" id="refreshProductsButton">Оновити список</button>
-                <span class="admin-note">Показані лише активні товари (публічний GET /products).</span>
-            </div>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Код</th>
+              <th>Клієнт</th>
+              <th>Телефон</th>
+              <th>Квиток</th>
+              <th>Дата</th>
+              <th>Час</th>
+              <th>Відвідувачів</th>
+              <th>Сума</th>
+              <th>Статус</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="bookingsTableBody"></tbody>
+        </table>
+      </section>
+    </section>
 
-            <table class="admin-table">
-                <thead>
-                    <tr>
-                        <th>ID</th><th>Назва</th><th>Категорія</th><th>Група</th>
-                        <th>Ціна</th><th>Склад</th><th>Активний</th><th></th>
-                    </tr>
-                </thead>
-                <tbody id="productsTableBody"></tbody>
-            </table>
-        </section>
-
-        <!-- ---------------- ORDERS TAB ---------------- -->
-        <section class="admin-tab-panel" id="ordersPanel">
-
-            <div class="admin-toolbar">
-                <button type="button" id="refreshOrdersButton">Оновити список</button>
-            </div>
-
-            <table class="admin-table">
-                <thead>
-                    <tr>
-                        <th>ID</th><th>Код</th><th>Клієнт</th><th>Телефон</th>
-                        <th>Сума</th><th>Статус</th><th>Оплата</th><th></th>
-                    </tr>
-                </thead>
-                <tbody id="ordersTableBody"></tbody>
-            </table>
-        </section>
-
-        <!-- ---------------- BOOKINGS TAB ---------------- -->
-        <section class="admin-tab-panel" id="bookingsPanel">
-
-            <div class="admin-toolbar">
-                <button type="button" id="refreshBookingsButton">Оновити список</button>
-            </div>
-
-            <table class="admin-table">
-                <thead>
-                    <tr>
-                        <th>ID</th><th>Код</th><th>Клієнт</th><th>Телефон</th>
-                        <th>Квиток</th><th>Дата</th><th>Час</th>
-                        <th>Відвідувачів</th><th>Сума</th><th>Статус</th><th></th>
-                    </tr>
-                </thead>
-                <tbody id="bookingsTableBody"></tbody>
-            </table>
-        </section>
-
+    <section class="admin-tab-panel" id="categoriesPanel">
+    <details class="admin-create-box">
+        <summary>+ Додати категорію</summary>
+        <form class="admin-form" id="createCategoryForm">
+            <label>Назва <input type="text" name="name" required></label>
+            <label>Опис <input type="text" name="description"></label>
+            <label>Текст ціни (напр. "Від 100 грн") <input type="text" name="price_label"></label>
+            <label>
+                Група каталогу
+                <select name="display_group">
+                    <option value="products">products</option>
+                    <option value="seedlings">seedlings</option>
+                </select>
+            </label>
+            <label>Порядок сортування <input type="number" name="sort_order" value="0"></label>
+            <label>URL зображення <input type="text" name="image_url"></label>
+            <label>URL іконки <input type="text" name="icon_url"></label>
+            <label class="admin-checkbox">
+                <input type="checkbox" name="is_active" checked> Активна
+            </label>
+            <span class="admin-error" id="createCategoryError"></span>
+            <button type="submit">Створити категорію</button>
+        </form>
+    </details>
+    <div class="admin-toolbar">
+        <button type="button" id="refreshCategoriesButton">Оновити список</button>
+    </div>
+    <table class="admin-table">
+        <thead><tr><th>ID</th><th>Назва</th><th>Slug</th><th>Група</th><th>Активна</th><th></th></tr></thead>
+        <tbody id="categoriesTableBody"></tbody>
+    </table>
     </section>
 
     <script src="/frontend/JS/config.js"></script>
     <script src="/frontend/JS/api.js"></script>
     <script src="admin.js"></script>
-</body>
+  </body>
 </html>

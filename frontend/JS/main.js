@@ -15,21 +15,18 @@ let topCategories = [];
 const initTopProducts = async function () {
 
     try {
-        const response = await fetchCategoriesCatalogue();
-        topCategories = response.data || [];
+        const response = await fetchAllCategories();
+        const allCategories = response.data || [];
 
         articleAll.forEach((article) => {
+            const slug = article.dataset.category;
+            const category = findCategoryBySlug(allCategories, slug);
 
-            const categorySlug = article.dataset.category;
-            const category = topCategories.find((item) => item.slug === categorySlug);
-
-            if (!category) {
-                // Категорія деактивована/відсутня — картка лишається
-                // зі статичним текстом-заглушкою з HTML, нічого не ламаємо.
-                return;
+            if (category) {
+                setupCategoryCard(article, category);
+            } else {
+                console.warn(`Категорію "${slug}" не знайдено серед активних категорій`);
             }
-
-            setupCategoryCard(article, category);
         });
 
     } catch (error) {
@@ -123,7 +120,7 @@ if (
             allPhotos[nextIndex];
 
 
-        // Чекаємо, поки картинка реально завантажиться
+        // Чекаємо, поки картинка завантажиться
         const startTransition = function () {
 
             nextSlide.classList.remove(

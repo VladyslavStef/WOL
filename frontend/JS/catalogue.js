@@ -1,18 +1,15 @@
-// ========================================
-// НОВА МОДЕЛЬ: рендер категорій (не товарів "замаскованих" під категорію)
-// ========================================
+// НОВА МОДЕЛЬ: рендер категорій напряму з вкладеними products[] з бекенду.
+// FIX: раніше тут була суміш двох реалізацій — виклик
+// filterCategoriesByDisplayGroup на змінній catalogueCategories, яку ніхто
+// не заповнював (замість цього код помилково писав у products/seedlings
+// через застарілий groupCategoriesByDisplayGroup/buildCategoryArticle,
+// яких більше не існує). Тепер лишається один шлях даних.
 
 const fillButton = document.querySelectorAll(".button-container__button");
 const catalogContainer = document.querySelector(".sell__article__container");
 const articleTemplate = document.getElementById("article-template");
 
-// Повний список категорій з GET /categories (кожна вже містить products[])
 let catalogueCategories = [];
-
-
-// ----------------------------
-// RENDER CATALOG
-// ----------------------------
 
 const renderCatalog = function (displayGroup) {
 
@@ -32,16 +29,9 @@ const renderCatalog = function (displayGroup) {
 
         catalogContainer.append(cloneArticle);
 
-        // Уся логіка стану "категорія ⇄ товари" — спільна з main.js,
-        // визначена в category-groups.js. Тут не дублюється.
         setupCategoryCard(articleElement, category);
     });
 };
-
-
-// ----------------------------
-// CATEGORY BUTTONS (перемикач "Наша продукція" / "Саджанці")
-// ----------------------------
 
 fillButton.forEach((button) => {
 
@@ -64,17 +54,12 @@ fillButton.forEach((button) => {
     });
 });
 
-
-// ----------------------------
-// INIT: тягнемо каталог з бекенду й тільки тоді рендеримо
-// ----------------------------
-
 const initCatalogue = async function () {
 
     catalogContainer.innerHTML = `<p class="catalog-empty">Завантаження каталогу...</p>`;
 
     try {
-        const response = await fetchCategoriesCatalogue();
+        const response = await fetchAllCategories();
         catalogueCategories = response.data || [];
 
         renderCatalog("products");

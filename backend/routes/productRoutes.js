@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const {
     getAllProducts,
-    getAllProductsAdmin, // FIX: новий контролер для адмінського списку
+    getAllProductsAdmin,
     createProduct,
     updateProduct,
     deleteProduct
@@ -10,11 +10,8 @@ const {
 
 const adminAuth = require("../middleware/authSecurity");
 
-// Клієнтська вітрина — лише активні товари, без авторизації
 router.get("/", getAllProducts);
-
-// FIX: новий маршрут для адмінки — повертає ВСІ товари, включно з неактивними
-router.get("/admin", adminAuth, getAllProductsAdmin);
+router.get("/admin", adminAuth, getAllProductsAdmin); // FIX: адмінка бачить і неактивні товари
 
 router.post("/", adminAuth, createProduct);
 router.put("/:id", adminAuth, updateProduct);

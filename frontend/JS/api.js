@@ -39,12 +39,11 @@ const fetchAllProducts = function () {
   return apiRequest("/products", { method: "GET" });
 };
 
-// FIX: новий каталог — категорії з вкладеними товарами (нова модель
-// categories → products). Використовується catalogue.js/main.js.
-// fetchAllProducts() і далі потрібен окремо: booking.js шукає квитки
-// (product_type='ticket'), які НЕ мають категорії і не входять у
-// GET /categories взагалі — це свідомо різні дані.
 const fetchCategoriesCatalogue = function () {
+  return apiRequest("/categories", { method: "GET" });
+};
+
+const fetchAllCategories = function () {
   return apiRequest("/categories", { method: "GET" });
 };
 
@@ -189,5 +188,5 @@ const adminDeleteBooking = function (bookingId) {
 // FIX: адмінка тепер бере товари з захищеного /products/admin
 // (включно з неактивними), а не з публічного /products.
 const adminGetProducts = function () {
-    return adminRequest("/products/admin", { method: "GET" });
+  return adminRequest("/products/admin", { method: "GET" });
 };
