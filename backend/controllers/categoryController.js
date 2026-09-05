@@ -1,5 +1,6 @@
 const pool = require("../config/db");
 const { slugify } = require("../utils/slugify");
+const { LOW_STOCK_THRESHOLD } = require("../config/stock");
 
 function mapCategory(c) {
     return {
@@ -33,6 +34,10 @@ function mapProductForCategory(p) {
         productType: p.product_type,
         pricingMode: p.pricing_mode,
         stock: p.stock,
+        isLowStock: p.product_type === "physical"
+            && p.stock !== null
+            && p.stock > 0
+            && p.stock <= LOW_STOCK_THRESHOLD,
         sortOrder: p.sort_order,
         isActive: p.is_active
     };
@@ -41,6 +46,17 @@ function mapProductForCategory(p) {
 // ==========================================
 // 1a. READ: публічний список категорій з вкладеними товарами
 // (єдиний запит для всього каталогу — саме те, що очікує catalogue.js)
+//
+// FIX (stock): products тут фільтруються так само, як і в публічному
+// GET /products (is_active = true AND (не physical АБО stock > 0)) —
+// те саме правило "доступного товару", просто застосоване один раз тут,
+// а не продубльоване окремо на фронтенді.
+//
+// FIX (stock): категорія більше НЕ повертається публічно, якщо після
+// цього фільтра в неї не лишилось жодного товару — "категорія без товарів"
+// не показується у доступному каталозі. Перша позиція товару НІКОЛИ не
+// використовується як ознака категорії (це вже коректно у моделі даних —
+// категорія має власні метадані, окремі від products[]).
 // ==========================================
 exports.getAllCategories = async (req, res) => {
     try {
@@ -59,7 +75,9 @@ exports.getAllCategories = async (req, res) => {
                 SELECT id, slug, title, description, price, currency, image_url, icon_url,
                        alt, category_id, product_type, pricing_mode, stock, sort_order, is_active
                 FROM products
-                WHERE category_id = ANY($1::bigint[]) AND is_active = true
+                WHERE category_id = ANY($1::bigint[])
+                  AND is_active = true
+                  AND (product_type != 'physical' OR stock > 0)
                 ORDER BY sort_order ASC, title ASC;
             `, [categoryIds]);
 
@@ -73,7 +91,11 @@ exports.getAllCategories = async (req, res) => {
             }
         }
 
-        return res.status(200).json({ success: true, count: categories.length, data: categories.map(mapCategory) });
+        // Категорія без жодного доступного товару не показується у
+        // публічному каталозі (див. коментар вище).
+        const availableCategories = categories.filter((category) => (category.products || []).length > 0);
+
+        return res.status(200).json({ success: true, count: availableCategories.length, data: availableCategories.map(mapCategory) });
     } catch (error) {
         console.error("Помилка READ categories:", error.message);
         return res.status(500).json({ success: false, message: "Внутрішня помилка сервера при отриманні категорій" });
@@ -82,6 +104,9 @@ exports.getAllCategories = async (req, res) => {
 
 // ==========================================
 // 1b. READ: адмінський список категорій (активні + неактивні, без товарів)
+// НАВМИСНО: не фільтрує ані за is_active, ані за наявністю товарів —
+// адмін повинен бачити й порожні, і неактивні категорії, щоб мати змогу
+// їх наповнити/увімкнути.
 // ==========================================
 exports.getAllCategoriesAdmin = async (req, res) => {
     try {

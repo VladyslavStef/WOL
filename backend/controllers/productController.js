@@ -1,5 +1,6 @@
 const pool = require("../config/db");
 const { slugify } = require("../utils/slugify");
+const { LOW_STOCK_THRESHOLD } = require("../config/stock");
 
 function mapProduct(p) {
     return {
@@ -18,6 +19,10 @@ function mapProduct(p) {
         productType: p.product_type,
         pricingMode: p.pricing_mode,
         stock: p.stock,
+        isLowStock: p.product_type === "physical"
+            && p.stock !== null
+            && p.stock > 0
+            && p.stock <= LOW_STOCK_THRESHOLD,
         sortOrder: p.sort_order,
         isActive: p.is_active
     };
@@ -28,6 +33,15 @@ function mapProduct(p) {
 // FIX: раніше SELECT посилався на неіснучу колонку products.category —
 // звідси "Помилка READ products: стовпця category не існує". Тепер
 // беремо реальні колонки category_id/alt і мапимо у camelCase.
+//
+// FIX (stock): публічна вітрина тепер приховує physical-товари з
+// stock <= 0 (або stock IS NULL — тобто "склад ніколи не був заповнений").
+// Квитки (product_type = 'ticket') НЕ мають фізичного складу і завжди
+// проходять цей фільтр незалежно від значення stock — їхня доступність
+// контролюється окремою booking-логікою (busy dates), яку тут не чіпаємо.
+// Це ЄДИНЕ місце, де визначається "доступний товар" для публічного API —
+// каталог, головна сторінка і кошик підтягують дані саме звідси, тож
+// правило не дублюється по компонентах.
 // ==========================================
 exports.getAllProducts = async (req, res) => {
     try {
@@ -37,6 +51,7 @@ exports.getAllProducts = async (req, res) => {
                    stock, sort_order, is_active, display_group, created_at, updated_at
             FROM products
             WHERE is_active = true
+              AND (product_type != 'physical' OR stock > 0)
             ORDER BY sort_order ASC, title ASC;
         `);
         return res.status(200).json({ success: true, count: result.rows.length, data: result.rows.map(mapProduct) });
@@ -50,6 +65,11 @@ exports.getAllProducts = async (req, res) => {
 // 1b. READ: адмінська вітрина (активні + неактивні)
 // FIX: раніше адмінка ходила на публічний GET /products (WHERE is_active=true)
 // і губила деактивовані товари без можливості їх повернути.
+//
+// НАВМИСНО: адмінська вітрина НЕ фільтрує за stock — адмін повинен бачити
+// і редагувати товари незалежно від того, скільки їх на складі (включно
+// зі stock = 0), інакше повернути товар у продаж після поповнення складу
+// було б неможливо.
 // ==========================================
 exports.getAllProductsAdmin = async (req, res) => {
     try {
@@ -190,6 +210,18 @@ exports.updateProduct = async (req, res) => {
             }
         }
 
+        // FIX (stock): дозволяємо явно встановити stock = 0 (наприклад, коли
+        // адмін хоче тимчасово зняти товар з продажу без деактивації).
+        // stock !== undefined перевіряє саме "поле передано у запиті",
+        // а не "поле truthy" — інакше 0 сприймалось би як "не передано".
+        let newStock = existing.stock;
+        if (stock !== undefined) {
+            newStock = stock !== null ? parseInt(stock) : null;
+            if (newStock !== null && (isNaN(newStock) || newStock < 0)) {
+                return res.status(400).json({ success: false, message: "Кількість на складі не може бути від'ємною" });
+            }
+        }
+
         const result = await pool.query(`
             UPDATE products
             SET slug=$1, sku=$2, title=$3, description=$4, price=$5, currency=$6,
@@ -212,7 +244,7 @@ exports.updateProduct = async (req, res) => {
             display_group !== undefined ? display_group : existing.display_group,
             product_type !== undefined ? product_type : existing.product_type,
             pricing_mode !== undefined ? pricing_mode : existing.pricing_mode,
-            stock !== undefined ? (stock !== null ? parseInt(stock) : null) : existing.stock,
+            newStock,
             sort_order !== undefined ? parseInt(sort_order) : existing.sort_order,
             is_active !== undefined ? Boolean(is_active) : existing.is_active,
             updated_by_admin_id,

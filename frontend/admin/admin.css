@@ -227,3 +227,34 @@ body {
 .admin-btn-edit {
     background: var(--primary-color);
 }
+
+/* ------------- CATLOGUE STATUS ------------- */
+
+.admin-catalog-status {
+    margin: 1.5rem 2rem 0;
+    padding: 1.2rem 1.8rem;
+    background: white;
+    border-radius: 0.7rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 2rem;
+}
+.admin-catalog-status__info { font-size: 1.05rem; }
+.admin-catalog-status__hint {
+    flex-basis: 100%;
+    margin: 0;
+    font-size: 0.85rem;
+    opacity: 0.75;
+}
+.admin-catalog-status__toggle {
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 0.5rem;
+    background: var(--primary-color);
+    cursor: pointer;
+}
+.admin-catalog-status__message {
+    font-size: 0.85rem;
+    color: var(--footer-color);
+}

@@ -16,14 +16,11 @@ const generateOrderCode = () => {
 // ==========================================
 exports.getAllOrders = async (req, res) => {
   try {
-    // Спочатку дістаємо всі замовлення з бази (від найновіших до найстаріших)
     const ordersRes = await pool.query(
       "SELECT * FROM orders ORDER BY id DESC;",
     );
     const orders = ordersRes.rows;
 
-    // FIX: замінили N+1 запитів (один SELECT на кожне замовлення) на єдиний
-    // запит з ANY($1), що набагато швидше при великій кількості замовлень.
     if (orders.length > 0) {
       const orderIds = orders.map((o) => o.id);
       const itemsRes = await pool.query(
@@ -110,6 +107,39 @@ exports.createOrder = async (req, res) => {
   try {
     await client.query("BEGIN");
 
+    // ------------------------------------------------------------
+    // FIX (catalog_enabled): БЕКЕНД — остаточний захист від продажу
+    // товарів каталогу, поки catalog_enabled = false. Це навмисно НЕ
+    // те саме, що products.is_active/categories.is_active — це окремий,
+    // глобальний бізнес-стан "магазин тимчасово не приймає нові
+    // замовлення через каталог", який зберігається в site_settings.
+    //
+    // Перевірка виконується ПЕРШОЮ, всередині тієї самої транзакції, ще
+    // до будь-якої роботи з товарами/stock — якщо каталог закрито,
+    // жоден рядок в orders/ordered_products не створюється і жоден
+    // stock не списується. Booking (bookings/booking_times) навмисно
+    // НЕ зачіпається цією перевіркою — це окремий бізнес-процес
+    // (відвідування поля), не завʼязаний на продаж товарів каталогу.
+    // ------------------------------------------------------------
+    const catalogStatusRes = await client.query(
+      "SELECT catalog_enabled FROM site_settings WHERE id = 1",
+    );
+
+    const isCatalogEnabled =
+      catalogStatusRes.rows.length === 0
+        ? true // немає рядка (стара база без сідингу) — безпечний дефолт "відкрито"
+        : catalogStatusRes.rows[0].catalog_enabled;
+
+    if (!isCatalogEnabled) {
+      await client.query("ROLLBACK");
+      return res.status(409).json({
+        success: false,
+        catalogClosed: true,
+        message:
+          "Каталог тимчасово закритий (сезонна перерва). Спробуйте, будь ласка, пізніше.",
+      });
+    }
+
     let total_price = 0;
     const verifiedItems = [];
 
@@ -121,7 +151,6 @@ exports.createOrder = async (req, res) => {
         throw new Error("Некоректні дані товару або кількості в кошику");
       }
 
-      // Запит до бази за актуальною ціною, назвою та залишками
       const productRes = await client.query(
         "SELECT title, price, stock, is_active, product_type FROM products WHERE id = $1",
         [product_id],
@@ -139,7 +168,6 @@ exports.createOrder = async (req, res) => {
         );
       }
 
-      // Перевірка складу для фізичних товарів
       if (
         product.product_type === "physical" &&
         (product.stock === null || product.stock < quantity)
@@ -153,7 +181,6 @@ exports.createOrder = async (req, res) => {
       const itemCost = itemPrice * quantity;
       total_price += itemCost;
 
-      // Зберігаємо перевірені дані для подальшого запису
       verifiedItems.push({
         product_id,
         quantity,
@@ -188,7 +215,6 @@ exports.createOrder = async (req, res) => {
         `;
 
     for (const item of verifiedItems) {
-      // Записуємо товар у чек
       await client.query(itemInsertQuery, [
         orderId,
         item.product_id,
@@ -197,16 +223,25 @@ exports.createOrder = async (req, res) => {
         item.product_title,
       ]);
 
-      // Якщо товар фізичний — списуємо кількість зі складу
+      // Атомарне умовне списання складу — закриває race condition при
+      // одночасних замовленнях (два покупці на останню одиницю товару).
       if (item.product_type === "physical") {
-        await client.query(
-          "UPDATE products SET stock = stock - $1 WHERE id = $2",
+        const stockUpdateRes = await client.query(
+          `UPDATE products
+                     SET stock = stock - $1
+                     WHERE id = $2 AND stock >= $1
+                     RETURNING stock`,
           [item.quantity, item.product_id],
         );
+
+        if (stockUpdateRes.rows.length === 0) {
+          throw new Error(
+            `Товар "${item.product_title}" щойно розкупили — на складі вже недостатньо. Оновіть кошик і спробуйте ще раз.`,
+          );
+        }
       }
     }
 
-    // Фіксуємо транзакцію назавжди, якщо все пройшло без помилок
     await client.query("COMMIT");
 
     return res.status(201).json({
@@ -229,7 +264,6 @@ exports.createOrder = async (req, res) => {
         message: error.message || "Помилка сервера при оформленні замовлення",
       });
   } finally {
-    // Обов'язково звільняємо клієнта назад у пул підключень
     client.release();
   }
 };
@@ -238,10 +272,9 @@ exports.createOrder = async (req, res) => {
 // 3. UPDATE: Зміна статусу замовлення (Адмінка)
 // ==========================================
 exports.updateOrderStatus = async (req, res) => {
-  const { id } = req.params; // Отримуємо ID замовлення з URL-адреси
-  const { status, payment_status } = req.body; // Отримуємо нові статуси з форми
+  const { id } = req.params;
+  const { status, payment_status } = req.body;
 
-  // --- ПЕРЕВІРКА 1: Чи ввів адмін правильний статус (відповідно до CHECK в БД) ---
   const allowedStatuses = [
     "new",
     "processing",
@@ -276,7 +309,6 @@ exports.updateOrderStatus = async (req, res) => {
   }
 
   try {
-    // --- ПЕРЕВІРКА 2: Чи існує замовлення з таким ID в базі даних ---
     const orderCheck = await pool.query("SELECT * FROM orders WHERE id = $1", [
       id,
     ]);
@@ -288,7 +320,6 @@ exports.updateOrderStatus = async (req, res) => {
       });
     }
 
-    // Оновлюємо дані. Якщо якесь поле не передали з форми, залишаємо старе з бази
     const newStatus = status || orderCheck.rows[0].status;
     const newPaymentStatus =
       payment_status || orderCheck.rows[0].payment_status;

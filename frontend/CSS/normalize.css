@@ -2482,6 +2482,42 @@ body.modal-open {
     gap: 2rem;
 }
 
+/* ======================================== */
+/* Catalogue Error */
+/* ======================================== */
+
+.catalog-closed-modal__container {
+    max-width: 55rem;
+    height: auto;
+    max-height: none;
+    padding: 6rem 5rem;
+    align-items: center;
+    text-align: center;
+    gap: 2.5rem;
+}
+
+.catalog-closed-modal__image {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background-color: var(--bg-cards);
+    border-radius: 1.5rem;
+    margin-top:2rem;
+}
+
+.catalog-closed-modal__text {
+    font-size: var(--secondary-heading);
+    color: var(--text-color);
+    line-height: 1.3;
+}
+
+.is-catalog-blocked {
+    pointer-events: none;
+    opacity: 0.35;
+    filter: grayscale(0.4);
+    transition: opacity 0.3s ease;
+}
+
+
 /* ---------- sell --------- */
 .sell{
   width: 100%;
@@ -2777,5 +2813,5 @@ body.modal-open {
 .foo__deco{
   position:absolute;
   top:6rem;
-  left: 128rem;
+  right: -5rem;
 }

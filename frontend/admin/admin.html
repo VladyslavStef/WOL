@@ -19,7 +19,12 @@
 
         <label>
           Пароль
-          <input type="password" name="password" autocomplete="current-password" required />
+          <input
+            type="password"
+            name="password"
+            autocomplete="current-password"
+            required
+          />
         </label>
 
         <span class="admin-error" id="loginError"></span>
@@ -34,7 +39,27 @@
         <h1>Wonder of Lavender — Адмін</h1>
         <button type="button" id="logoutButton">Вийти</button>
       </header>
-
+      <section class="admin-catalog-status">
+        <div class="admin-catalog-status__info">
+          <strong>Каталог:</strong>
+          <span id="catalogStatusLabel">Завантаження...</span>
+        </div>
+        <p class="admin-catalog-status__hint">
+          Вимкніть каталог на сезонний період. Користувачі побачать повідомлення
+          «Лаванда спить, завітайте пізніше».
+        </p>
+        <button
+          type="button"
+          id="toggleCatalogButton"
+          class="admin-catalog-status__toggle"
+        >
+          Змінити статус
+        </button>
+        <span
+          class="admin-catalog-status__message"
+          id="catalogStatusMessage"
+        ></span>
+      </section>
       <nav class="admin-tabs">
         <button type="button" class="admin-tab is-active" data-tab="categories">
           Категорії
@@ -45,7 +70,6 @@
         <button type="button" class="admin-tab" data-tab="orders">
           Замовлення
         </button>
-        <button type="button" class="admin-tab" data-tab="categories">Категорії</button>
         <button type="button" class="admin-tab" data-tab="bookings">
           Бронювання
         </button>
@@ -263,39 +287,6 @@
           <tbody id="bookingsTableBody"></tbody>
         </table>
       </section>
-    </section>
-
-    <section class="admin-tab-panel" id="categoriesPanel">
-    <details class="admin-create-box">
-        <summary>+ Додати категорію</summary>
-        <form class="admin-form" id="createCategoryForm">
-            <label>Назва <input type="text" name="name" required></label>
-            <label>Опис <input type="text" name="description"></label>
-            <label>Текст ціни (напр. "Від 100 грн") <input type="text" name="price_label"></label>
-            <label>
-                Група каталогу
-                <select name="display_group">
-                    <option value="products">products</option>
-                    <option value="seedlings">seedlings</option>
-                </select>
-            </label>
-            <label>Порядок сортування <input type="number" name="sort_order" value="0"></label>
-            <label>URL зображення <input type="text" name="image_url"></label>
-            <label>URL іконки <input type="text" name="icon_url"></label>
-            <label class="admin-checkbox">
-                <input type="checkbox" name="is_active" checked> Активна
-            </label>
-            <span class="admin-error" id="createCategoryError"></span>
-            <button type="submit">Створити категорію</button>
-        </form>
-    </details>
-    <div class="admin-toolbar">
-        <button type="button" id="refreshCategoriesButton">Оновити список</button>
-    </div>
-    <table class="admin-table">
-        <thead><tr><th>ID</th><th>Назва</th><th>Slug</th><th>Група</th><th>Активна</th><th></th></tr></thead>
-        <tbody id="categoriesTableBody"></tbody>
-    </table>
     </section>
 
     <script src="/frontend/JS/config.js"></script>

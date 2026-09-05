@@ -25,7 +25,18 @@ const apiRequest = async function (path, options = {}) {
     const message =
       (data && data.message) || `Помилка сервера (${response.status})`;
 
-    throw new Error(message);
+    const error = new Error(message);
+
+    // FIX (catalog_enabled): переносимо додаткові поля відповіді
+    // (наприклад, { catalogClosed: true } від POST /orders, коли бекенд
+    // відхиляє замовлення через глобально вимкнений каталог) на сам
+    // об'єкт помилки — щоб виклики (basket.js) могли розрізнити "каталог
+    // закрито" від звичайної помилки без парсингу тексту повідомлення.
+    if (data && typeof data === "object") {
+      Object.assign(error, data);
+    }
+
+    throw error;
   }
 
   return data;
@@ -48,6 +59,14 @@ const fetchAllCategories = function () {
 };
 
 // ----------------------------
+// PUBLIC: СТАН КАТАЛОГУ
+// ----------------------------
+
+const fetchCatalogStatus = function () {
+  return apiRequest("/settings/catalog-status", { method: "GET" });
+};
+
+// ----------------------------
 // PUBLIC: ЗАМОВЛЕННЯ / БРОНЮВАННЯ
 // ----------------------------
 
@@ -65,8 +84,6 @@ const createBooking = function (payload) {
   });
 };
 
-// FIX: раніше зайнятість дат бронювання була захардкоджена на фронтенді.
-// Тепер реально запитуємо в бекенду, які дати вже зайняті для цього квитка.
 const fetchBusyDates = function (productId) {
   return apiRequest(`/booking/busy-dates?product_id=${productId}`, {
     method: "GET",
@@ -185,8 +202,21 @@ const adminDeleteBooking = function (bookingId) {
   return adminRequest(`/booking/admin/${bookingId}`, { method: "DELETE" });
 };
 
-// FIX: адмінка тепер бере товари з захищеного /products/admin
-// (включно з неактивними), а не з публічного /products.
 const adminGetProducts = function () {
   return adminRequest("/products/admin", { method: "GET" });
+};
+
+// ----------------------------
+// ADMIN: СТАН КАТАЛОГУ
+// ----------------------------
+
+const adminGetCatalogStatus = function () {
+  return apiRequest("/settings/catalog-status", { method: "GET" });
+};
+
+const adminUpdateCatalogStatus = function (catalogEnabled) {
+  return adminRequest("/settings/catalog-status", {
+    method: "PUT",
+    body: JSON.stringify({ catalog_enabled: catalogEnabled }),
+  });
 };

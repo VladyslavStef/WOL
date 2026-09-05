@@ -1,9 +1,25 @@
-// ГРУПУВАННЯ ТЕПЕР ПРИХОДИТЬ ГОТОВИМ З БЕКЕНДУ (GET /categories, вкладені products[]).
-// Категорія відображається як "картка" з власним фото/описом (стан -1),
-// товари категорії — наступні слайди (кнопка кошика активна лише на них).
-// FIX: це ЄДИНА версія цього файлу в проєкті. Стара "плоска" модель
-// (buildCategoryArticle/toFrontendItem/групування у масив [header,...products])
-// повністю видалена — вона конфліктувала з цією версією і ламала каталог.
+// ========================================
+// НОВА МОДЕЛЬ: categories → products
+// ========================================
+// FIX: цей файл раніше хардкодив списки категорій
+// (PRODUCT_CATEGORY_ORDER/SEEDLING_CATEGORY_ORDER) і мав toFrontendProduct()
+// із прапорцем isFirstInCategory, що імітував "перший елемент масиву — це
+// категорія". Це і була стара неправильна модель. Тепер бекенд (GET
+// /categories) сам повертає категорії окремо від товарів, уже відсортовані,
+// і поля вже узгоджені з тим, що очікує рендер — тому тут лишається лише
+// групування по displayGroup і спільна логіка картки категорія→товари.
+//
+// FIX (stock-аудит): прибрано непридатний "мертвий" код
+// toFrontendItem/buildCategoryArticle/groupCategoriesByDisplayGroup, який
+// ніде коректно не викликався (несумісний формат даних). main.js і
+// catalogue.js тепер напряму передають сюди "сирі" категорії з API.
+//
+// FIX (catalog_enabled): клік "додати в кошик" тепер обгорнутий у
+// guardCatalogAction() (catalog-state.js) — перед фактичним додаванням
+// товару завжди робиться жива (не кешована) перевірка стану каталогу.
+// Це та сама функція, що використовується для посилань і кнопок
+// перемикання каталогу — логіка перевірки не дублюється по файлах.
+
 
 // ----------------------------
 // РОЗБИТТЯ КАТЕГОРІЙ ПО ГРУПІ ВІДОБРАЖЕННЯ
@@ -13,15 +29,17 @@ const filterCategoriesByDisplayGroup = function (categories, displayGroup) {
     return categories.filter((category) => category.displayGroup === displayGroup);
 };
 
-const findCategoryBySlug = function (categories, slug) {
-    return categories.find((category) => category.slug === slug);
-};
 
 // ----------------------------
 // ЧИСТІ ФУНКЦІЇ СТАНУ КАРТКИ (тестуються окремо, без DOM)
 // ----------------------------
 // currentIndex === -1  → СТАН 1: показуємо саму категорію
 // currentIndex === 0..N-1 → СТАН 2/3: показуємо products[currentIndex]
+//
+// І category, і product тут — це "сирі" об'єкти так, як їх повертає API
+// (mapCategory / mapProductForCategory у categoryController.js): категорія
+// має name/description/priceLabel/image/icon/alt, а товар — title (НЕ name!)
+// /description/price (число)/image/icon/alt/stock.
 
 const getCategoryCardStateData = function (category, index) {
 
@@ -39,16 +57,15 @@ const getCategoryCardStateData = function (category, index) {
 
     const product = (category.products || [])[index];
 
-    // FIX: API повертає товар з полем "title", не "name" — раніше тут
-    // читалось лише product.name, яке завжди undefined -> назва товару
-    // ніколи не показувалась при перемиканні слайдів.
+    const productName = product.title || product.name;
+
     return {
-        name: product.name || product.title,
+        name: productName,
         description: product.description || "",
         priceText: `${product.price} грн`,
         image: product.image || "",
         icon: product.icon || "",
-        alt: product.alt || product.name || product.title,
+        alt: product.alt || productName,
         isCategory: false
     };
 };
@@ -96,10 +113,12 @@ const showAddedAnimation = function (image) {
 // ----------------------------
 // СПІЛЬНА ЛОГІКА КАРТКИ: категорія ⇄ товари
 // ----------------------------
+// Використовується і в catalogue.js (усі категорії), і в main.js
+// (топ-категорії на головній) — та сама поведінка.
 
 const setupCategoryCard = function (article, category) {
 
-    let currentIndex = -1; // ЗАВЖДИ стартуємо з категорії
+    let currentIndex = -1; // ЗАВЖДИ стартуємо з категорії, ніколи не з products[0]
     let isAnimating = false;
     let isBasketAnimating = false;
 
@@ -123,6 +142,7 @@ const setupCategoryCard = function (article, category) {
 
     basketImage.classList.remove("is-hidden");
 
+    // ---- рендер даних у DOM ----
     const renderState = function (data) {
         titleEl.textContent = data.name;
         descriptionEl.textContent = data.description;
@@ -139,40 +159,40 @@ const setupCategoryCard = function (article, category) {
         basketButton.classList.toggle("is-hidden", nav.isCategoryState);
     };
 
+    // ---- ПОЧАТКОВИЙ RENDER: завжди СТАН 1 (категорія) ----
     renderState(getCategoryCardStateData(category, currentIndex));
     updateControls();
 
+    // ---- ДОДАВАННЯ В КОШИК: лише в товарному стані ----
+    // FIX (catalog_enabled): перед фактичним addToBasket завжди робимо
+    // живу перевірку стану каталогу через guardCatalogAction — якщо
+    // каталог щойно вимкнули (навіть якщо картка вже давно відкрита на
+    // екрані), товар у кошик не потрапить, а натомість покажеться
+    // "Лаванда спить".
     basketButton.addEventListener("click", () => {
 
         if (currentIndex === -1) {
             return; // безпека: категорію не можна покласти в кошик
         }
 
-        const product = products[currentIndex];
+        guardCatalogAction(() => {
 
-        // FIX: API віддає товар як {title, price, image, icon, alt, ...} —
-        // а basket.js по всьому коду очікує {name, priceValue, image, alt}.
-        // Без цієї нормалізації кошик показував би NaN грн.
-        addToBasket({
-            id: product.id,
-            name: product.name || product.title,
-            priceValue: Number(product.price),
-            image: product.image,
-            alt: product.alt || product.name || product.title
+            addToBasket(products[currentIndex]);
+
+            if (isBasketAnimating) {
+                return;
+            }
+
+            isBasketAnimating = true;
+            showAddedAnimation(basketImage);
+
+            setTimeout(() => {
+                isBasketAnimating = false;
+            }, 1000);
         });
-
-        if (isBasketAnimating) {
-            return;
-        }
-
-        isBasketAnimating = true;
-        showAddedAnimation(basketImage);
-
-        setTimeout(() => {
-            isBasketAnimating = false;
-        }, 1000);
     });
 
+    // ---- анімація переходу (той самий fade, що й раніше) ----
     const addFadeIn = () => { imageNextEl.classList.add("is-fading-in"); iconNextEl.classList.add("is-fading-in"); };
     const addFadeOut = () => { imageEl.classList.add("is-fading-out"); iconEl.classList.add("is-fading-out"); };
     const removeFadeIn = () => { imageNextEl.classList.remove("is-fading-in"); iconNextEl.classList.remove("is-fading-in"); };

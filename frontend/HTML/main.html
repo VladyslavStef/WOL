@@ -97,6 +97,29 @@
 
     </article>
 </template>
+
+<section class="modal catalog-closed-modal" id="catalogClosedModal" aria-hidden="true">
+    <div class="modal__container catalog-closed-modal__container">
+
+        <button
+            class="modal__close catalog-closed-modal__close"
+            type="button"
+            aria-label="Закрити"
+        ></button>
+
+        <img
+            src="/frontend/IMG/lavender-sleeping.png"
+            alt="Лаванда спить"
+            class="catalog-closed-modal__image"
+          />
+
+        <p class="catalog-closed-modal__text">
+            Лаванда спить, завітайте пізніше
+        </p>
+
+    </div>
+</section>
+
 <section class="modal modal-basket">
 
     <div class="modal__container modal-basket__container">
@@ -980,6 +1003,7 @@
 <!-- FIX: нові файли — мають підключатись ПЕРЕД main.js/basket.js/booking.js -->
 <script src="/frontend/JS/config.js"></script>
 <script src="/frontend/JS/api.js"></script>
+<script src="/frontend/JS/catalogue-state.js"></script>
 <script src="/frontend/JS/category-groups.js"></script>
 <script src="/frontend/JS/main.js"></script>
 <script src="/frontend/JS/basket.js"></script>

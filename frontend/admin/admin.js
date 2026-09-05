@@ -25,7 +25,6 @@ const createProductForm = document.getElementById("createProductForm");
 const createProductError = document.getElementById("createProductError");
 const refreshProductsButton = document.getElementById("refreshProductsButton");
 const productsTableBody = document.getElementById("productsTableBody");
-const productCategorySelect = document.getElementById("productCategorySelect");
 
 const refreshOrdersButton = document.getElementById("refreshOrdersButton");
 const ordersTableBody = document.getElementById("ordersTableBody");
@@ -36,11 +35,6 @@ const bookingsTableBody = document.getElementById("bookingsTableBody");
 let editingProductId = null;
 let editingCategoryId = null;
 
-// Кешований останній список категорій — щоб не тягнути з бекенду щоразу
-// при відкритті форми товару, і щоб select завжди відображав актуальний стан
-let cachedCategories = [];
-
-
 // ========================================
 // VIEW SWITCHING
 // ========================================
@@ -49,9 +43,7 @@ const showDashboard = async function () {
     loginView.classList.add("is-hidden");
     dashboardView.classList.remove("is-hidden");
 
-    // Категорії мають завантажитись ПЕРШИМИ — і для таблиці категорій,
-    // і для select у формі товару, і щоб таблиця товарів одразу показувала
-    // назву категорії, а не "без категорії" до довантаження.
+    loadCatalogStatus(); 
     loadCategories();
     loadProducts();
     loadOrders();
@@ -234,12 +226,6 @@ document.getElementById("refreshCategoriesButton").addEventListener("click", loa
 // ========================================
 // PRODUCTS
 // ========================================
-
-const getCategoryNameById = function (categoryId) {
-
-    const category = cachedCategories.find((item) => item.id === categoryId);
-    return category ? category.name : "— без категорії —";
-};
 
 const renderProductsTable = function (products) {
     productsTableBody.innerHTML = "";
@@ -503,6 +489,60 @@ const loadBookings = async function () {
 
 refreshBookingsButton.addEventListener("click", loadBookings);
 
+
+// ========================================
+// CATALOG STATUS (catalog_enabled)
+// ========================================
+
+const catalogStatusLabel = document.getElementById("catalogStatusLabel");
+const toggleCatalogButton = document.getElementById("toggleCatalogButton");
+const catalogStatusMessage = document.getElementById("catalogStatusMessage");
+
+let currentCatalogEnabled = null;
+
+const renderCatalogStatus = function () {
+    if (currentCatalogEnabled === null) {
+        catalogStatusLabel.textContent = "Завантаження...";
+        return;
+    }
+    catalogStatusLabel.textContent = currentCatalogEnabled
+        ? " Каталог працює"
+        : " Каталог вимкнений";
+    toggleCatalogButton.textContent = currentCatalogEnabled
+        ? "Вимкнути каталог"
+        : "Увімкнути каталог";
+};
+
+const loadCatalogStatus = async function () {
+    try {
+        const response = await adminGetCatalogStatus();
+        currentCatalogEnabled = Boolean(response.catalogEnabled);
+        renderCatalogStatus();
+    } catch (error) {
+        catalogStatusLabel.textContent = "Помилка завантаження статусу";
+        console.error("Не вдалося завантажити статус каталогу:", error.message);
+    }
+};
+
+toggleCatalogButton.addEventListener("click", async () => {
+    if (currentCatalogEnabled === null) return;
+
+    const nextValue = !currentCatalogEnabled;
+    toggleCatalogButton.disabled = true;
+    catalogStatusMessage.textContent = "";
+
+    try {
+        const response = await adminUpdateCatalogStatus(nextValue);
+        currentCatalogEnabled = Boolean(response.catalogEnabled);
+        renderCatalogStatus();
+        catalogStatusMessage.textContent = "Статус збережено";
+        setTimeout(() => { catalogStatusMessage.textContent = ""; }, 3000);
+    } catch (error) {
+        catalogStatusMessage.textContent = `Помилка: ${error.message}`;
+    } finally {
+        toggleCatalogButton.disabled = false;
+    }
+});
 
 // ========================================
 // INIT

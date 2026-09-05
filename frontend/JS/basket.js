@@ -1,4 +1,17 @@
-const MAX_QUANTITY = 5;
+// FIX (stock): реальний product.stock — єдине джерело істини для
+// максимальної кількості товару в кошику, замість жорсткого MAX_QUANTITY.
+const getMaxQuantity = function (product) {
+
+    if (
+        product == null ||
+        product.stock === null ||
+        product.stock === undefined
+    ) {
+        return 0;
+    }
+
+    return Math.max(0, Number(product.stock));
+};
 
 let basket =
     JSON.parse(localStorage.getItem("basket")) || [];
@@ -185,6 +198,60 @@ const removeFromBasket = function (item) {
 
 
 // ========================================
+// STOCK RECONCILIATION
+// ========================================
+// Товар міг лежати в кошику (localStorage переживає перезавантаження), а
+// тим часом його реальний stock міг зменшитись/зникнути. Перед показом
+// кошика звіряємо з актуальними даними — єдиним джерелом істини.
+const reconcileBasketWithStock = async function () {
+
+    if (basket.length === 0) {
+        return false;
+    }
+
+    try {
+        const response = await fetchAllProducts();
+        const freshProducts = response.data || [];
+        const freshById = new Map(freshProducts.map((product) => [product.id, product]));
+
+        let changed = false;
+
+        basket = basket.filter((item) => {
+
+            const fresh = freshById.get(item.product.id);
+
+            if (!fresh) {
+                changed = true;
+                return false;
+            }
+
+            item.product = fresh;
+
+            const maxQuantity = getMaxQuantity(fresh);
+
+            if (item.quantity > maxQuantity) {
+                item.quantity = maxQuantity;
+                changed = true;
+            }
+
+            return item.quantity > 0;
+        });
+
+        if (changed) {
+            saveBasket();
+            updateBasketCount();
+        }
+
+        return changed;
+
+    } catch (error) {
+        console.error("Не вдалося перевірити актуальний залишок кошика:", error.message);
+        return false;
+    }
+};
+
+
+// ========================================
 // RENDER BASKET
 // ========================================
 
@@ -267,14 +334,10 @@ const renderItems = function () {
             );
 
 
-        // ----------------------------
-        // UPDATE ITEM PRICE
-        // ----------------------------
-
         const updateItemPrice = function () {
 
             const price =
-                item.product.priceValue *
+                Number(item.product.price) *
                 item.quantity;
 
             itemPrice.textContent =
@@ -282,30 +345,22 @@ const renderItems = function () {
         };
 
 
-        // ----------------------------
-        // UPDATE PLUS BUTTON
-        // ----------------------------
-
         const updatePlusButton = function () {
 
             basketPlus.disabled =
-                item.quantity >= MAX_QUANTITY;
+                item.quantity >= getMaxQuantity(item.product);
         };
 
 
-        // ----------------------------
-        // INITIAL PRODUCT DATA
-        // ----------------------------
-
         itemName.textContent =
-            item.product.name;
+            item.product.title;
 
         itemImage.src =
             item.product.image;
 
         itemImage.alt =
             item.product.alt ||
-            item.product.name;
+            item.product.title;
 
         itemQuantity.textContent =
             item.quantity;
@@ -316,17 +371,13 @@ const renderItems = function () {
         updatePlusButton();
 
 
-        // ----------------------------
-        // PLUS
-        // ----------------------------
-
         basketPlus.addEventListener(
             "click",
             () => {
 
                 if (
                     item.quantity <
-                    MAX_QUANTITY
+                    getMaxQuantity(item.product)
                 ) {
 
                     item.quantity++;
@@ -350,10 +401,6 @@ const renderItems = function () {
             }
         );
 
-
-        // ----------------------------
-        // MINUS
-        // ----------------------------
 
         basketMinus.addEventListener(
             "click",
@@ -383,10 +430,6 @@ const renderItems = function () {
             }
         );
 
-
-        // ----------------------------
-        // REMOVE BUTTON
-        // ----------------------------
 
         removeButton.addEventListener(
             "click",
@@ -432,9 +475,12 @@ const renderItems = function () {
 
 const addToBasket = function (product) {
 
-    // FIX: раніше товари звірялись за назвою (item.product.name), що могло
-    // збігтись у різних категоріях. Тепер бекенд дає стабільний id — звіряємо
-    // за ним, а на name падаємо лише як fallback для дуже старих даних.
+    const maxQuantity = getMaxQuantity(product);
+
+    if (maxQuantity <= 0) {
+        return;
+    }
+
     const existingItem =
         basket.find((item) => {
 
@@ -442,7 +488,7 @@ const addToBasket = function (product) {
                 return item.product.id === product.id;
             }
 
-            return item.product.name === product.name;
+            return item.product.title === product.title;
         });
 
 
@@ -450,7 +496,7 @@ const addToBasket = function (product) {
 
         if (
             existingItem.quantity <
-            MAX_QUANTITY
+            getMaxQuantity(existingItem.product)
         ) {
 
             existingItem.quantity++;
@@ -487,7 +533,7 @@ const renderCheckout = function () {
     basket.forEach((item) => {
 
         const itemTotal =
-            item.product.priceValue *
+            Number(item.product.price) *
             item.quantity;
 
         total += itemTotal;
@@ -497,7 +543,7 @@ const renderCheckout = function () {
             <div class="checkout-item">
 
                 <span class="checkout-item__name">
-                    ${item.product.name}
+                    ${item.product.title}
                 </span>
 
                 <span class="checkout-item__quantity">
@@ -586,51 +632,55 @@ const renderOrderConfirmation =
 // ========================================
 // OPEN CHECKOUT
 // ========================================
+// FIX (catalog_enabled): "Підтвердити" з кошика веде до checkout-форми —
+// це вже початок оформлення нового замовлення, тож перед відкриттям
+// checkout завжди робимо живу перевірку стану каталогу через
+// guardCatalogAction. Якщо каталог щойно вимкнули — замість переходу в
+// checkout користувач побачить "Лаванда спить".
 
 confirmButton.addEventListener(
     "click",
     () => {
 
-        renderCheckout();
+        guardCatalogAction(() => {
+
+            renderCheckout();
 
 
-        basketView.classList.add(
-            "is-hidden"
-        );
+            basketView.classList.add(
+                "is-hidden"
+            );
 
 
-        checkoutView.classList.add(
-            "is-active"
-        );
+            checkoutView.classList.add(
+                "is-active"
+            );
 
 
-        // починаємо з першого checkout-кроку
-
-        checkoutSummary.classList.remove(
-            "is-hidden"
-        );
+            checkoutSummary.classList.remove(
+                "is-hidden"
+            );
 
 
-        paymentView.classList.remove(
-            "is-active"
-        );
+            paymentView.classList.remove(
+                "is-active"
+            );
 
 
-        orderConfirmationView.classList.remove(
-            "is-active"
-        );
+            orderConfirmationView.classList.remove(
+                "is-active"
+            );
 
 
-        pendingOrder = null;
+            pendingOrder = null;
 
 
-        // очищаємо помилки
+            nameError.textContent = "";
 
-        nameError.textContent = "";
+            phoneError.textContent = "";
 
-        phoneError.textContent = "";
-
-        paymentError.textContent = "";
+            paymentError.textContent = "";
+        });
     }
 );
 
@@ -680,10 +730,6 @@ formCheckout.addEventListener(
         let isValid = true;
 
 
-        // ----------------------------
-        // PHONE
-        // ----------------------------
-
         if (
             !phonePattern.test(
                 phoneNumber
@@ -700,10 +746,6 @@ formCheckout.addEventListener(
             phoneError.textContent = "";
         }
 
-
-        // ----------------------------
-        // NAME
-        // ----------------------------
 
         if (
             customerName.length < 2
@@ -724,10 +766,6 @@ formCheckout.addEventListener(
             return;
         }
 
-
-        // ----------------------------
-        // GO TO PAYMENT
-        // ----------------------------
 
         checkoutSummary.classList.add(
             "is-hidden"
@@ -781,10 +819,6 @@ paymentForm.addEventListener(
             );
 
 
-        // ----------------------------
-        // PAYMENT VALIDATION
-        // ----------------------------
-
         if (!selectedPayment) {
 
             paymentError.textContent =
@@ -797,10 +831,6 @@ paymentForm.addEventListener(
         paymentError.textContent = "";
 
 
-        // ----------------------------
-        // BUILD ORDER
-        // ----------------------------
-
         let total = 0;
 
 
@@ -808,7 +838,7 @@ paymentForm.addEventListener(
             basket.map((item) => {
 
                 const itemTotal =
-                    item.product.priceValue *
+                    Number(item.product.price) *
                     item.quantity;
 
 
@@ -818,10 +848,10 @@ paymentForm.addEventListener(
                 return {
 
                     name:
-                        item.product.name,
+                        item.product.title,
 
                     price:
-                        item.product.priceValue,
+                        Number(item.product.price),
 
                     quantity:
                         item.quantity,
@@ -857,17 +887,9 @@ paymentForm.addEventListener(
         };
 
 
-        // ----------------------------
-        // SAVE PENDING ORDER
-        // ----------------------------
-
         pendingOrder =
             orderData;
 
-
-        // ----------------------------
-        // RENDER FINAL SCREEN
-        // ----------------------------
 
         renderOrderConfirmation(
             orderData
@@ -908,9 +930,17 @@ orderConfirmationBack.addEventListener(
 
 // ========================================
 // FINAL ORDER ACTION
-// FIX: раніше тут був лише console.log — замовлення ніколи не долітало
-// до бекенду. Тепер реальний виклик POST /orders.
 // ========================================
+// FIX (catalog_enabled — критичний сценарій "race condition при checkout"):
+// 1. Перед фактичною відправкою запиту ще РАЗ, наостанок, живо перевіряємо
+//    стан каталогу. Якщо адмін вимкнув каталог саме поки користувач був
+//    на екрані підтвердження — запит навіть не йде на сервер, одразу
+//    показується "Лаванда спить".
+// 2. Це НЕ замінює backend-перевірку — orderController тепер теж
+//    перевіряє site_settings.catalog_enabled і повертає 409 з прапорцем
+//    catalogClosed:true, якщо стан змінився буквально між кроком 1 і
+//    записом у БД. apiRequest (api.js) переносить catalogClosed у
+//    об'єкт помилки — тут його й перевіряємо.
 
 let isSubmittingOrder = false;
 
@@ -924,6 +954,13 @@ orderConfirmationAction.addEventListener(
 
         if (isSubmittingOrder) {
             return;
+        }
+
+        const catalogStillEnabled = await refreshCatalogStatus();
+
+        if (!catalogStillEnabled) {
+            applyCatalogBlockedState();
+            return; // запит на сервер узагалі не відправляється
         }
 
         isSubmittingOrder = true;
@@ -952,7 +989,6 @@ orderConfirmationAction.addEventListener(
                 `Замовлення оформлено!\nНомер замовлення: ${result.order_code}\nСума: ${result.total_price} грн`
             );
 
-            // очищаємо кошик і закриваємо модалку тільки після успіху
             basket = [];
             saveBasket();
             updateBasketCount();
@@ -963,7 +999,21 @@ orderConfirmationAction.addEventListener(
 
         } catch (error) {
 
-            alert(`Не вдалося оформити замовлення: ${error.message}`);
+            if (error.catalogClosed) {
+                // Бекенд відхилив замовлення саме через глобальне
+                // вимкнення каталогу (спрацювало між кроком 1 і записом
+                // у БД) — показуємо ту саму спільну модалку, а не
+                // технічний alert. Order НЕ створено.
+                applyCatalogBlockedState();
+            } else {
+
+                alert(`Не вдалося оформити замовлення: ${error.message}`);
+
+                // Якщо причина — недостатній stock (гонка з іншим
+                // покупцем), одразу звіряємо кошик з актуальним складом.
+                await reconcileBasketWithStock();
+                renderItems();
+            }
 
         } finally {
 
@@ -979,54 +1029,37 @@ orderConfirmationAction.addEventListener(
 // OPEN BASKET
 // ========================================
 
-const openBasket = function () {
-
-    /*
-        Кожне нове відкриття кошика
-        починаємо з чистого UI-стану.
-    */
-
-
-    // ховаємо checkout
+const openBasket = async function () {
 
     checkoutView.classList.remove(
         "is-active"
     );
 
 
-    // показуємо кошик
-
     basketView.classList.remove(
         "is-hidden"
     );
 
-
-    // скидаємо перший checkout-крок
 
     checkoutSummary.classList.remove(
         "is-hidden"
     );
 
 
-    // ховаємо payment
-
     paymentView.classList.remove(
         "is-active"
     );
 
-
-    // ВАЖЛИВИЙ FIX:
-    // ховаємо старий фінальний екран
 
     orderConfirmationView.classList.remove(
         "is-active"
     );
 
 
-    // очищаємо старе pending-замовлення
-
     pendingOrder = null;
 
+
+    const stockChanged = await reconcileBasketWithStock();
 
     renderItems();
 
@@ -1039,6 +1072,10 @@ const openBasket = function () {
     document.body.classList.add(
         "modal-open"
     );
+
+    if (stockChanged) {
+        alert("Наявність деяких товарів у кошику змінилася — кількість оновлено відповідно до складу.");
+    }
 };
 
 

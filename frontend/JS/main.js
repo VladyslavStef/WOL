@@ -1,16 +1,64 @@
 // ========================================
-// TOP PRODUCTS (нова модель: categories → products)
+// TOP PRODUCTS (нова модель: categories → products, з урахуванням stock)
 // ========================================
-// FIX: раніше тут будувався productsByCategory з product-data.js/бекенду
-// плоским списком і власна (дубльована з catalogue.js) карусельна логіка.
-// Тепер: 3 картки на головній ("hydrolats", "oils", "soaps") — це
-// data-category === category.slug, і вся поведінка "категорія ⇄ товари"
-// уже визначена один раз у category-groups.js (setupCategoryCard),
-// спільно з catalogue.js.
+// FIX: раніше тут будувався productsByCategory через buildCategoryArticle()
+// (несумісний, "мертвий" формат — див. category-groups.js) і виклик
+// articleAll.forEach(setupProductCard) — функції setupProductCard ніде не
+// існувало, тобто це падало з ReferenceError і топ-товари на головній
+// ніколи не рендерились.
+//
+// Тепер: GET /categories вже повертає лише активні категорії групи
+// "products", у яких є хоча б один товар в наявності (is_active=true,
+// stock>0 для physical) — фільтрація за stock відбувається ОДИН РАЗ на
+// бекенді, тут вона не дублюється.
+//
+// Логіка вибору 3 карток на головній (Частина 5 ТЗ):
+//   1. Пріоритетно беремо категорії "hydrolats", "oils", "soaps", якщо вони
+//      є серед доступних.
+//   2. Якщо якоїсь із них немає (наприклад, весь stock=0) — вільну позицію
+//      займає інша доступна категорія групи "products" (без дублів).
+//   3. Якщо доступних категорій менше 3 — показуємо стільки, скільки є,
+//      і прибираємо зайві картки з DOM, а не показуємо порожні "заглушки".
 
 const articleAll = document.querySelectorAll(".sell__article");
 
-let topCategories = [];
+const PREFERRED_TOP_SLUGS = ["hydrolats", "oils", "soaps"];
+const TOP_PRODUCTS_CARD_COUNT = 3;
+
+const pickTopCategories = function (allCategories) {
+
+    const productCategories = allCategories
+        .filter((category) => category.displayGroup === "products")
+        .slice()
+        .sort((a, b) => a.sortOrder - b.sortOrder);
+
+    const picked = [];
+    const usedIds = new Set();
+
+    // 1. Пріоритетні категорії — якщо доступні
+    PREFERRED_TOP_SLUGS.forEach((slug) => {
+        const found = productCategories.find((category) => category.slug === slug);
+        if (found && !usedIds.has(found.id)) {
+            picked.push(found);
+            usedIds.add(found.id);
+        }
+    });
+
+    // 2. Доповнюємо іншими доступними категоріями до потрібної кількості,
+    // без дублів (усі вже в usedIds пропускаються).
+    for (const category of productCategories) {
+        if (picked.length >= TOP_PRODUCTS_CARD_COUNT) {
+            break;
+        }
+        if (usedIds.has(category.id)) {
+            continue;
+        }
+        picked.push(category);
+        usedIds.add(category.id);
+    }
+
+    return picked.slice(0, TOP_PRODUCTS_CARD_COUNT);
+};
 
 const initTopProducts = async function () {
 
@@ -18,15 +66,20 @@ const initTopProducts = async function () {
         const response = await fetchAllCategories();
         const allCategories = response.data || [];
 
-        articleAll.forEach((article) => {
-            const slug = article.dataset.category;
-            const category = findCategoryBySlug(allCategories, slug);
+        const topCategories = pickTopCategories(allCategories);
 
-            if (category) {
-                setupCategoryCard(article, category);
-            } else {
-                console.warn(`Категорію "${slug}" не знайдено серед активних категорій`);
+        articleAll.forEach((article, index) => {
+
+            const category = topCategories[index];
+
+            if (!category) {
+                // Доступних категорій менше, ніж карток на сторінці —
+                // прибираємо зайву картку, а не показуємо фіктивну/порожню.
+                article.remove();
+                return;
             }
+
+            setupCategoryCard(article, category);
         });
 
     } catch (error) {
@@ -120,7 +173,7 @@ if (
             allPhotos[nextIndex];
 
 
-        // Чекаємо, поки картинка завантажиться
+        // Чекаємо, поки картинка реально завантажиться
         const startTransition = function () {
 
             nextSlide.classList.remove(
