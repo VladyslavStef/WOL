@@ -5,83 +5,134 @@
   box-sizing: border-box;
 }
 
-*,*:before,*:after {
--moz-box-sizing:  border-box;
--webkit-box-sizing: border-box;
-box-sizing: border-box;
+*,
+*:before,
+*:after {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
-:focus,:active{outline: none;}
-a:focus, a:active{outline: none;}
+:focus,
+:active {
+  outline: none;
+}
+a:focus,
+a:active {
+  outline: none;
+}
 
-nav, header, footer, section, article, aside, figure, figcaption {
+nav,
+header,
+footer,
+section,
+article,
+aside,
+figure,
+figcaption {
   display: block;
 }
 
-html, body {
+html,
+body {
   height: 100%;
-  width: 100%; 
-  font-size:100%;
+  width: 100%;
+  font-size: 100%;
   line-height: 1;
-  font-size:62.5%;
+  font-size: 62.5%;
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
   -moz-text-size-adjust: 100%;
   font-family: "Playfair Display";
 }
 
-input, button, select, textarea {font-family: inherit;}
+input,
+button,
+select,
+textarea {
+  font-family: inherit;
+}
 
-input::-ms-clear {display: none;}
-button{cursor: pointer;}
-button::-moz-focus-inner {padding: 0; border: 0;}
-a,a:visited { text-decoration: none;}
-a:hover{ text-decoration: none; }
-ul li{list-style:none;}
-img{vertical-align: top;}
+input::-ms-clear {
+  display: none;
+}
+button {
+  cursor: pointer;
+}
+button::-moz-focus-inner {
+  padding: 0;
+  border: 0;
+}
+a,
+a:visited {
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: none;
+}
+ul li {
+  list-style: none;
+}
+img {
+  vertical-align: top;
+}
 
-h1, h2, h3, h4, h5, h6 {font-weight: 400;font-size: inherit;}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 400;
+  font-size: inherit;
+}
 
-:root{
- --primary-color: #BBABD6;
- --footer-color: #5E3B78;
- --neutral-bg: #FBF9FB;
- --text-color: #31293A;
- --bg-cards: #E9E6EF;
+:root {
+  --primary-color: #bbabd6;
+  --footer-color: #5e3b78;
+  --neutral-bg: #fbf9fb;
+  --text-color: #31293a;
+  --bg-cards: #e9e6ef;
 
   --button-font-size: 3.2rem;
   --primary-heading: 9.6rem;
   --secondary-heading: 5.2rem;
-  --ternary-heading:3.6rem;
+  --ternary-heading: 3.6rem;
   --subtitle-font-size: 2.4rem;
   --card-font-size: 2rem;
- 
 }
 
 /* ----common use sections ------- */
 /* ----- navbar --------- */
 
-body{
- background-color: var(--neutral-bg);
+body {
+  background-color: var(--neutral-bg);
 }
 
-.header{
-  font-size:var(--subtitle-font-size);
-  font-family: 'Montserrat';
+.header {
+  position: relative; /* Накладає шапку поверх вмісту Hero */
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10; /* Виводить навбар на передній план над фоном */
+  background: transparent; /* Робить тло шапки повністю прозорим */
+  
+  font-size: var(--subtitle-font-size);
+  font-family: "Montserrat";
   padding-top: 3.8rem;
 }
 
-.navbar__container{
+.navbar__container {
   display: flex;
   flex-direction: row;
   align-items: center;
   max-width: 162.1rem;
   margin: 0 auto;
   position: relative;
-  
+  background: transparent; 
 }
 
-.navbar__list{
+.navbar__list {
   display: flex;
   flex-direction: row;
   gap: 7.5rem;
@@ -90,22 +141,21 @@ body{
   color: var(--text-color);
 }
 
-.shop{
+.shop {
   max-width: 9rem;
   max-height: 9rem;
 }
 
 .icon-button {
-  border-radius:50%;
+  border-radius: 50%;
   background-color: transparent;
   position: relative;
-  
 }
 
-.basket-count{
+.basket-count {
   position: absolute;
-  bottom:0;
-  right:0;
+  bottom: 0;
+  right: 0;
 
   border-radius: 50%;
 
@@ -113,12 +163,11 @@ body{
   height: 3rem;
 
   color: var(--neutral-bg);
-  background-color: #F09C48;
+  background-color: #f09c48;
 
   display: flex;
   justify-content: center;
   align-items: center;
-
 }
 
 /* -----interactive navbar ----- */
@@ -155,35 +204,34 @@ body{
 
 .modal,
 .modal-basket {
-    display: none;
+  display: none;
 
-    position: fixed;
-    inset: 0;
+  position: fixed;
+  inset: 0;
 
-    z-index: 1000;
+  z-index: 1000;
 
-    padding: 5rem 2rem;
+  padding: 5rem 2rem;
 
-    overflow-y: auto;
+  overflow-y: auto;
 
-    background-color: rgba(49, 41, 58, 0.2);
-    backdrop-filter: blur(8px);
+  background-color: rgba(49, 41, 58, 0.2);
+  backdrop-filter: blur(8px);
 
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 .modal.is-open,
 .modal-basket.is-open {
-    display: flex;
+  display: flex;
 
-    justify-content: center;
-    align-items: flex-start;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 body.modal-open {
-    overflow: hidden;
+  overflow: hidden;
 }
-
 
 /* ======================================== */
 /* COMMON MODAL CONTAINER */
@@ -191,27 +239,26 @@ body.modal-open {
 
 .modal__container,
 .modal-basket__container {
-    position: relative;
+  position: relative;
 
-    width: min(100rem, 100%);
-    height: 67rem;
+  width: min(100rem, 100%);
+  height: 67rem;
 
-    max-height: calc(100vh - 10rem);
+  max-height: calc(100vh - 10rem);
 
-    margin: 0 auto;
+  margin: 0 auto;
 
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 
-    background-color: var(--neutral-bg);
+  background-color: var(--neutral-bg);
 
-    border-radius: 2.5rem;
+  border-radius: 2.5rem;
 
-    overflow: hidden;
+  overflow: hidden;
 
-    isolation: isolate;
+  isolation: isolate;
 }
-
 
 /* ======================================== */
 /* COMMON MODAL BACKGROUND */
@@ -219,19 +266,18 @@ body.modal-open {
 
 .modal__bg,
 .basket-bg {
-    position: absolute;
-    inset: 0;
+  position: absolute;
+  inset: 0;
 
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
 
-    object-fit: cover;
+  object-fit: cover;
 
-    pointer-events: none;
+  pointer-events: none;
 
-    z-index: -1;
+  z-index: -1;
 }
-
 
 /* ======================================== */
 /* COMMON MODAL CLOSE */
@@ -239,95 +285,93 @@ body.modal-open {
 
 .modal__close,
 .close {
-    position: absolute;
+  position: absolute;
 
-    top: 4rem;
-    right: 5rem;
+  top: 4rem;
+  right: 5rem;
 
-    width: 4rem;
-    height: 4rem;
+  width: 4rem;
+  height: 4rem;
 
-    padding: 0;
+  padding: 0;
 
-    border: none;
+  border: none;
 
-    background: transparent;
+  background: transparent;
 
-    cursor: pointer;
+  cursor: pointer;
 
-    z-index: 20;
+  z-index: 20;
 
-    transition: transform 0.3s ease;
+  transition: transform 0.3s ease;
 }
 
 .modal__close:hover,
 .close:hover {
-    transform: scale(1.12);
+  transform: scale(1.12);
 }
 
 .modal__close::before,
 .modal__close::after,
 .close::before,
 .close::after {
-    content: "";
+  content: "";
 
-    position: absolute;
+  position: absolute;
 
-    top: 50%;
-    left: 50%;
+  top: 50%;
+  left: 50%;
 
-    width: 3.3rem;
-    height: 0.3rem;
+  width: 3.3rem;
+  height: 0.3rem;
 
-    border-radius: 1rem;
+  border-radius: 1rem;
 
-    background-color: var(--text-color);
+  background-color: var(--text-color);
 }
 
 .modal__close::before,
 .close::before {
-    transform: translate(-50%, -50%) rotate(45deg);
+  transform: translate(-50%, -50%) rotate(45deg);
 }
 
 .modal__close::after,
 .close::after {
-    transform: translate(-50%, -50%) rotate(-45deg);
+  transform: translate(-50%, -50%) rotate(-45deg);
 }
-
 
 /* ======================================== */
 /* COMMON MODAL HEADING / FOOTER */
 /* ======================================== */
 
 .heading-modal {
-    width: 100%;
+  width: 100%;
 
-    margin: 0 auto;
+  margin: 0 auto;
 
-    padding-top: 7.6rem;
+  padding-top: 7.6rem;
 
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 
-    align-items: center;
-    justify-content: space-between;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .heading-modal__heading {
-    font-size: var(--secondary-heading);
+  font-size: var(--secondary-heading);
 }
 
 .footer-modal {
-    margin: 0 auto;
+  margin: 0 auto;
 
-    padding-bottom: 2.5rem;
+  padding-bottom: 2.5rem;
 
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 
-    flex-shrink: 0;
+  flex-shrink: 0;
 }
-
 
 /* ======================================== */
 /* COMMON MODAL BUTTON */
@@ -335,81 +379,81 @@ body.modal-open {
 
 .modal-button,
 .button-container__button-modal {
-    padding: 1.7rem 2.5rem;
+  padding: 1.7rem 2.5rem;
 
-    position: relative;
+  position: relative;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-    border: 1px solid var(--text-color);
-    border-radius: 2rem;
+  border: 1px solid var(--text-color);
+  border-radius: 2rem;
 
-    background-color: var(--primary-color);
+  background-color: var(--primary-color);
 
-    color: var(--text-color);
+  color: var(--text-color);
 
-    font-size: var(--button-font-size);
+  font-size: var(--button-font-size);
 
-    overflow: hidden;
+  overflow: hidden;
 
-    cursor: pointer;
+  cursor: pointer;
 
-    transform: scale(0.8);
+  transform: scale(0.8);
 
-    transition:
-        transform 0.4s ease-in-out,
-        opacity 0.3s ease;
+  transition:
+    transform 0.4s ease-in-out,
+    opacity 0.3s ease;
 
-    isolation: isolate;
+  isolation: isolate;
 }
 
 .modal-button::before,
 .button-container__button-modal::before {
-    content: "";
+  content: "";
 
-    position: absolute;
+  position: absolute;
 
-    top: 50%;
-    left: 50%;
+  top: 50%;
+  left: 50%;
 
-    width: 200%;
+  width: 200%;
 
-    aspect-ratio: 1 / 1;
+  aspect-ratio: 1 / 1;
 
-    border-radius: 50%;
+  border-radius: 50%;
 
-    background-color: var(--neutral-bg);
+  background-color: var(--neutral-bg);
 
-    transform: translate(-50%, -50%) scale(0);
+  transform: translate(-50%, -50%) scale(0);
 
-    transition: transform 0.4s ease;
+  transition: transform 0.4s ease;
 
-    z-index: -1;
+  z-index: -1;
 }
 
 .button-container__button-modal span {
-    position: relative;
+  position: relative;
 
-    z-index: 1;
+  z-index: 1;
 }
 
 .modal-button:not(:disabled):hover,
 .button-container__button-modal:not(:disabled):hover {
-    transform: scale(1);
+  transform: scale(1);
 }
 
 .modal-button:not(:disabled):hover::before,
 .button-container__button-modal:not(:disabled):hover::before {
-    transform: translate(-50%, -50%) scale(1);
+  transform: translate(-50%, -50%) scale(1);
 }
 
 .modal-button:disabled,
 .button-container__button-modal:disabled {
-    opacity: 0.5;
+  opacity: 0.5;
 
-    cursor: not-allowed;
+  cursor: not-allowed;
 }
 
 /* ------ UI Payment ------- */
@@ -417,133 +461,129 @@ body.modal-open {
 /* PAYMENT VIEW */
 /* ============================= */
 
-
 .payment-view.is-active {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .payment-view {
-    display: none;
+  display: none;
 
-    width: 100%;
-    flex: 1;
-    min-height: 0;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
 
-    padding: 4rem 6rem;
+  padding: 4rem 6rem;
 
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 .payment-view.is-active {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.payment-view  h2{
+.payment-view h2 {
   padding: 4rem 6rem;
 }
-
 
 /* ============================= */
 /* PAYMENT OPTIONS */
 /* ============================= */
 
 .checkout-payment {
-    width: 100%;
-    max-width: 65rem;
+  width: 100%;
+  max-width: 65rem;
 
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 
-    margin: 0 auto;
+  margin: 0 auto;
 }
 
 .checkout-payment__option {
-    width: 100%;
+  width: 100%;
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
-    padding: 2.2rem 2.5rem;
+  padding: 2.2rem 2.5rem;
 
-    background-color: var(--bg-cards);
+  background-color: var(--bg-cards);
 
-    border: 1px solid transparent;
-    border-radius: 2rem;
+  border: 1px solid transparent;
+  border-radius: 2rem;
 
-    font-size: var(--card-font-size);
-    color: var(--text-color);
+  font-size: var(--card-font-size);
+  color: var(--text-color);
 
-    cursor: pointer;
+  cursor: pointer;
 
-    position: relative;
+  position: relative;
 
-    transition:
-        transform 0.3s ease,
-        border-color 0.3s ease,
-        background-color 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease,
+    background-color 0.3s ease;
 }
 
 .checkout-payment__option:hover {
-    transform: scale(1.02);
-    border-color: var(--primary-color);
+  transform: scale(1.02);
+  border-color: var(--primary-color);
 }
 
 .checkout-payment__option:has(input:checked) {
-    transform: scale(1.02);
+  transform: scale(1.02);
 
-    border-color: var(--footer-color);
+  border-color: var(--footer-color);
 
-    background-color: var(--primary-color);
+  background-color: var(--primary-color);
 }
 
-
-
 .checkout-payment__option::after {
-    content: "✓";
+  content: "✓";
 
-    width: 3rem;
-    height: 3rem;
+  width: 3rem;
+  height: 3rem;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-    border: 1px solid var(--text-color);
-    border-radius: 50%;
+  border: 1px solid var(--text-color);
+  border-radius: 50%;
 
-    opacity: 0;
-    transform: scale(0);
+  opacity: 0;
+  transform: scale(0);
 
-    font-size: 1.8rem;
+  font-size: 1.8rem;
 
-    transition:
-        opacity 0.25s ease,
-        transform 0.25s ease;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
 }
 
 .checkout-payment__option:has(input:checked)::after {
-    opacity: 1;
-    transform: scale(1);
+  opacity: 1;
+  transform: scale(1);
 }
 
 .checkout-summary {
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
 
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 
-    min-height: 0;
+  min-height: 0;
 }
 
 .checkout-summary.is-hidden {
-    display: none;
+  display: none;
 }
 
 /* ============================= */
@@ -551,316 +591,295 @@ body.modal-open {
 /* ============================= */
 
 .checkout-payment__option input {
-    width: 2.4rem;
-    height: 2.4rem;
+  width: 2.4rem;
+  height: 2.4rem;
 
-    accent-color: var(--footer-color);
-    position: absolute;
+  accent-color: var(--footer-color);
+  position: absolute;
 
-    opacity: 0;
-    pointer-events: none;
+  opacity: 0;
+  pointer-events: none;
 
-    cursor: pointer;
+  cursor: pointer;
 }
-
 
 /* ============================= */
 /* ERROR */
 /* ============================= */
 
 .payment-error {
-    min-height: 2rem;
+  min-height: 2rem;
 
-    margin-top: 1.5rem;
+  margin-top: 1.5rem;
 
-    font-size: var(--card-font-size);
+  font-size: var(--card-font-size);
 
-    color: #9c3d3d;
+  color: #9c3d3d;
 
-    text-align: center;
+  text-align: center;
 }
 
-.name-error{
-    font-size: 1.5rem;
+.name-error {
+  font-size: 1.5rem;
 
-    color: #9c3d3d;
+  color: #9c3d3d;
 
-    text-align: center;
+  text-align: center;
 }
 
-.phone-error{
-    font-size:1.5rem;
+.phone-error {
+  font-size: 1.5rem;
 
-    color: #9c3d3d;
+  color: #9c3d3d;
 
-    text-align: center;
+  text-align: center;
 }
-
-
 
 /* ============================= */
 /* BOTTOM BUTTONS */
 /* ============================= */
 
 .payment-form {
-    margin-top: auto;
+  margin-top: auto;
 
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 
-    width: 100%;
+  width: 100%;
 }
 
 .payment-form button,
 .payment-back {
-    padding: 1.7rem 2.5rem;
+  padding: 1.7rem 2.5rem;
 
-    background-color: var(--primary-color);
-    color: var(--text-color);
+  background-color: var(--primary-color);
+  color: var(--text-color);
 
-    border: 1px solid var(--text-color);
-    border-radius: 2rem;
+  border: 1px solid var(--text-color);
+  border-radius: 2rem;
 
-    font-size: var(--button-font-size);
+  font-size: var(--button-font-size);
 
-    position: relative;
+  position: relative;
 
-    overflow: hidden;
+  overflow: hidden;
 
-    cursor: pointer;
+  cursor: pointer;
 
-    transform: scale(0.8);
+  transform: scale(0.8);
 
-    transition: transform 0.4s ease;
+  transition: transform 0.4s ease;
 
-    isolation: isolate;
+  isolation: isolate;
 }
 
 .payment-form button::before,
 .payment-back::before {
-    content: "";
+  content: "";
 
-    position: absolute;
+  position: absolute;
 
-    top: 50%;
-    left: 50%;
+  top: 50%;
+  left: 50%;
 
-    width: 200%;
-    aspect-ratio: 1 / 1;
+  width: 200%;
+  aspect-ratio: 1 / 1;
 
-    border-radius: 50%;
+  border-radius: 50%;
 
-    background-color: var(--neutral-bg);
+  background-color: var(--neutral-bg);
 
-    transform: translate(-50%, -50%) scale(0);
+  transform: translate(-50%, -50%) scale(0);
 
-    transition: transform 0.4s ease;
+  transition: transform 0.4s ease;
 
-    z-index: -1;
+  z-index: -1;
 }
 
 .payment-form button:hover,
 .payment-back:hover {
-    transform: scale(1);
+  transform: scale(1);
 }
 
 .payment-form button:hover::before,
 .payment-back:hover::before {
-    transform: translate(-50%, -50%) scale(1);
+  transform: translate(-50%, -50%) scale(1);
 }
 
 .payment-back {
-    margin-top: 1rem;
+  margin-top: 1rem;
 }
 /* ============================= */
 /* CHECKOUT VIEW */
 /* ============================= */
 
 .checkout-view {
-    display: none;
+  display: none;
 
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
 
-    padding: 3rem;
+  padding: 3rem;
 
-    flex-direction: column;
+  flex-direction: column;
 
-    position: relative;
+  position: relative;
 
-    color: var(--text-color);
+  color: var(--text-color);
 
-    box-sizing: border-box;
+  box-sizing: border-box;
 
-    overflow: hidden;
-
+  overflow: hidden;
 }
 
 .checkout-view.is-active {
-    display: flex;
+  display: flex;
 }
 
 .basket-view.is-hidden {
-    display: none;
+  display: none;
 }
-
 
 /* ============================= */
 /* CHECKOUT HEADING */
 /* ============================= */
 
 .checkout-view h2 {
+  text-align: center;
 
-    text-align: center;
+  font-size: var(--secondary-heading);
+  font-weight: 400;
 
-    font-size: var(--secondary-heading);
-    font-weight: 400;
-
-    color: var(--text-color);
-
+  color: var(--text-color);
 }
-
 
 /* ============================= */
 /* CHECKOUT ITEMS */
 /* ============================= */
 
 .checkout-items {
-    width: 100%;
+  width: 100%;
 
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 
-    gap: 1rem;
-    margin-top: 4rem;
+  gap: 1rem;
+  margin-top: 4rem;
 
-    flex: 1;
-    min-height: 0;
+  flex: 1;
+  min-height: 0;
 
-    overflow-y: auto;
-    overflow-x: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
 
-    padding-right: 1rem;
+  padding-right: 1rem;
 }
-
 
 .checkout-item {
-    width: 100%;
+  width: 100%;
 
-    display: grid;
+  display: grid;
 
-    grid-template-columns:
-        minmax(0, 1fr)
-        auto
-        15rem;
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto
+    15rem;
 
-    align-items: center;
+  align-items: center;
 
-    gap: 2rem;
+  gap: 2rem;
 
-    padding: 1.5rem 0;
+  padding: 1.5rem 0;
 
-    border-bottom: 1px solid var(--primary-color);
+  border-bottom: 1px solid var(--primary-color);
 }
-
 
 .checkout-item__name {
-    font-size: var(--card-font-size);
+  font-size: var(--card-font-size);
 
-    color: var(--text-color);
+  color: var(--text-color);
 }
-
 
 .checkout-item__quantity {
-    font-size: var(--card-font-size);
+  font-size: var(--card-font-size);
 
-    color: var(--text-color);
+  color: var(--text-color);
 }
-
 
 .checkout-item__price {
-    justify-self: end;
+  justify-self: end;
 
-    font-size: var(--card-font-size);
-    font-weight: 700;
+  font-size: var(--card-font-size);
+  font-weight: 700;
 
-    color: var(--text-color);
+  color: var(--text-color);
 }
-
 
 /* ============================= */
 /* TOTAL */
 /* ============================= */
 
 .checkout-total {
-    width: 100%;
+  width: 100%;
 
-    margin: 2.5rem 0;
+  margin: 2.5rem 0;
 
-    text-align: right;
+  text-align: right;
 
-    font-size: var(--ternary-heading);
+  font-size: var(--ternary-heading);
 
-    color: var(--text-color);
+  color: var(--text-color);
 }
-
 
 .checkout-total__value {
-    font-weight: 700;
+  font-weight: 700;
 }
-
 
 /* ============================= */
 /* CHECKOUT FORM */
 /* ============================= */
 
 .checkout-form {
-    width: 100%;
+  width: 100%;
 
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 
-    gap: 1.5rem;
+  gap: 1.5rem;
 
-    margin-top: auto;
+  margin-top: auto;
 }
-
 
 .checkout-form input {
-    width: 100%;
+  width: 100%;
 
-    padding: 1.6rem 2rem;
+  padding: 1.6rem 2rem;
 
-    border: 1px solid var(--text-color);
-    border-radius: 1.5rem;
+  border: 1px solid var(--text-color);
+  border-radius: 1.5rem;
 
-    background-color: var(--neutral-bg);
+  background-color: var(--neutral-bg);
 
-    color: var(--text-color);
+  color: var(--text-color);
 
-    font-size: var(--card-font-size);
+  font-size: var(--card-font-size);
 
-    outline: none;
+  outline: none;
 
-    transition:
-        border-color 0.3s ease,
-        box-shadow 0.3s ease;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
-
 
 .checkout-form input::placeholder {
-    color: rgba(49, 41, 58, 0.6);
+  color: rgba(49, 41, 58, 0.6);
 }
-
 
 .checkout-form input:focus {
-    border-color: var(--primary-color);
+  border-color: var(--primary-color);
 
-    box-shadow:
-        0 0 0 0.3rem
-        rgba(187, 171, 214, 0.25);
+  box-shadow: 0 0 0 0.3rem rgba(187, 171, 214, 0.25);
 }
-
 
 /* ============================= */
 /* CHECKOUT BUTTONS */
@@ -868,91 +887,80 @@ body.modal-open {
 
 .checkout-form button[type="submit"],
 .checkout-back {
+  padding: 1.7rem 2.5rem;
 
-    padding: 1.7rem 2.5rem;
+  border-radius: 2rem;
+  border: 1px solid var(--text-color);
 
-    border-radius: 2rem;
-    border: 1px solid var(--text-color);
+  background-color: var(--primary-color);
 
-    background-color: var(--primary-color);
+  color: var(--text-color);
 
-    color: var(--text-color);
+  font-size: var(--button-font-size);
 
-    font-size: var(--button-font-size);
+  cursor: pointer;
 
-    cursor: pointer;
+  position: relative;
 
-    position: relative;
+  overflow: hidden;
 
-    overflow: hidden;
+  transform: scale(0.8);
 
-    transform: scale(0.8);
+  transition:
+    transform 0.4s ease-in-out,
+    background-color 0.4s ease-in-out;
 
-    transition:
-        transform 0.4s ease-in-out,
-        background-color 0.4s ease-in-out;
-
-    isolation: isolate;
+  isolation: isolate;
 }
 
 .checkout-form button[type="submit"]::before,
 .checkout-back::before {
+  content: "";
 
-    content: "";
+  position: absolute;
 
-    position: absolute;
+  top: 50%;
+  left: 50%;
 
-    top: 50%;
-    left: 50%;
+  width: 200%;
 
-    width: 200%;
+  aspect-ratio: 1 / 1;
 
-    aspect-ratio: 1 / 1;
+  border-radius: 50%;
 
-    border-radius: 50%;
+  background-color: var(--neutral-bg);
 
-    background-color: var(--neutral-bg);
+  transform: translate(-50%, -50%) scale(0);
 
-    transform:
-        translate(-50%, -50%)
-        scale(0);
+  transition: transform 0.4s ease;
 
-    transition: transform 0.4s ease;
-
-    z-index: -1;
+  z-index: -1;
 }
-
-
 
 .checkout-form button[type="submit"]:hover,
 .checkout-back:hover {
-    transform: scale(1);
+  transform: scale(1);
 }
-
 
 .checkout-form button[type="submit"]:hover::before,
 .checkout-back:hover::before {
-    transform:
-        translate(-50%, -50%)
-        scale(1);
+  transform: translate(-50%, -50%) scale(1);
 }
-
 
 /* ============================= */
 /* BUTTON POSITION */
 /* ============================= */
 
 .checkout-form button[type="submit"] {
-    align-self: center;
+  align-self: center;
 
-    margin-top: 1rem;
+  margin-top: 1rem;
 }
 
-
 .checkout-back {
-    align-self: center;
+  align-self: center;
 
-    margin-top: 1rem;
+  margin-top: 1rem;
 }
 
 /* ============================= */
@@ -960,186 +968,173 @@ body.modal-open {
 /* ============================= */
 
 .order-confirmation-view {
-    display: none;
+  display: none;
 
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
 
-    padding: 4rem 6rem;
+  padding: 4rem 6rem;
 
-    box-sizing: border-box;
+  box-sizing: border-box;
 
-    flex-direction: column;
-    align-items: center;
+  flex-direction: column;
+  align-items: center;
 
-    color: var(--text-color);
+  color: var(--text-color);
 
-    overflow: hidden;
+  overflow: hidden;
 }
 
 .order-confirmation-view.is-active {
-    display: flex;
+  display: flex;
 }
-
 
 /* ============================= */
 /* HEADING */
 /* ============================= */
 
 .order-confirmation-view h2 {
-    margin: 0 0 3rem;
+  margin: 0 0 3rem;
 
-    font-size: var(--secondary-heading);
-    font-weight: 400;
+  font-size: var(--secondary-heading);
+  font-weight: 400;
 
-    text-align: center;
+  text-align: center;
 
-    color: var(--text-color);
+  color: var(--text-color);
 
-    flex-shrink: 0;
+  flex-shrink: 0;
 }
-
 
 /* ============================= */
 /* ITEMS */
 /* ============================= */
 
 .order-confirmation__items {
-    width: 100%;
-    max-width: 75rem;
+  width: 100%;
+  max-width: 75rem;
 
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 
-    gap: 1rem;
+  gap: 1rem;
 
-    flex: 1;
-    min-height: 0;
+  flex: 1;
+  min-height: 0;
 
-    overflow-y: auto;
-    overflow-x: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
 
-    padding-right: 1rem;
+  padding-right: 1rem;
 }
-
 
 /* один товар */
 
 .order-confirmation__item {
-    width: 100%;
+  width: 100%;
 
-    display: grid;
+  display: grid;
 
-    grid-template-columns:
-        minmax(0, 1fr)
-        auto
-        14rem;
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto
+    14rem;
 
-    align-items: center;
+  align-items: center;
 
-    gap: 2rem;
+  gap: 2rem;
 
-    padding: 1.5rem 0;
+  padding: 1.5rem 0;
 
-    border-bottom:
-        1px solid var(--primary-color);
+  border-bottom: 1px solid var(--primary-color);
 }
-
 
 .order-confirmation__item-name {
-    font-size: var(--card-font-size);
+  font-size: var(--card-font-size);
 
-    color: var(--text-color);
+  color: var(--text-color);
 }
-
 
 .order-confirmation__item-quantity {
-    font-size: var(--card-font-size);
+  font-size: var(--card-font-size);
 
-    color: var(--text-color);
+  color: var(--text-color);
 }
-
 
 .order-confirmation__item-price {
-    justify-self: end;
+  justify-self: end;
 
-    font-size: var(--card-font-size);
-    font-weight: 700;
+  font-size: var(--card-font-size);
+  font-weight: 700;
 
-    color: var(--text-color);
+  color: var(--text-color);
 }
-
 
 /* ============================= */
 /* CUSTOMER DATA */
 /* ============================= */
 
 .order-confirmation__customer {
-    width: 100%;
-    max-width: 75rem;
+  width: 100%;
+  max-width: 75rem;
 
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 
-    gap: 1rem;
+  gap: 1rem;
 
-    margin-top: 2rem;
+  margin-top: 2rem;
 
-    padding: 2rem 2.5rem;
+  padding: 2rem 2.5rem;
 
-    background-color: var(--bg-cards);
+  background-color: var(--bg-cards);
 
-    border-radius: 2rem;
+  border-radius: 2rem;
 
-    flex-shrink: 0;
+  flex-shrink: 0;
 }
-
 
 .order-confirmation__customer p {
-    display: flex;
+  display: flex;
 
-    justify-content: space-between;
-    align-items: center;
+  justify-content: space-between;
+  align-items: center;
 
-    gap: 2rem;
+  gap: 2rem;
 
-    font-size: var(--card-font-size);
+  font-size: var(--card-font-size);
 
-    color: var(--text-color);
+  color: var(--text-color);
 }
-
 
 .order-confirmation__customer span {
-    font-weight: 700;
+  font-weight: 700;
 
-    text-align: right;
+  text-align: right;
 }
-
 
 /* ============================= */
 /* TOTAL */
 /* ============================= */
 
 .order-confirmation__total {
-    width: 100%;
-    max-width: 75rem;
+  width: 100%;
+  max-width: 75rem;
 
-    margin: 2rem 0;
+  margin: 2rem 0;
 
-    text-align: right;
+  text-align: right;
 
-    font-size: var(--ternary-heading);
+  font-size: var(--ternary-heading);
 
-    color: var(--text-color);
+  color: var(--text-color);
 
-    flex-shrink: 0;
+  flex-shrink: 0;
 }
-
 
 .order-confirmation__total-value {
-    font-weight: 700;
+  font-weight: 700;
 }
-
 
 /* ============================= */
 /* BUTTONS */
@@ -1147,907 +1142,887 @@ body.modal-open {
 
 .order-confirmation__action,
 .order-confirmation__back {
-    padding: 1.7rem 2.5rem;
+  padding: 1.7rem 2.5rem;
 
-    background-color: var(--primary-color);
-    color: var(--text-color);
+  background-color: var(--primary-color);
+  color: var(--text-color);
 
-    border: 1px solid var(--text-color);
-    border-radius: 2rem;
+  border: 1px solid var(--text-color);
+  border-radius: 2rem;
 
-    font-size: var(--button-font-size);
+  font-size: var(--button-font-size);
 
-    position: relative;
+  position: relative;
 
-    overflow: hidden;
+  overflow: hidden;
 
-    cursor: pointer;
+  cursor: pointer;
 
-    transform: scale(0.8);
+  transform: scale(0.8);
 
-    transition:
-        transform 0.4s ease-in-out,
-        background-color 0.4s ease-in-out;
+  transition:
+    transform 0.4s ease-in-out,
+    background-color 0.4s ease-in-out;
 
-    isolation: isolate;
+  isolation: isolate;
 
-    flex-shrink: 0;
+  flex-shrink: 0;
 }
-
 
 /* біла кругла заливка */
 
 .order-confirmation__action::before,
 .order-confirmation__back::before {
-    content: "";
+  content: "";
 
-    position: absolute;
+  position: absolute;
 
-    top: 50%;
-    left: 50%;
+  top: 50%;
+  left: 50%;
 
-    width: 200%;
+  width: 200%;
 
-    aspect-ratio: 1 / 1;
+  aspect-ratio: 1 / 1;
 
-    border-radius: 50%;
+  border-radius: 50%;
 
-    background-color: var(--neutral-bg);
+  background-color: var(--neutral-bg);
 
-    transform:
-        translate(-50%, -50%)
-        scale(0);
+  transform: translate(-50%, -50%) scale(0);
 
-    transition:
-        transform 0.4s ease;
+  transition: transform 0.4s ease;
 
-    z-index: -1;
+  z-index: -1;
 }
-
 
 /* hover */
 
 .order-confirmation__action:hover,
 .order-confirmation__back:hover {
-    transform: scale(1);
+  transform: scale(1);
 }
-
 
 .order-confirmation__action:hover::before,
 .order-confirmation__back:hover::before {
-    transform:
-        translate(-50%, -50%)
-        scale(1);
+  transform: translate(-50%, -50%) scale(1);
 }
-
 
 /* ============================= */
 /* BUTTON POSITION */
 /* ============================= */
 
 .order-confirmation__action {
-    margin-top: auto;
+  margin-top: auto;
 }
 
-
 .order-confirmation__back {
-    margin-top: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 /* -------- UI Basket ------ */
 
 .basket-view {
-    width: 100%;
-    flex: 1;
-    min-height: 0;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
 
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .footer-modal {
-    flex-shrink: 0;
+  flex-shrink: 0;
 }
 
-
-
 .checkout-view.is-active {
-    display: flex;
+  display: flex;
 }
 
 .basket-view.is-hidden {
-    display: none;
+  display: none;
 }
 
 .basket-items {
-    width: 100%;
-    padding: 2rem 6rem;
+  width: 100%;
+  padding: 2rem 6rem;
 
-    flex: 1;
-    min-height: 0;
+  flex: 1;
+  min-height: 0;
 
-    overflow-y: auto;
+  overflow-y: auto;
 
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .basket-items__empty {
-    margin: auto;
+  margin: auto;
 
-    font-size: 3rem;
-    color: var(--text-color);
+  font-size: 3rem;
+  color: var(--text-color);
 
-    text-align: center;
+  text-align: center;
 }
 
-
 .basket-item {
-    width: 100%;
+  width: 100%;
 
-    display: grid;
-    grid-template-columns: 34rem 1fr 20rem;
-    column-gap: 5rem;
+  display: grid;
+  grid-template-columns: 34rem 1fr 20rem;
+  column-gap: 5rem;
 
-    align-items: center;
+  align-items: center;
 
-    padding: 3rem 3rem 7rem;
+  padding: 3rem 3rem 7rem;
 
-    position: relative;
+  position: relative;
 }
 
 .basket-item__left {
-    grid-column: 1;
+  grid-column: 1;
 
-    width: 34rem;
+  width: 34rem;
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .basket-item__quantity {
-    width: 100%;
-    height: 5rem;
+  width: 100%;
+  height: 5rem;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-    gap: 1.8rem;
+  gap: 1.8rem;
 
-    background-color: var(--bg-cards);
+  background-color: var(--bg-cards);
 
-    border-radius: 0 0 2.5rem 2.5rem;
+  border-radius: 0 0 2.5rem 2.5rem;
 }
 
 .basket-item-button {
-    width: 3rem;
-    height: 3rem;
+  width: 3rem;
+  height: 3rem;
 
-    position: relative;
+  position: relative;
 
-    padding: 0;
+  padding: 0;
 
-    border: none;
-    background: transparent;
+  border: none;
+  background: transparent;
 
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .basket-item--plus::before,
 .basket-item--minus::before {
-    content: "";
+  content: "";
 
-    position: absolute;
-    top: 50%;
-    left: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
 
-    width: 1.8rem;
-    height: 0.2rem;
+  width: 1.8rem;
+  height: 0.2rem;
 
-    background-color: var(--text-color);
+  background-color: var(--text-color);
 
-    transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 }
 
 .basket-item--plus::after {
-    content: "";
+  content: "";
 
-    position: absolute;
-    top: 50%;
-    left: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
 
-    width: 0.2rem;
-    height: 1.8rem;
+  width: 0.2rem;
+  height: 1.8rem;
 
-    background-color: var(--text-color);
+  background-color: var(--text-color);
 
-    transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 }
 
 .basket-item__remove {
-    align-self: center;
+  align-self: center;
 
-    border: none;
-    background: transparent;
+  border: none;
+  background: transparent;
 
-    color: var(--text-color);
+  color: var(--text-color);
 
-    font-size: var(--card-font-size);
-    text-decoration: underline;
+  font-size: var(--card-font-size);
+  text-decoration: underline;
 
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .basket-item::after {
-    content: "";
+  content: "";
 
-    position: absolute;
+  position: absolute;
 
-    left: 50%;
-    bottom: 1rem;
+  left: 50%;
+  bottom: 1rem;
 
-    width: 50rem;
-    height: 4rem;
+  width: 50rem;
+  height: 4rem;
 
-    transform: translateX(-50%);
+  transform: translateX(-50%);
 
-    background-image: url("/frontend/IMG/deco hero.svg");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
+  background-image: url("/frontend/IMG/deco hero.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
 }
 
 .basket-item__image {
-    width: 34rem;
-    height: 22rem;
+  width: 34rem;
+  height: 22rem;
 
-    object-fit: cover;
+  object-fit: cover;
 
-    border-radius: 2.5rem 2.5rem 0 0;
+  border-radius: 2.5rem 2.5rem 0 0;
 }
 
 .basket-item__info {
-    display: contents;
+  display: contents;
 }
 
 .basket-item__name {
-    grid-column: 2;
-    grid-row: 1 / 3;
+  grid-column: 2;
+  grid-row: 1 / 3;
 
-    align-self: center;
+  align-self: center;
 
-    margin: 0;
+  margin: 0;
 
-    font-size: 3.6rem;
-    font-weight: 400;
+  font-size: 3.6rem;
+  font-weight: 400;
 
-    color: var(--text-color);
+  color: var(--text-color);
 }
 
-
 .basket-item__count {
-    width: 5rem;
-    height: 5rem;
+  width: 5rem;
+  height: 5rem;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-    background-color: var(--neutral-bg);
+  background-color: var(--neutral-bg);
 
-    border-radius: 50%;
+  border-radius: 50%;
 
-    font-size: var(--card-font-size);
+  font-size: var(--card-font-size);
 }
 
 .basket-item__price {
-    grid-column: 3;
-    grid-row: 1 / 3;
+  grid-column: 3;
+  grid-row: 1 / 3;
 
-    align-self: center;
-    justify-self: center;
+  align-self: center;
+  justify-self: center;
 
-    margin: 0;
+  margin: 0;
 
-    font-size: 3.6rem;
-    font-weight: 700;
+  font-size: 3.6rem;
+  font-weight: 700;
 
-    color: var(--text-color);
+  color: var(--text-color);
 }
 
 .basket-item:last-child::after {
-    display: none;
+  display: none;
 }
 
 /* -----Minus delete ------ */
 
 .basket-item__delete-confirm {
-    max-height: 0;
-    opacity: 0;
-    visibility: hidden;
-    overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  visibility: hidden;
+  overflow: hidden;
 
-    transform: translateY(-0.5rem);
+  transform: translateY(-0.5rem);
 
-    text-align: center;
-    font-size: var(--card-font-size);
-    color: var(--text-color);
+  text-align: center;
+  font-size: var(--card-font-size);
+  color: var(--text-color);
 
-    transition:
-        max-height 0.35s ease,
-        opacity 0.25s ease,
-        transform 0.35s ease,
-        margin-top 0.35s ease;
+  transition:
+    max-height 0.35s ease,
+    opacity 0.25s ease,
+    transform 0.35s ease,
+    margin-top 0.35s ease;
 
-    margin-top: 0;
-    pointer-events: none;
+  margin-top: 0;
+  pointer-events: none;
 }
 
 .basket-item__delete-confirm.is-visible {
-    max-height: 8rem;
-    opacity: 1;
-    visibility: visible;
+  max-height: 8rem;
+  opacity: 1;
+  visibility: visible;
 
-    transform: translateY(0);
+  transform: translateY(0);
 
-    margin-top: 1rem;
-    pointer-events: auto;
+  margin-top: 1rem;
+  pointer-events: auto;
 }
 
 .basket-item__delete-actions {
-    display: flex;
-    justify-content: center;
-    gap: 1.5rem;
-    margin-top: 0.7rem;
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 0.7rem;
 }
 
 .basket-item__delete-yes,
 .basket-item__delete-no {
-    border: none;
-    background: transparent;
-    font: inherit;
-    color: var(--text-color);
-    cursor: pointer;
+  border: none;
+  background: transparent;
+  font: inherit;
+  color: var(--text-color);
+  cursor: pointer;
 }
 
 .basket-item__delete-yes {
-    text-decoration: underline;
+  text-decoration: underline;
 }
-
-
-
 
 /* ======================================== */
 /* BOOKING MODAL */
 /* ======================================== */
 
 .modal-booking__container {
-    color: var(--text-color);
+  color: var(--text-color);
 }
-
 
 /* ======================================== */
 /* BOOKING VIEWS */
 /* ======================================== */
 
 .booking-view {
-    display: none;
+  display: none;
 
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
 
-    min-height: 0;
+  min-height: 0;
 
-    padding: 4rem 6rem;
+  padding: 4rem 6rem;
 
-    flex-direction: column;
+  flex-direction: column;
 
-    align-items: center;
+  align-items: center;
 
-    overflow: hidden;
+  overflow: hidden;
 }
 
 .booking-view.is-active {
-    display: flex;
+  display: flex;
 }
 
 .booking-view__title {
-    margin: 0 0 2rem;
+  margin: 0 0 2rem;
 
-    text-align: center;
+  text-align: center;
 
-    font-size: var(--secondary-heading);
+  font-size: var(--secondary-heading);
 
-    color: var(--text-color);
+  color: var(--text-color);
 
-    flex-shrink: 0;
+  flex-shrink: 0;
 }
 
 .booking-view__subtitle {
-    margin-bottom: 2.5rem;
+  margin-bottom: 2.5rem;
 
-    text-align: center;
+  text-align: center;
 
-    font-size: var(--subtitle-font-size);
+  font-size: var(--subtitle-font-size);
 
-    color: var(--text-color);
+  color: var(--text-color);
 
-    flex-shrink: 0;
+  flex-shrink: 0;
 }
-
 
 /* ======================================== */
 /* BOOKING TYPE */
 /* ======================================== */
 
 .booking-options {
-    width: 100%;
-    max-width: 72rem;
+  width: 100%;
+  max-width: 72rem;
 
-    margin: auto 0;
+  margin: auto 0;
 
-    display: grid;
+  display: grid;
 
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 
-    gap: 2rem;
+  gap: 2rem;
 }
 
 .booking-option {
-    width: 100%;
-    min-height: 14rem;
+  width: 100%;
+  min-height: 14rem;
 
-    padding: 2rem 2.5rem;
+  padding: 2rem 2.5rem;
 
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 
-    align-items: flex-start;
-    justify-content: center;
+  align-items: flex-start;
+  justify-content: center;
 
-    gap: 0.8rem;
+  gap: 0.8rem;
 
-    text-align: left;
+  text-align: left;
 
-    border: 1px solid transparent;
-    border-radius: 2rem;
+  border: 1px solid transparent;
+  border-radius: 2rem;
 
-    background-color: var(--bg-cards);
+  background-color: var(--bg-cards);
 
-    color: var(--text-color);
+  color: var(--text-color);
 
-    cursor: pointer;
+  cursor: pointer;
 
-    transition:
-        transform 0.3s ease,
-        border-color 0.3s ease,
-        background-color 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease,
+    background-color 0.3s ease;
 }
 
 .booking-option:hover {
-    transform: scale(1.02);
+  transform: scale(1.02);
 
-    border-color: var(--primary-color);
+  border-color: var(--primary-color);
 }
 
 .booking-option.is-selected {
-    transform: scale(1.02);
+  transform: scale(1.02);
 
-    border-color: var(--footer-color);
+  border-color: var(--footer-color);
 
-    background-color: var(--primary-color);
+  background-color: var(--primary-color);
 }
 
 .booking-option__title {
-    font-size: var(--ternary-heading);
+  font-size: var(--ternary-heading);
 }
 
 .booking-option__text {
-    font-size: var(--card-font-size);
+  font-size: var(--card-font-size);
 
-    line-height: 1.4;
+  line-height: 1.4;
 }
-
 
 /* ======================================== */
 /* BOOKING CALENDAR */
 /* ======================================== */
 
 .booking-calendar {
-    width: 100%;
-    max-width: 75rem;
+  width: 100%;
+  max-width: 75rem;
 
-    flex: 1;
+  flex: 1;
 
-    min-height: 0;
+  min-height: 0;
 
-    overflow-y: auto;
+  overflow-y: auto;
 
-    padding-right: 1rem;
+  padding-right: 1rem;
 }
 
 .booking-calendar,
 .booking-times {
-    overflow-y: auto;
-    padding: 1rem;
+  overflow-y: auto;
+  padding: 1rem;
 }
 
 .booking-month-row {
-    display: grid;
+  display: grid;
 
-    grid-template-columns: 5rem 1fr 5rem;
+  grid-template-columns: 5rem 1fr 5rem;
 
-    align-items: center;
+  align-items: center;
 
-    gap: 1rem;
+  gap: 1rem;
 
-    margin-bottom: 2rem;
+  margin-bottom: 2rem;
 }
 
 .booking-month {
-    text-align: center;
+  text-align: center;
 
-    font-size: var(--ternary-heading);
+  font-size: var(--ternary-heading);
 
-    color: var(--text-color);
+  color: var(--text-color);
 }
 
 .booking-month-nav {
-    width: 4.5rem;
-    height: 4.5rem;
+  width: 4.5rem;
+  height: 4.5rem;
 
-    border-radius: 50%;
+  border-radius: 50%;
 
-    background-color: var(--bg-cards);
+  background-color: var(--bg-cards);
 
-    color: var(--text-color);
+  color: var(--text-color);
 
-    font-size: 2.4rem;
+  font-size: 2.4rem;
 
-    transition:
-        transform 0.25s ease,
-        opacity 0.25s ease;
+  transition:
+    transform 0.25s ease,
+    opacity 0.25s ease;
 }
 
 .booking-month-nav:hover:not(:disabled) {
-    transform: scale(1.08);
+  transform: scale(1.08);
 }
 
 .booking-month-nav:disabled {
-    opacity: 0.35;
+  opacity: 0.35;
 
-    cursor: not-allowed;
+  cursor: not-allowed;
 }
 
 .booking-weekdays {
-    display: grid;
+  display: grid;
 
-    grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-columns: repeat(7, minmax(0, 1fr));
 
-    gap: 1rem;
+  gap: 1rem;
 
-    margin-bottom: 1rem;
+  margin-bottom: 1rem;
 
-    text-align: center;
+  text-align: center;
 
-    font-size: 1.6rem;
+  font-size: 1.6rem;
 
-    color: var(--text-color);
+  color: var(--text-color);
 }
 
 .booking-days {
-    display: grid;
+  display: grid;
 
-    grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-columns: repeat(7, minmax(0, 1fr));
 
-    gap: 1rem;
+  gap: 1rem;
 }
 
 .booking-day {
-    min-height: 5rem;
+  min-height: 5rem;
 
-    padding: 0.8rem;
+  padding: 0.8rem;
 
-    border: 1px solid transparent;
-    border-radius: 1.5rem;
+  border: 1px solid transparent;
+  border-radius: 1.5rem;
 
-    background-color: var(--primary-color);
+  background-color: var(--primary-color);
 
-    color: var(--text-color);
+  color: var(--text-color);
 
-    font-size: var(--card-font-size);
+  font-size: var(--card-font-size);
 
-    cursor: pointer;
+  cursor: pointer;
 
-    transition:
-        transform 0.25s ease,
-        border-color 0.25s ease,
-        background-color 0.25s ease,
-        opacity 0.25s ease;
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    background-color 0.25s ease,
+    opacity 0.25s ease;
 }
 
 .booking-day:hover:not(:disabled) {
-    transform: scale(1.07);
+  transform: scale(1.07);
 
-    border-color: var(--footer-color);
+  border-color: var(--footer-color);
 }
 
 .booking-day.is-selected {
-    transform: scale(1.07);
+  transform: scale(1.07);
 
-    border-color: var(--footer-color);
+  border-color: var(--footer-color);
 
-    background-color: var(--footer-color);
+  background-color: var(--footer-color);
 
-    color: var(--neutral-bg);
+  color: var(--neutral-bg);
 }
 
 .booking-day:disabled {
-    opacity: 0.35;
+  opacity: 0.35;
 
-    cursor: not-allowed;
+  cursor: not-allowed;
 
-    transform: none;
+  transform: none;
 }
 
 .booking-day.is-busy {
-    background-color: #d8d4dc;
+  background-color: #d8d4dc;
 }
 
 .booking-day--empty {
-    visibility: hidden;
+  visibility: hidden;
 
-    pointer-events: none;
+  pointer-events: none;
 }
 .booking-legend {
-    margin-top: 2rem;
+  margin-top: 2rem;
 
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 
-    gap: 2.5rem;
+  gap: 2.5rem;
 
-    font-size: 1.8rem;
+  font-size: 1.8rem;
 
-    color: var(--text-color);
+  color: var(--text-color);
 }
 
 .booking-legend span {
-    display: flex;
+  display: flex;
 
-    align-items: center;
+  align-items: center;
 
-    gap: 0.7rem;
+  gap: 0.7rem;
 }
 
 .booking-legend__dot {
-    display: inline-block;
+  display: inline-block;
 
-    width: 1.2rem;
-    height: 1.2rem;
+  width: 1.2rem;
+  height: 1.2rem;
 
-    border-radius: 50%;
+  border-radius: 50%;
 }
 
 .booking-legend__dot--free {
-    background-color: var(--primary-color);
+  background-color: var(--primary-color);
 }
 
 .booking-legend__dot--busy {
-    background-color: #d8d4dc;
+  background-color: #d8d4dc;
 }
-
 
 /* ======================================== */
 /* BOOKING TIME */
 /* ======================================== */
 
 .booking-times {
-    width: 100%;
-    max-width: 75rem;
+  width: 100%;
+  max-width: 75rem;
 
-    flex: 1;
+  flex: 1;
 
-    min-height: 0;
+  min-height: 0;
 
-    overflow-y: auto;
+  overflow-y: auto;
 
-    padding-right: 1rem;
+  padding-right: 1rem;
 }
 
 .booking-time-list {
-    display: grid;
+  display: grid;
 
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 
-    gap: 1.2rem;
+  gap: 1.2rem;
 }
 
 .booking-time {
-    min-height: 6rem;
+  min-height: 6rem;
 
-    padding: 1.2rem;
+  padding: 1.2rem;
 
-    border: 1px solid transparent;
-    border-radius: 1.5rem;
+  border: 1px solid transparent;
+  border-radius: 1.5rem;
 
-    background-color: var(--primary-color);
+  background-color: var(--primary-color);
 
-    color: var(--text-color);
+  color: var(--text-color);
 
-    font-size: var(--card-font-size);
+  font-size: var(--card-font-size);
 
-    cursor: pointer;
+  cursor: pointer;
 
-    transition:
-        transform 0.25s ease,
-        border-color 0.25s ease,
-        background-color 0.25s ease,
-        opacity 0.25s ease;
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    background-color 0.25s ease,
+    opacity 0.25s ease;
 }
 
 .booking-time:hover:not(:disabled) {
-    transform: scale(1.05);
+  transform: scale(1.05);
 
-    border-color: var(--footer-color);
+  border-color: var(--footer-color);
 }
 
 .booking-time.is-selected {
-    transform: scale(1.05);
+  transform: scale(1.05);
 
-    border-color: var(--footer-color);
+  border-color: var(--footer-color);
 
-    background-color: var(--footer-color);
+  background-color: var(--footer-color);
 
-    color: var(--neutral-bg);
+  color: var(--neutral-bg);
 }
 
 .booking-time:disabled {
-    opacity: 0.35;
+  opacity: 0.35;
 
-    cursor: not-allowed;
+  cursor: not-allowed;
 
-    transform: none;
+  transform: none;
 
-    background-color: #d8d4dc;
+  background-color: #d8d4dc;
 }
-
 
 /* ======================================== */
 /* BOOKING TICKETS */
 /* ======================================== */
 
 .booking-tickets {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    width: 100%;
-    margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+  margin-top: 2rem;
 }
 
 .booking-ticket {
-    display: grid;
-    grid-template-columns: 22rem 1fr 24rem;
-    align-items: center;
-    gap: 3rem;
+  display: grid;
+  grid-template-columns: 22rem 1fr 24rem;
+  align-items: center;
+  gap: 3rem;
 
-    width: 100%;
-    padding: 2rem 0;
+  width: 100%;
+  padding: 2rem 0;
 
-    border-bottom: 1px solid rgba(94, 59, 120, 0.25);
+  border-bottom: 1px solid rgba(94, 59, 120, 0.25);
 }
 
 .booking-ticket__image-wrap {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .booking-ticket__image {
-    width: 18rem;
-    max-width: 100%;
-    height: auto;
-    display: block;
+  width: 18rem;
+  max-width: 100%;
+  height: auto;
+  display: block;
 }
 
 .booking-ticket__info {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .booking-ticket__time {
-    margin: 0;
-    font-size: 3.2rem;
-    font-weight: 400;
-    color: var(--text-color);
+  margin: 0;
+  font-size: 3.2rem;
+  font-weight: 400;
+  color: var(--text-color);
 }
 
 .booking-ticket__description {
-    margin: 0;
-    font-size: 2rem;
-    color: var(--text-color);
+  margin: 0;
+  font-size: 2rem;
+  color: var(--text-color);
 }
 
 .booking-ticket__side {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 1.8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1.8rem;
 }
 
 .booking-ticket__price {
-    font-size: 3.2rem;
-    font-weight: 400;
-    color: var(--text-color);
+  font-size: 3.2rem;
+  font-weight: 400;
+  color: var(--text-color);
 }
 
 .booking-ticket__button {
-    min-width: 19rem;
-    padding: 1.7rem 2.4rem;
+  min-width: 19rem;
+  padding: 1.7rem 2.4rem;
 
-    border: 1px solid var(--text-color);
-    border-radius: 2rem;
+  border: 1px solid var(--text-color);
+  border-radius: 2rem;
 
-    background-color: var(--primary-color);
-    color: var(--text-color);
+  background-color: var(--primary-color);
+  color: var(--text-color);
 
-    font-size: 2.4rem;
-    cursor: pointer;
+  font-size: 2.4rem;
+  cursor: pointer;
 
-    transition: transform 0.3s ease, background-color 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    background-color 0.3s ease;
 }
 
 .booking-ticket__button:hover {
-    transform: scale(1.05);
+  transform: scale(1.05);
 }
 
 @media (max-width: 900px) {
-    .booking-ticket {
-        grid-template-columns: 1fr;
-        text-align: center;
-        gap: 2rem;
-    }
+  .booking-ticket {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 2rem;
+  }
 
-    .booking-ticket__info {
-        align-items: center;
-    }
+  .booking-ticket__info {
+    align-items: center;
+  }
 
-    .booking-ticket__side {
-        align-items: center;
-    }
+  .booking-ticket__side {
+    align-items: center;
+  }
 
-    .booking-ticket__image {
-        width: 16rem;
-    }
+  .booking-ticket__image {
+    width: 16rem;
+  }
 }
 
 .booking-heading {
-    width: 100%;
+  width: 100%;
 
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 
-    align-items: center;
+  align-items: center;
 
-    flex-shrink: 0;
+  flex-shrink: 0;
 }
 
 .booking-heading .booking-view__title {
-    margin-bottom: 0.8rem;
+  margin-bottom: 0.8rem;
 }
 
 .booking-heading__decor {
-    width: 32rem;
-    max-width: 80%;
+  width: 32rem;
+  max-width: 80%;
 
-    height: auto;
+  height: auto;
 
-    object-fit: contain;
+  object-fit: contain;
 
-    margin-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 /* ======================================== */
@@ -2055,203 +2030,194 @@ body.modal-open {
 /* ======================================== */
 
 .booking-form {
-    width: 100%;
-    max-width: 75rem;
+  width: 100%;
+  max-width: 75rem;
 
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 
-    gap: 1rem;
+  gap: 1rem;
 }
 
 .booking-form input {
-    width: 100%;
+  width: 100%;
 
-    padding: 1.6rem 2rem;
+  padding: 1.6rem 2rem;
 
-    border: 1px solid var(--text-color);
-    border-radius: 1.5rem;
+  border: 1px solid var(--text-color);
+  border-radius: 1.5rem;
 
-    background-color: var(--neutral-bg);
+  background-color: var(--neutral-bg);
 
-    color: var(--text-color);
+  color: var(--text-color);
 
-    font-size: var(--card-font-size);
+  font-size: var(--card-font-size);
 
-    transition:
-        border-color 0.3s ease,
-        box-shadow 0.3s ease;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .booking-form input::placeholder {
-    color: rgba(49, 41, 58, 0.6);
+  color: rgba(49, 41, 58, 0.6);
 }
 
 .booking-form input:focus {
-    border-color: var(--primary-color);
+  border-color: var(--primary-color);
 
-    box-shadow:
-        0 0 0 0.3rem
-        rgba(187, 171, 214, 0.25);
+  box-shadow: 0 0 0 0.3rem rgba(187, 171, 214, 0.25);
 }
 
 .booking-details-view {
-    overflow-y: auto;
+  overflow-y: auto;
 }
-
 
 /* ======================================== */
 /* BOOKING ERRORS */
 /* ======================================== */
 
 .booking-error {
-    min-height: 2rem;
+  min-height: 2rem;
 
-    margin-top: 1rem;
+  margin-top: 1rem;
 
-    color: #9c3d3d;
+  color: #9c3d3d;
 
-    font-size: 1.5rem;
+  font-size: 1.5rem;
 
-    text-align: center;
+  text-align: center;
 }
-
 
 /* ======================================== */
 /* BOOKING ACTIONS */
 /* ======================================== */
 
 .booking-actions {
-    width: 100%;
+  width: 100%;
 
-    margin-top: auto;
+  margin-top: auto;
 
-    display: flex;
+  display: flex;
 
-    align-items: center;
-    justify-content: center;
+  align-items: center;
+  justify-content: center;
 
-    gap: 1rem;
+  gap: 1rem;
 
-    flex-shrink: 0;
+  flex-shrink: 0;
 }
 
 .booking-details-view .booking-actions {
-    margin-top: 1rem;
+  margin-top: 1rem;
 }
-
 
 /* ======================================== */
 /* BOOKING CONFIRMATION */
 /* ======================================== */
 
 .booking-confirmation {
-    width: 100%;
-    max-width: 75rem;
+  width: 100%;
+  max-width: 75rem;
 
-    flex: 1;
+  flex: 1;
 
-    min-height: 0;
+  min-height: 0;
 
-    overflow-y: auto;
+  overflow-y: auto;
 
-    padding: 2rem 2.5rem;
+  padding: 2rem 2.5rem;
 
-    border-radius: 2rem;
+  border-radius: 2rem;
 
-    background-color: var(--bg-cards);
+  background-color: var(--bg-cards);
 }
 
 .booking-confirmation p {
-    display: flex;
+  display: flex;
 
-    align-items: center;
-    justify-content: space-between;
+  align-items: center;
+  justify-content: space-between;
 
-    gap: 2rem;
+  gap: 2rem;
 
-    padding: 1.2rem 0;
+  padding: 1.2rem 0;
 
-    border-bottom:
-        1px solid
-        rgba(49, 41, 58, 0.12);
+  border-bottom: 1px solid rgba(49, 41, 58, 0.12);
 
-    font-size: var(--card-font-size);
+  font-size: var(--card-font-size);
 }
 
 .booking-confirmation p:last-child {
-    border-bottom: none;
+  border-bottom: none;
 }
 
 .booking-confirmation span {
-    font-weight: 700;
+  font-weight: 700;
 
-    text-align: right;
+  text-align: right;
 }
 
 .booking-confirmation-view .booking-actions {
-    margin-top: 2rem;
+  margin-top: 2rem;
 }
-
 
 /* ======================================== */
 /* BOOKING RESPONSIVE */
 /* ======================================== */
 
 @media (max-width: 700px) {
+  .modal {
+    padding: 1rem;
+  }
 
-    .modal {
-        padding: 1rem;
-    }
+  .modal__container,
+  .modal-basket__container {
+    width: 100%;
+    height: calc(100vh - 2rem);
 
-    .modal__container,
-    .modal-basket__container {
-        width: 100%;
-        height: calc(100vh - 2rem);
+    max-height: none;
+  }
 
-        max-height: none;
-    }
+  .modal__close,
+  .close {
+    top: 2rem;
+    right: 2rem;
+  }
 
-    .modal__close,
-    .close {
-        top: 2rem;
-        right: 2rem;
-    }
+  .booking-view {
+    padding: 3rem 2rem;
+  }
 
-    .booking-view {
-        padding: 3rem 2rem;
-    }
+  .booking-view__title {
+    font-size: 4rem;
+  }
 
-    .booking-view__title {
-        font-size: 4rem;
-    }
+  .booking-options {
+    grid-template-columns: 1fr;
+  }
 
-    .booking-options {
-        grid-template-columns: 1fr;
-    }
+  .booking-weekdays,
+  .booking-days {
+    gap: 0.5rem;
+  }
 
-    .booking-weekdays,
-    .booking-days {
-        gap: 0.5rem;
-    }
+  .booking-day {
+    min-height: 4.5rem;
 
-    .booking-day {
-        min-height: 4.5rem;
+    padding: 0.5rem;
 
-        padding: 0.5rem;
+    font-size: 1.5rem;
+  }
 
-        font-size: 1.5rem;
-    }
+  .booking-time-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 
-    .booking-time-list {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
+  .booking-actions {
+    flex-direction: column;
 
-    .booking-actions {
-        flex-direction: column;
-
-        align-items: center;
-    }
+    align-items: center;
+  }
 }
 
 /* ======================================== */
@@ -2261,16 +2227,16 @@ body.modal-open {
 .booking-selected-type,
 .booking-selected-date,
 .booking-selected-time {
-    margin: 0 0 2rem;
+  margin: 0 0 2rem;
 
-    font-size: var(--card-font-size);
-    line-height: 1.4;
+  font-size: var(--card-font-size);
+  line-height: 1.4;
 
-    text-align: center;
+  text-align: center;
 
-    color: var(--text-color);
+  color: var(--text-color);
 
-    flex-shrink: 0;
+  flex-shrink: 0;
 }
 
 /* ======================================== */
@@ -2278,208 +2244,195 @@ body.modal-open {
 /* ======================================== */
 
 .booking-details-view {
-    display: none;
+  display: none;
 
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
 
-    padding: 4rem 6rem;
+  padding: 4rem 6rem;
 
-    flex-direction: column;
-    align-items: center;
+  flex-direction: column;
+  align-items: center;
 
-    overflow: hidden;
+  overflow: hidden;
 }
 
 .booking-details-view.is-active {
-    display: flex;
+  display: flex;
 }
-
 
 /* дата + час під заголовком */
 
 .booking-selected-time {
-    margin: 0 0 2rem;
+  margin: 0 0 2rem;
 
-    font-size: var(--card-font-size);
-    line-height: 1.4;
+  font-size: var(--card-font-size);
+  line-height: 1.4;
 
-    text-align: center;
+  text-align: center;
 
-    color: var(--text-color);
+  color: var(--text-color);
 }
-
 
 /* ======================================== */
 /* VISITORS */
 /* ======================================== */
 
 .booking-tickets {
-    width: 100%;
-    max-width: 75rem;
+  width: 100%;
+  max-width: 75rem;
 
-    margin: 0 auto 2rem;
+  margin: 0 auto 2rem;
 
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 
-    align-items: center;
+  align-items: center;
 
-    gap: 1.5rem;
+  gap: 1.5rem;
 }
-
 
 .booking-tickets__label {
-    font-size: var(--subtitle-font-size);
-    line-height: 1.3;
+  font-size: var(--subtitle-font-size);
+  line-height: 1.3;
 
-    text-align: center;
+  text-align: center;
 
-    color: var(--text-color);
+  color: var(--text-color);
 }
-
 
 /* ======================================== */
 /* COUNTER */
 /* ======================================== */
 
 .booking-counter {
-    display: flex;
+  display: flex;
 
-    align-items: center;
-    justify-content: center;
+  align-items: center;
+  justify-content: center;
 
-    gap: 2rem;
+  gap: 2rem;
 }
-
 
 .booking-counter__button {
-    width: 4.5rem;
-    height: 4.5rem;
+  width: 4.5rem;
+  height: 4.5rem;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-    background-color: var(--primary-color);
+  background-color: var(--primary-color);
 
-    border: 1px solid var(--text-color);
-    border-radius: 50%;
+  border: 1px solid var(--text-color);
+  border-radius: 50%;
 
-    color: var(--text-color);
+  color: var(--text-color);
 
-    font-size: 2.6rem;
+  font-size: 2.6rem;
 
-    cursor: pointer;
+  cursor: pointer;
 }
-
 
 .booking-counter__value {
-    width: 5.5rem;
-    height: 5.5rem;
+  width: 5.5rem;
+  height: 5.5rem;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-    background-color: var(--neutral-bg);
+  background-color: var(--neutral-bg);
 
-    border: 1px solid var(--primary-color);
-    border-radius: 50%;
+  border: 1px solid var(--primary-color);
+  border-radius: 50%;
 
-    font-size: var(--subtitle-font-size);
+  font-size: var(--subtitle-font-size);
 
-    color: var(--text-color);
+  color: var(--text-color);
 }
-
 
 /* ======================================== */
 /* PRICE */
 /* ======================================== */
 
 .booking-price {
-    margin: 0;
+  margin: 0;
 
-    font-size: var(--subtitle-font-size);
+  font-size: var(--subtitle-font-size);
 
-    text-align: center;
+  text-align: center;
 
-    color: var(--text-color);
+  color: var(--text-color);
 }
-
 
 .booking-price__value {
-    font-weight: 700;
+  font-weight: 700;
 }
-
 
 /* ======================================== */
 /* FORM */
 /* ======================================== */
 
 .booking-form {
-    width: 100%;
-    max-width: 75rem;
+  width: 100%;
+  max-width: 75rem;
 
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 
-    gap: 1.5rem;
+  gap: 1.5rem;
 
-    margin-top: 1rem;
+  margin-top: 1rem;
 }
-
 
 .booking-form input {
-    width: 100%;
+  width: 100%;
 
-    padding: 1.7rem 2rem;
+  padding: 1.7rem 2rem;
 
-    border: 1px solid var(--text-color);
-    border-radius: 1.5rem;
+  border: 1px solid var(--text-color);
+  border-radius: 1.5rem;
 
-    background-color: var(--neutral-bg);
+  background-color: var(--neutral-bg);
 
-    color: var(--text-color);
+  color: var(--text-color);
 
-    font-size: var(--card-font-size);
+  font-size: var(--card-font-size);
 }
-
 
 .booking-form input::placeholder {
-    color: rgba(49, 41, 58, 0.55);
+  color: rgba(49, 41, 58, 0.55);
 }
-
 
 /* помилки */
 
 .booking-name-error,
 .booking-phone-error {
-    min-height: 1.8rem;
+  min-height: 1.8rem;
 
-    font-size: 1.5rem;
+  font-size: 1.5rem;
 
-    text-align: center;
+  text-align: center;
 
-    color: #9c3d3d;
+  color: #9c3d3d;
 }
-
 
 /* ======================================== */
 /* BUTTONS */
 /* ======================================== */
 
 .booking-details-view .booking-actions {
-    width: 100%;
+  width: 100%;
 
-    margin-top: 1rem;
+  margin-top: 1rem;
 
-    display: flex;
+  display: flex;
 
-    justify-content: center;
-    align-items: center;
+  justify-content: center;
+  align-items: center;
 
-    gap: 2rem;
+  gap: 2rem;
 }
 
 /* ======================================== */
@@ -2487,42 +2440,119 @@ body.modal-open {
 /* ======================================== */
 
 .catalog-closed-modal__container {
-    max-width: 55rem;
-    height: auto;
-    max-height: none;
-    padding: 6rem 5rem;
-    align-items: center;
-    text-align: center;
-    gap: 2.5rem;
+  max-width: 55rem;
+  height: auto;
+  max-height: none;
+  padding: 6rem 5rem;
+  align-items: center;
+  text-align: center;
+  gap: 2.5rem;
 }
 
 .catalog-closed-modal__image {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    background-color: var(--bg-cards);
-    border-radius: 1.5rem;
-    margin-top:2rem;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background-color: var(--bg-cards);
+  border-radius: 1.5rem;
+  margin-top: 2rem;
 }
 
 .catalog-closed-modal__text {
-    font-size: var(--secondary-heading);
-    color: var(--text-color);
-    line-height: 1.3;
+  font-size: var(--secondary-heading);
+  color: var(--text-color);
+  line-height: 1.3;
 }
 
 .is-catalog-blocked {
-    pointer-events: none;
-    opacity: 0.35;
-    filter: grayscale(0.4);
-    transition: opacity 0.3s ease;
+  pointer-events: none;
+  opacity: 0.35;
+  filter: grayscale(0.4);
+  transition: opacity 0.3s ease;
 }
 
+/* ======================================== */
+/* USER MESSAGE MODAL (успіх/помилка/попередження/інфо для покупця) */
+/* ======================================== */
+/* ДОДАТИ у normalize.css. Побудовано на тій самій базовій системі         */
+/* .modal/.modal__container/.modal__close, що вже використовують кошик,   */
+/* бронювання і модалка "Лаванда спить" — нової overlay-системи немає.    */
+
+.user-message-modal__container {
+  max-width: 50rem;
+  height: auto;
+  max-height: none;
+  padding: 5rem 4rem;
+  align-items: center;
+  text-align: center;
+  gap: 1.2rem;
+}
+
+.user-message-modal__icon {
+  width: 5.6rem;
+  height: 5.6rem;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 2.6rem;
+  font-weight: 700;
+  line-height: 1;
+
+  background-color: var(--bg-cards);
+  color: var(--footer-color);
+}
+
+.user-message-modal--success .user-message-modal__icon {
+  background-color: #ddefe0;
+  color: #2f7d42;
+}
+.user-message-modal--success .user-message-modal__icon::before {
+  content: "✓";
+}
+
+.user-message-modal--error .user-message-modal__icon {
+  background-color: #f3dede;
+  color: #9c3d3d; /* той самий колір, що вже використаний для помилок форм на сайті */
+}
+.user-message-modal--error .user-message-modal__icon::before {
+  content: "!";
+}
+
+.user-message-modal--warning .user-message-modal__icon {
+  background-color: #f7ebd3;
+  color: #a5710a;
+}
+.user-message-modal--warning .user-message-modal__icon::before {
+  content: "!";
+}
+
+.user-message-modal--info .user-message-modal__icon::before {
+  content: "i";
+}
+
+.user-message-modal__title {
+  font-size: var(--ternary-heading);
+  color: var(--text-color);
+}
+
+.user-message-modal__text {
+  font-size: var(--card-font-size);
+  color: var(--text-color);
+  line-height: 1.5;
+  white-space: pre-line; /* щоб "\n" у повідомленні рендерився як перенос рядка */
+}
+
+.user-message-modal__ok {
+  margin-top: 1rem;
+}
 
 /* ---------- sell --------- */
-.sell{
+.sell {
   width: 100%;
-  
-  padding-top:2.6rem;
+
+  padding-top: 2.6rem;
   position: relative;
 
   display: flex;
@@ -2532,158 +2562,154 @@ body.modal-open {
 
   display: flex;
   flex-direction: column;
-
 }
 
-.sell__article__container{
+.sell__article__container {
   gap: 3.5rem;
   margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(3, 50rem);
 }
 
-.sell__article{
+.sell__article {
   display: flex;
   flex-direction: column;
-  max-width:50rem;
-  max-height:45.1rem;
+  max-width: 50rem;
+  max-height: 45.1rem;
 }
 
-.sell__article__info{
-  background-color: #E9E6EF;
+.sell__article__info {
+  background-color: #e9e6ef;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size:var(--card-font-size);
-  padding:0 3rem;
+  font-size: var(--card-font-size);
+  padding: 0 3rem;
 
   border-radius: 0 0 20px 20px;
 }
-.sell__article__info__text{
+.sell__article__info__text {
   display: flex;
   flex-direction: column;
   padding: 1rem 0 1.3rem 0;
-  gap: .4rem;
-  transition:opacity 0.3s ease;
+  gap: 0.4rem;
+  transition: opacity 0.3s ease;
 }
 
-.sell__article__info-title{
- font-size: var(--ternary-heading);
+.sell__article__info-title {
+  font-size: var(--ternary-heading);
 }
 
-.button__image{
+.button__image {
   max-width: 6.2rem;
   opacity: 1;
   transition: opacity 0.3s ease;
-      transition:
-        transform 0.2s ease,
-        opacity 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
 }
 
 .button__image.is-added {
-    transform: scale(1.2);
-    opacity: 1
-}
-
-.button__image.is-changing {
-    transform: scale(0);
-    opacity: 0;
-}
-
-.sell__article-info-basket{
-  max-width: 6.2rem;
-  max-height:6.2rem;
-  border-radius: 50%;
-  background-color: transparent;
-
-
-
-}
-
-
-/* ----interactive elements ----- */
-
-
-
-.hydrolat-image{
-  position: relative;
-  transition: opacity 0.4s ease;
+  transform: scale(1.2);
   opacity: 1;
 }
 
-.hydrolat-image--under{
- position: absolute;
- inset: 0;
- width: 100%;
- height: 100%;
- object-fit: cover;
- 
- opacity: 0;
- transition: opacity 0.4s ease;
+.button__image.is-changing {
+  transform: scale(0);
+  opacity: 0;
 }
 
-.arrow--flipped{
+.sell__article-info-basket {
+  max-width: 6.2rem;
+  max-height: 6.2rem;
+  border-radius: 50%;
+  background-color: transparent;
+}
+
+/* ----interactive elements ----- */
+
+.hydrolat-image {
+  position: relative;
+  transition: opacity 0.4s ease;
+  opacity: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.hydrolat-image--under {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.arrow--flipped {
   transform: rotate(180deg);
 }
-
-.sell__media{
-  position:relative;
+.sell__media {
+  position: relative;
   overflow: hidden;
   border-radius: 20px 20px 0 0;
   background-color: var(--neutral-bg);
+  height: 31.4rem; 
 }
 
-.sell__media::before{
+.sell__media::before {
   content: "";
   position: absolute;
   background-color: rgba(27, 27, 27);
-  z-index: 1; 
+  z-index: 1;
 
-  transition:opacity 0.3s ease;
-  
-  inset:0;
-  opacity:0;
+  transition: opacity 0.3s ease;
+
+  inset: 0;
+  opacity: 0;
 }
 
-.sell__article-nav{
- position: absolute;
- right: 1rem;
- bottom: 10rem;
- max-width: 2.8rem;
- max-height: 7.8rem;
- background-color: transparent;
+.sell__article-nav {
+  position: absolute;
+  right: 1rem;
+  bottom: 10rem;
+  max-width: 2.8rem;
+  max-height: 7.8rem;
+  background-color: transparent;
 
- opacity: 0;
- transition: opacity 0.3s ease;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 
- z-index: 2;
-
+  z-index: 2;
 }
 
-.sell__article-nav--previous{
+.sell__article-nav--previous {
   left: 1rem;
   opacity: 0;
   transition: opacity 0.4s ease;
-} 
-
-.sell__icon-holder{
- position: absolute;
- top: 50%;
- left: 50%;
- transform: translate(-50%, -50%);
- 
- width: 35rem;
- height: 31rem;
-
- z-index: 1;
- opacity: 0;
- transition: opacity 0.4s ease;
 }
 
-.sell__article-icon{
+.sell__icon-holder {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 35rem;
+  height: 31rem;
+
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.sell__article-icon {
   position: absolute;
   left: 50%;
-  top:50%;
+  top: 50%;
   object-fit: contain;
   width: auto;
   height: auto;
@@ -2695,123 +2721,116 @@ body.modal-open {
   transition: opacity 0.4s ease;
 }
 
-.sell__article-icon--next{
+.sell__article-icon--next {
   opacity: 0;
 }
 
-.is-hidden{
+.is-hidden {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
 }
 
-.is-changing{
+.is-changing {
   opacity: 0;
 }
 
-
-.is-fading-out{
- opacity: 0;
+.is-fading-out {
+  opacity: 0;
 }
 
-.is-fading-in{
+.is-fading-in {
   opacity: 1;
 }
 
 /* --------- sell hover -------- */
-.sell__media:hover .sell__article-nav--previous{
+.sell__media:hover .sell__article-nav--previous {
   opacity: 1;
 }
 
-.sell__media:hover .hydrolat-image{
- filter: blur(0.5rem);
+.sell__media:hover .hydrolat-image {
+  filter: blur(0.5rem);
 }
 
 .sell__media:hover .sell__article-nav {
   opacity: 1;
 }
 
-.sell__media:hover .sell__icon-holder{
+.sell__media:hover .sell__icon-holder {
   opacity: 1;
 }
 
-.sell__media:hover::before{
- opacity: 0.67;
+.sell__media:hover::before {
+  opacity: 0.67;
 }
-
 
 /* ---- footer ----- */
 
-.footer{
-  background-color: #5E3B78;
-  color: #FBF9FB;
+.footer {
+  background-color: #5e3b78;
+  color: #fbf9fb;
   max-height: 69.7rem;
   overflow: hidden;
-  
-
 }
 
-.footer__container{
+.footer__container {
   display: flex;
   flex-direction: row;
   position: relative;
 }
 
-.author{
+.author {
   height: 691px;
   width: 781px;
 }
 
-.introduce__textholder{
+.introduce__textholder {
   display: flex;
   flex-direction: column;
-  padding:12.7rem 0 0 5rem;
+  padding: 12.7rem 0 0 5rem;
 }
 
-.introduce__textholder-deco{
+.introduce__textholder-deco {
   width: 215px;
   height: 28px;
 }
 
-.introduce__textholder-about{
+.introduce__textholder-about {
   font-size: var(--secondary-heading);
 }
 
-.introduce__textholder-greeting{
+.introduce__textholder-greeting {
   font-family: "Great Vibes";
   font-size: var(--secondary-heading);
 }
 
-.introduce__textholder-paragraph{
+.introduce__textholder-paragraph {
   font-size: var(--subtitle-font-size);
   letter-spacing: -1%;
   line-height: 2.5rem;
   max-width: 41rem;
 }
 
-.introduce__socialsholder{
+.introduce__socialsholder {
   display: flex;
   flex-direction: row;
-  gap:7.3rem;
+  gap: 7.3rem;
   padding: 4.5rem 0 0 5rem;
 }
 
-
-.icon{
-  max-width:5.8rem;
-  max-height:5.8rem;
+.icon {
+  max-width: 5.8rem;
+  max-height: 5.8rem;
   transition: transform 0.4s ease-in-out;
 }
 
-.icon:hover{
-
+.icon:hover {
   transform: scale(1.2);
   transition: transform 0.4s ease-in-out;
-
 }
 
-.foo__deco{
-  position:absolute;
-  top:6rem;
+.foo__deco {
+  position: absolute;
+  top: 6rem;
   right: -5rem;
 }

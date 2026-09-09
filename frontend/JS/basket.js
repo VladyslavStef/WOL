@@ -245,7 +245,7 @@ const reconcileBasketWithStock = async function () {
         return changed;
 
     } catch (error) {
-        console.error("Не вдалося перевірити актуальний залишок кошика:", error.message);
+        console.error("Не вдалося перевірити актуальний залишок кошика:", error);
         return false;
     }
 };
@@ -632,11 +632,9 @@ const renderOrderConfirmation =
 // ========================================
 // OPEN CHECKOUT
 // ========================================
-// FIX (catalog_enabled): "Підтвердити" з кошика веде до checkout-форми —
-// це вже початок оформлення нового замовлення, тож перед відкриттям
-// checkout завжди робимо живу перевірку стану каталогу через
-// guardCatalogAction. Якщо каталог щойно вимкнули — замість переходу в
-// checkout користувач побачить "Лаванда спить".
+// Перед відкриттям checkout завжди робимо живу перевірку стану каталогу
+// (guardCatalogAction, з catalogue-state.js) — якщо каталог щойно вимкнули,
+// замість переходу в checkout покажеться "Лаванда спить".
 
 confirmButton.addEventListener(
     "click",
@@ -931,16 +929,18 @@ orderConfirmationBack.addEventListener(
 // ========================================
 // FINAL ORDER ACTION
 // ========================================
-// FIX (catalog_enabled — критичний сценарій "race condition при checkout"):
-// 1. Перед фактичною відправкою запиту ще РАЗ, наостанок, живо перевіряємо
-//    стан каталогу. Якщо адмін вимкнув каталог саме поки користувач був
-//    на екрані підтвердження — запит навіть не йде на сервер, одразу
-//    показується "Лаванда спить".
-// 2. Це НЕ замінює backend-перевірку — orderController тепер теж
-//    перевіряє site_settings.catalog_enabled і повертає 409 з прапорцем
-//    catalogClosed:true, якщо стан змінився буквально між кроком 1 і
-//    записом у БД. apiRequest (api.js) переносить catalogClosed у
-//    об'єкт помилки — тут його й перевіряємо.
+// FIX (user messages): alert() замінено на showUserMessage() (спільна
+// модалка з user-message.js). Перед фактичною відправкою ще раз живо
+// перевіряємо catalog_enabled (guard від race condition при закритті
+// каталогу саме в момент оформлення).
+//
+// ВАЖЛИВО (Етап 7, послідовність async): раніше після успіху одразу
+// викликався closeBasketModal(), який знімає body.classList("modal-open").
+// Тепер це прибрано — showUserMessage() САМ ховає модалку кошика і сам
+// керує блокуванням скролу тіла; виклик closeBasketModal() одразу після
+// showUserMessage() достроково розблокував би скрол, поки success-
+// повідомлення ще показане. Кошик просто лишається схованим під
+// повідомленням і не відновлюється (restoreUnderlyingModal не передано).
 
 let isSubmittingOrder = false;
 
@@ -985,9 +985,10 @@ orderConfirmationAction.addEventListener(
 
             const result = await createOrder(payload);
 
-            alert(
-                `Замовлення оформлено!\nНомер замовлення: ${result.order_code}\nСума: ${result.total_price} грн`
-            );
+            showUserMessage({
+                type: "success",
+                message: `Замовлення успішно оформлено!\nНомер замовлення: ${result.order_code}\nСума: ${result.total_price} грн`
+            });
 
             basket = [];
             saveBasket();
@@ -995,24 +996,33 @@ orderConfirmationAction.addEventListener(
 
             pendingOrder = null;
 
-            closeBasketModal();
-
         } catch (error) {
 
             if (error.catalogClosed) {
                 // Бекенд відхилив замовлення саме через глобальне
-                // вимкнення каталогу (спрацювало між кроком 1 і записом
-                // у БД) — показуємо ту саму спільну модалку, а не
-                // технічний alert. Order НЕ створено.
+                // вимкнення каталогу — та сама спільна модалка "Лаванда
+                // спить", не технічний alert. Order НЕ створено.
                 applyCatalogBlockedState();
             } else {
 
-                alert(`Не вдалося оформити замовлення: ${error.message}`);
+                console.error("Не вдалося оформити замовлення:", error);
 
-                // Якщо причина — недостатній stock (гонка з іншим
-                // покупцем), одразу звіряємо кошик з актуальним складом.
+                // Причина могла бути в недостатньому stock (гонка з
+                // іншим покупцем) — одразу звіряємо кошик, ЩЕ до показу
+                // повідомлення, щоб після повернення до кошика (див.
+                // restoreUnderlyingModal нижче) він уже показував
+                // актуальні кількості.
                 await reconcileBasketWithStock();
                 renderItems();
+
+                showUserMessage({
+                    type: "error",
+                    message: toUserFriendlyErrorMessage(
+                        error,
+                        "Не вдалося оформити замовлення. Перевірте з'єднання з інтернетом і спробуйте ще раз."
+                    ),
+                    restoreUnderlyingModal: true
+                });
             }
 
         } finally {
@@ -1074,7 +1084,14 @@ const openBasket = async function () {
     );
 
     if (stockChanged) {
-        alert("Наявність деяких товарів у кошику змінилася — кількість оновлено відповідно до складу.");
+        // FIX (user messages): alert() → showUserMessage(). Кошик
+        // (уже перемальований з актуальними кількостями) знову
+        // показується одразу після закриття попередження.
+        showUserMessage({
+            type: "warning",
+            message: "Наявність деяких товарів у кошику змінилася — кількість оновлено відповідно до складу.",
+            restoreUnderlyingModal: true
+        });
     }
 };
 
@@ -1114,6 +1131,21 @@ closeBasket.addEventListener(
     () => {
 
         closeBasketModal();
+    }
+);
+
+// FIX (a11y): раніше Escape закривав лише модалку бронювання —
+// вирівнюємо кошик під той самий, уже існуючий на сайті патерн.
+document.addEventListener(
+    "keydown",
+    (event) => {
+
+        if (
+            event.key === "Escape" &&
+            basketModal.classList.contains("is-open")
+        ) {
+            closeBasketModal();
+        }
     }
 );
 

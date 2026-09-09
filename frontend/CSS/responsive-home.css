@@ -1,0 +1,1213 @@
+/* ============================================================
+   RESPONSIVE — HOME (main.html)
+
+   Mobile: 320–768px
+
+   Desktop main.css / normalize.css НЕ змінюються.
+   Підключати ОСТАННІМ у <head>.
+   ============================================================ */
+
+/* ============================================================
+   BURGER BUTTON
+   ============================================================ */
+
+.navbar__burger {
+  display: none;
+
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+
+  width: 3rem;
+  height: 2.2rem;
+
+  padding: 0;
+  margin: 0;
+
+  background: transparent;
+  border: none;
+
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.navbar__burger span {
+  display: block;
+
+  width: 100%;
+  height: 0.3rem;
+
+  background-color: var(--text-color);
+  border-radius: 0.2rem;
+
+  transition:
+    transform 0.25s ease,
+    opacity 0.25s ease;
+}
+
+.navbar__burger.is-active span:nth-child(1) {
+  transform: translateY(0.95rem) rotate(45deg);
+}
+
+.navbar__burger.is-active span:nth-child(2) {
+  opacity: 0;
+}
+
+.navbar__burger.is-active span:nth-child(3) {
+  transform: translateY(-0.95rem) rotate(-45deg);
+}
+
+/* ============================================================
+   ≤768px
+   ============================================================ */
+
+@media (max-width: 768px) {
+  /* --------------------------------------------------------
+       TYPOGRAPHY
+       -------------------------------------------------------- */
+
+
+
+  :root {
+    --primary-heading: 4.4rem;
+    --secondary-heading: 2.8rem;
+    --ternary-heading: 2.2rem;
+
+    --subtitle-font-size: 1.6rem;
+    --card-font-size: 1.6rem;
+    --info-card-font: 1.4rem;
+    --button-font-size: 1.8rem;
+  }
+
+  /* --------------------------------------------------------
+       1. HEADER / BURGER
+       -------------------------------------------------------- */
+
+  .shop {
+    max-width: 6rem;
+    max-height: 6rem;
+  }
+
+  .header {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+
+    background: linear-gradient(180deg, rgba(94, 59, 120, 0.66), transparent 100%);
+
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+
+    box-shadow: 0 0.4rem 2rem rgba(0, 0, 0, 0.25);
+  }
+
+  .navbar__container {
+    display: flex;
+    flex-wrap: wrap;
+
+    width: 100%;
+    max-width: 100%;
+
+    padding: 0 1.6rem;
+
+    box-sizing: border-box;
+
+    align-items: center;
+  }
+
+  .logo {
+    display: block;
+
+    width: 100%;
+    max-width: 10rem;
+    height: auto;
+
+    flex-shrink: 0;
+    order: 1;
+  }
+
+  .logo img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+
+  /* Cart / icon */
+  .icon-button {
+    order: 2;
+
+    margin-left: auto;
+    margin-right: 1.6rem;
+
+    flex-shrink: 0;
+  }
+
+  /* Burger */
+  .navbar__burger {
+    display: flex;
+
+    order: 3;
+
+    flex-shrink: 0;
+  }
+
+  /* Navigation */
+  .navbar__list {
+    display: none;
+
+    flex-direction: column;
+    align-items: center;
+
+    width: 100%;
+
+    gap: 2rem;
+
+    padding: 2.4rem 1.6rem;
+    margin: 1.6rem 0 0;
+
+    box-sizing: border-box;
+
+    background-color: var(--neutral-bg);
+
+    border-radius: 1.2rem;
+
+    box-shadow:
+      0 0.4rem 1.2rem
+      rgba(49, 41, 58, 0.12);
+
+    order: 4;
+  }
+
+  .navbar__list.is-open {
+    display: flex;
+  }
+
+  .navbar__list-link {
+    display: block;
+
+    width: 100%;
+
+    text-align: center;
+
+    overflow-wrap: break-word;
+  }
+
+  /* --------------------------------------------------------
+       2. HERO
+       -------------------------------------------------------- */
+
+  .hero {
+    width: 100%;
+    max-width: 100%;
+
+    overflow: hidden;
+  }
+
+  .hero__container {
+    width: 100%;
+    max-width: 100%;
+
+    padding: 3rem 1.6rem 0;
+
+    box-sizing: border-box;
+
+    overflow-wrap: break-word;
+  }
+
+  .hero__heading {
+    max-width: 100%;
+
+    line-height: 1.15;
+
+    overflow-wrap: break-word;
+  }
+
+  /* --------------------------------------------------------
+       HERO BUTTONS
+       -------------------------------------------------------- */
+
+  .hero__button-container {
+    display: flex;
+
+    flex-direction: column;
+    align-items: stretch;
+
+    width: 100%;
+    max-width: 100%;
+
+    gap: 1.2rem;
+
+    padding: 3rem 1.6rem 2rem;
+
+    box-sizing: border-box;
+  }
+
+  .button-container__button {
+    width: 100%;
+    max-width: 100%;
+
+    padding: 1.4rem 1.6rem;
+
+    box-sizing: border-box;
+
+    transform: none;
+
+    overflow-wrap: break-word;
+  }
+
+  /* --------------------------------------------------------
+       3. TOP PRODUCTS / CATALOGUE SECTION
+       -------------------------------------------------------- */
+
+  .sell {
+    width: 100%;
+    max-width: 100%;
+    padding: 4rem 0 6rem;
+    overflow-x: hidden;
+  }
+
+  .sell__article__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 3rem;
+    width: 100%;
+    max-width: 100%;
+    padding: 0 1.6rem;
+    box-sizing: border-box;
+  }
+
+  .sell__article img {
+    display: block;
+
+    max-width: 100%;
+  }
+
+  .sell__decor-holder {
+    display: none;
+  }
+
+  .sell__link {
+    transform: none;
+  }
+
+  /* --------------------------------------------------------
+       CARD NAVIGATION
+       На touch-пристроях стрілки доступні без hover.
+       -------------------------------------------------------- */
+
+  .sell__article-nav,
+  .sell__article-nav--previous,
+  .sell__icon-holder {
+    opacity: 1;
+  }
+
+  /* --------------------------------------------------------
+       INFO SECTION
+       -------------------------------------------------------- */
+  .info {
+    max-width: 100%;
+    max-height: none; /* desktop-висота 17rem замала для колонкового вигляду */
+    width: calc(100% - 3.2rem);
+    margin: 4rem auto 0; /* desktop-відступ 19.2rem замінено на розумний mobile-відступ */
+    box-sizing: border-box;
+  }
+
+  .info__container {
+    flex-direction: column;
+    align-items: center;
+
+    width: 100%;
+    max-width: 100%;
+
+    padding: 2.4rem 1.6rem;
+    gap: 1.6rem;
+
+    text-align: center;
+
+    box-sizing: border-box;
+  }
+
+  .info__article {
+    flex-direction: column;
+    align-items: center;
+
+    width: 100%;
+    max-width: 100%;
+    min-height: 0;
+
+    border-right: none;
+    border-bottom: 0.1rem solid var(--primary-color);
+
+    padding-bottom: 1.6rem;
+
+    box-sizing: border-box;
+  }
+
+  .info__article:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .info__article-text {
+    align-items: center;
+
+    padding: 0;
+
+    max-width: 100%;
+    text-align: center;
+
+    overflow-wrap: break-word;
+  }
+
+  .info__title {
+    white-space: normal;
+  }
+
+  .info__text {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  /* --------------------------------------------------------
+       MODALS
+       -------------------------------------------------------- */
+
+  .modal {
+    padding: 1rem;
+
+    box-sizing: border-box;
+  }
+
+  .modal__container,
+  .modal-basket__container {
+    width: 100%;
+    max-width: 100%;
+
+    height: calc(100dvh - 2rem);
+    max-height: calc(100dvh - 2rem);
+
+    box-sizing: border-box;
+
+    border-radius: 1.6rem;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .modal__close,
+  .close {
+    top: 2rem;
+    right: 2rem;
+
+    z-index: 10;
+  }
+
+  .heading-modal {
+    padding-top: 4rem;
+
+    max-width: 100%;
+
+    overflow-wrap: break-word;
+  }
+
+  /* --------------------------------------------------------
+       CART
+       -------------------------------------------------------- */
+
+  .basket-items {
+    width: 100%;
+    max-width: 100%;
+
+    padding: 1.5rem 1.6rem;
+
+    box-sizing: border-box;
+  }
+
+  .basket-item {
+    display: grid;
+
+    grid-template-columns: minmax(0, 1fr);
+
+    column-gap: 0;
+    row-gap: 1.2rem;
+
+    width: 100%;
+
+    padding: 2rem 0 4rem;
+
+    justify-items: center;
+
+    text-align: center;
+
+    box-sizing: border-box;
+  }
+
+  .basket-item__left {
+    width: 100%;
+    max-width: 20rem;
+
+    min-width: 0;
+  }
+
+  .basket-item__image {
+    display: block;
+
+    width: 100%;
+    height: auto;
+
+    aspect-ratio: 3 / 2;
+
+    object-fit: cover;
+  }
+
+  .basket-item__name,
+  .basket-item__price {
+    grid-column: 1;
+    grid-row: auto;
+
+    justify-self: center;
+
+    max-width: 100%;
+
+    font-size: 2.2rem;
+
+    overflow-wrap: anywhere;
+  }
+
+  .basket-item::after {
+    width: 80%;
+    max-width: 26rem;
+
+    height: 2.4rem;
+
+    bottom: 0.6rem;
+  }
+
+  /* --------------------------------------------------------
+       CHECKOUT / PAYMENT / BOOKING
+       -------------------------------------------------------- */
+
+  .checkout-view,
+  .payment-view,
+  .order-confirmation-view,
+  .booking-view,
+  .booking-details-view {
+    width: 100%;
+    max-width: 100%;
+
+    padding: 2.4rem 1.8rem;
+
+    box-sizing: border-box;
+
+    overflow-wrap: break-word;
+  }
+
+  .checkout-item,
+  .order-confirmation__item {
+    grid-template-columns:
+      minmax(0, 1fr)
+      auto;
+
+    row-gap: 0.4rem;
+
+    min-width: 0;
+  }
+
+  .checkout-item__price,
+  .order-confirmation__item-price {
+    grid-column: 1 / -1;
+
+    justify-self: start;
+
+    max-width: 100%;
+
+    overflow-wrap: anywhere;
+  }
+
+  /* --------------------------------------------------------
+       BOOKING
+       -------------------------------------------------------- */
+
+  .booking-options {
+    grid-template-columns: minmax(0, 1fr);
+
+    width: 100%;
+  }
+
+  .booking-time-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    width: 100%;
+  }
+
+  .booking-ticket {
+    grid-template-columns: minmax(0, 1fr);
+
+    text-align: center;
+
+    min-width: 0;
+  }
+
+  /* ============================================================
+  SLIDER
+   ============================================================ */
+
+     .slider {
+    width: 100%;
+    margin-top: 2rem;
+    overflow: hidden;
+  }
+
+  .slider__wrapper {
+    width: 100%;
+    height: 42rem;
+
+    padding: 0;
+
+    overflow: hidden;
+
+    position: relative;
+    box-sizing: border-box;
+  }
+
+  .slider__photos-item {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    object-position: center;
+
+    transform: translateX(0);
+  }
+
+  .slider__photos-item--out {
+    transform: translateX(-100%);
+  }
+
+  .slider__photos-item--next {
+    transform: translateX(100%);
+  }
+
+
+  /* затемнення залишаємо,
+     але воно займає тільки фото */
+  .slider__gradient {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+  }
+
+
+  /* --------------------------------------------------
+     ТЕКСТ
+     -------------------------------------------------- */
+
+  .slider__textholder {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    width: calc(100% - 3.2rem);
+    max-width: 38rem;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 1rem;
+
+    text-align: center;
+
+    z-index: 2;
+  }
+
+  .slider__textholder-heading {
+    justify-content: center;
+
+    font-size: 2.6rem;
+    text-align: center;
+  }
+
+  .slider__textholder-info {
+    width: 100%;
+    max-width: 36rem;
+
+    text-align: center;
+
+    overflow-wrap: break-word;
+  }
+
+  .slider__textholder-contacts {
+    align-items: center;
+    text-align: center;
+  }
+
+
+  /* --------------------------------------------------
+     СТРІЛКА
+     -------------------------------------------------- */
+
+  .slider__button {
+    width: 5rem;
+    height: 5rem;
+
+    right: 1.2rem;
+    bottom: 1.2rem;
+
+    z-index: 5;
+  }
+
+    .slider__button {
+    display: none;
+  }
+
+  /* --------------------------------------------------
+     ЗАЙВИЙ DECOR
+     -------------------------------------------------- */
+
+  .slider__textholder-decor {
+    display: none;
+  }
+
+
+}
+
+/* ============================================================
+   ≤480px
+   ============================================================ */
+
+@media (max-width: 480px) {
+  :root {
+    --primary-heading: 3.2rem;
+    --secondary-heading: 2.5rem;
+    --ternary-heading: 2rem;
+
+    --subtitle-font-size: 1.5rem;
+    --card-font-size: 1.5rem;
+    --button-font-size: 1.7rem;
+  }
+
+  /* --------------------------------------------------------
+       HEADER
+       -------------------------------------------------------- */
+
+  .header {
+    padding-top: 1.6rem;
+  }
+
+  .navbar__container {
+    padding: 0 1.2rem;
+  }
+
+  .logo {
+    max-width: 9rem;
+  }
+
+  .navbar__burger {
+    width: 2.7rem;
+    height: 2rem;
+  }
+
+  .navbar__burger span {
+    height: 0.28rem;
+  }
+
+  .navbar__burger.is-active span:nth-child(1) {
+    transform: translateY(0.86rem) rotate(45deg);
+  }
+
+  .navbar__burger.is-active span:nth-child(3) {
+    transform: translateY(-0.86rem) rotate(-45deg);
+  }
+
+  .icon-button {
+    margin-right: 1.2rem;
+  }
+
+  /* --------------------------------------------------------
+       HERO
+       -------------------------------------------------------- */
+
+  .hero__container {
+    padding: 2.6rem 1.6rem 0;
+  }
+
+  .hero__heading {
+    line-height: 1.1;
+  }
+
+  .hero__button-container {
+    padding: 2.4rem 1.6rem 1.6rem;
+  }
+
+  .button-container__button {
+    padding: 1.2rem 1.4rem;
+  }
+
+  /* --------------------------------------------------------
+       CATALOGUE / TOP PRODUCTS
+       -------------------------------------------------------- */
+
+  .sell {
+    padding: 3rem 0 5rem;
+  }
+
+  .sell__article__container {
+    gap: 2.4rem;
+
+    padding: 0 1.2rem;
+  }
+
+  .sell__article img {
+    display: block;
+
+    max-width: 100%;
+  }
+
+  .sell__decor-holder {
+    display: none;
+  }
+
+  .sell__link {
+    transform: none;
+  }
+
+  /* --------------------------------------------------------
+       CARD NAVIGATION
+       На touch-пристроях стрілки доступні без hover.
+       -------------------------------------------------------- */
+
+  .sell__article-nav,
+  .sell__article-nav--previous,
+  .sell__icon-holder {
+    opacity: 1;
+  }
+
+  /* --------------------------------------------------------
+       INFO SECTION
+       -------------------------------------------------------- */
+
+  .info__container {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* --------------------------------------------------------
+       MODALS
+       -------------------------------------------------------- */
+
+  .modal {
+    padding: 0.6rem;
+  }
+
+  .modal__container,
+  .modal-basket__container {
+    height: calc(100dvh - 1.2rem);
+    max-height: calc(100dvh - 1.2rem);
+
+    border-radius: 1.4rem;
+  }
+
+  .modal__close,
+  .close {
+    top: 1.6rem;
+    right: 1.6rem;
+  }
+
+  .heading-modal {
+    padding-top: 3.6rem;
+  }
+
+  /* --------------------------------------------------------
+       CART
+       -------------------------------------------------------- */
+
+  .basket-items {
+    padding: 1.2rem;
+  }
+
+  .basket-item {
+    padding: 1.6rem 0 3.6rem;
+  }
+
+  .basket-item__left {
+    max-width: 18rem;
+  }
+
+  .basket-item__name,
+  .basket-item__price {
+    font-size: 2rem;
+  }
+
+  .basket-item::after {
+    width: 75%;
+    height: 2rem;
+  }
+
+  /* --------------------------------------------------------
+       CHECKOUT / PAYMENT / BOOKING
+       -------------------------------------------------------- */
+
+  .checkout-view,
+  .payment-view,
+  .order-confirmation-view,
+  .booking-view,
+  .booking-details-view {
+    padding: 2rem 1.4rem;
+  }
+
+  .booking-time-list {
+    gap: 0.8rem;
+  }
+}
+
+/* ============================================================
+   ≤360px
+   ============================================================ */
+
+@media (max-width: 360px) {
+  :root {
+    --primary-heading: 3rem;
+    --secondary-heading: 2.3rem;
+    --ternary-heading: 1.9rem;
+
+    --subtitle-font-size: 1.4rem;
+    --card-font-size: 1.4rem;
+    --button-font-size: 1.6rem;
+  }
+
+  /* --------------------------------------------------------
+       HEADER
+       -------------------------------------------------------- */
+
+  .navbar__container {
+    padding: 0 1rem;
+  }
+
+  .logo {
+    max-width: 8rem;
+  }
+
+  .icon-button {
+    margin-right: 0.8rem;
+  }
+
+  /* --------------------------------------------------------
+       HERO
+       -------------------------------------------------------- */
+
+  .hero__container {
+    padding-left: 1.2rem;
+    padding-right: 1.2rem;
+  }
+
+  .hero__button-container {
+    padding-left: 1.2rem;
+    padding-right: 1.2rem;
+  }
+
+  /* --------------------------------------------------------
+       CATALOGUE / TOP PRODUCTS
+       -------------------------------------------------------- */
+
+  .sell__article__container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .info__container {
+    padding: 1.6rem;
+  }
+
+  /* --------------------------------------------------------
+       MODALS
+       -------------------------------------------------------- */
+
+  .checkout-view,
+  .payment-view,
+  .order-confirmation-view,
+  .booking-view,
+  .booking-details-view {
+    padding-left: 1.2rem;
+    padding-right: 1.2rem;
+  }
+
+  .booking-time-list {
+    gap: 0.6rem;
+  }
+}
+
+/* ============================================================
+   RESPONSIVE — FOOTER
+   Mobile: 320–768px
+   Desktop footer НЕ змінюється.
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .footer {
+    width: 100%;
+    max-width: 100%;
+
+    max-height: none;
+
+    overflow: hidden;
+
+    box-sizing: border-box;
+  }
+
+  .foo__deco {
+  display: none;
+}
+
+  /* --------------------------------------------------------
+       FOOTER CONTAINER
+       -------------------------------------------------------- */
+
+  .footer__container {
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+
+    width: 100%;
+    max-width: 100%;
+
+    position: relative;
+
+    box-sizing: border-box;
+  }
+
+  /* --------------------------------------------------------
+       AUTHOR IMAGE
+       -------------------------------------------------------- */
+
+  .author {
+    width: auto;
+    max-width: 100%;
+
+    height: auto;
+    max-height: none;
+
+    display: block;
+
+    object-fit: contain;
+
+    flex-shrink: 0;
+  }
+
+  /* --------------------------------------------------------
+       INTRO TEXT
+       -------------------------------------------------------- */
+
+  .introduce__textholder {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    max-width: 100%;
+
+    padding: 4rem 2rem 0;
+
+    box-sizing: border-box;
+
+    align-items: center;
+
+    text-align: center;
+  }
+
+  .introduce__textholder-deco {
+    width: 21.5rem;
+    max-width: 80%;
+
+    height: auto;
+
+    display: block;
+  }
+
+  .introduce__textholder-about {
+    font-size: var(--secondary-heading);
+
+    max-width: 100%;
+
+    margin-top: 2rem;
+
+    overflow-wrap: break-word;
+  }
+
+  .introduce__textholder-greeting {
+    font-family: "Great Vibes";
+    font-size: var(--secondary-heading);
+
+    max-width: 100%;
+
+    overflow-wrap: break-word;
+  }
+
+  .introduce__textholder-paragraph {
+    max-width: 41rem;
+    width: 100%;
+
+    font-size: var(--subtitle-font-size);
+
+    line-height: 2.5rem;
+
+    letter-spacing: -0.01em;
+
+    margin-top: 1.5rem;
+
+    overflow-wrap: break-word;
+  }
+
+  /* --------------------------------------------------------
+       SOCIAL ICONS
+       -------------------------------------------------------- */
+
+  .introduce__socialsholder {
+    display: flex;
+    flex-direction: row;
+
+    justify-content: center;
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    width: 100%;
+    max-width: 100%;
+
+    gap: 3rem;
+
+    padding: 3rem 2rem 4rem;
+
+    box-sizing: border-box;
+  }
+
+  .icon {
+    width: 5.8rem;
+    height: 5.8rem;
+
+    max-width: 5.8rem;
+    max-height: 5.8rem;
+
+    flex-shrink: 0;
+  }
+
+  /* --------------------------------------------------------
+       DECORATION
+       -------------------------------------------------------- */
+
+  .foo__deco {
+    position: absolute;
+
+    top: auto;
+    right: auto;
+
+    bottom: 0;
+    left: 50%;
+
+    width: auto;
+    max-width: 90%;
+
+    transform: translateX(-50%);
+
+    pointer-events: none;
+  }
+}
+
+/* ============================================================
+   ≤480px
+   ============================================================ */
+
+@media (max-width: 480px) {
+  .introduce__textholder {
+    padding: 3.2rem 1.6rem 0;
+  }
+
+  .introduce__textholder-deco {
+    max-width: 70%;
+  }
+
+  .introduce__textholder-about,
+  .introduce__textholder-greeting {
+    font-size: 2.4rem;
+  }
+
+  .introduce__textholder-paragraph {
+    font-size: 1.5rem;
+
+    line-height: 2.3rem;
+
+    max-width: 34rem;
+  }
+
+  .introduce__socialsholder {
+    gap: 2rem;
+
+    padding: 2.5rem 1.6rem 3.5rem;
+  }
+
+  .icon {
+    width: 5rem;
+    height: 5rem;
+
+    max-width: 5rem;
+    max-height: 5rem;
+  }
+}
+
+/* ============================================================
+   ≤360px
+   ============================================================ */
+
+@media (max-width: 360px) {
+  .introduce__textholder {
+    padding-left: 1.2rem;
+    padding-right: 1.2rem;
+  }
+
+  .introduce__textholder-about,
+  .introduce__textholder-greeting {
+    font-size: 2.1rem;
+  }
+
+  .introduce__textholder-paragraph {
+    font-size: 1.4rem;
+
+    line-height: 2.1rem;
+  }
+
+  .introduce__socialsholder {
+    gap: 1.4rem;
+
+    padding-left: 1.2rem;
+    padding-right: 1.2rem;
+  }
+
+  .icon {
+    width: 4.4rem;
+    height: 4.4rem;
+
+    max-width: 4.4rem;
+    max-height: 4.4rem;
+  }
+
+  .foo__deco {
+    max-width: 100%;
+  }
+
+}
+

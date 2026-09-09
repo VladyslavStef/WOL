@@ -4,6 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>WOL — Адмін-панель</title>
+    <!-- Підключаємо normalize.css заради ГОТОВОЇ модальної системи
+         (.modal/.modal__container/.modal__close/is-open), яку вже
+         використовує сайт покупця — не дублюємо ці правила в admin.css. -->
+    <link rel="stylesheet" href="/frontend/CSS/normalize.css" />
+    <link rel="stylesheet" href="/frontend/CSS/user-message-modal.css" />
     <link rel="stylesheet" href="admin.css" />
   </head>
   <body>
@@ -14,17 +19,12 @@
 
         <label>
           Логін
-          <input type="text" name="name" autocomplete="username" required />
+          <input type="text" name="name" required />
         </label>
 
         <label>
           Пароль
-          <input
-            type="password"
-            name="password"
-            autocomplete="current-password"
-            required
-          />
+          <input type="password" name="password" required />
         </label>
 
         <span class="admin-error" id="loginError"></span>
@@ -39,27 +39,42 @@
         <h1>Wonder of Lavender — Адмін</h1>
         <button type="button" id="logoutButton">Вийти</button>
       </header>
+
+      <!-- ---------------- СТАН КАТАЛОГУ (сезонне вимкнення) ---------------- -->
       <section class="admin-catalog-status">
         <div class="admin-catalog-status__info">
           <strong>Каталог:</strong>
           <span id="catalogStatusLabel">Завантаження...</span>
         </div>
         <p class="admin-catalog-status__hint">
-          Вимкніть каталог на сезонний період. Користувачі побачать повідомлення
-          «Лаванда спить, завітайте пізніше».
+          Вимкніть каталог на сезонний період. Відвідувачі побачать
+          повідомлення «Лаванда спить, завітайте пізніше».
         </p>
-        <button
-          type="button"
-          id="toggleCatalogButton"
-          class="admin-catalog-status__toggle"
-        >
+        <button type="button" id="toggleCatalogButton" class="admin-catalog-status__toggle">
           Змінити статус
         </button>
-        <span
-          class="admin-catalog-status__message"
-          id="catalogStatusMessage"
-        ></span>
       </section>
+
+      <!-- ---------------- КОРОТКИЙ ОГЛЯД (dashboard-статистика) ---------------- -->
+      <section class="admin-dashboard-stats">
+        <div class="admin-stat admin-stat--danger">
+          <span class="admin-stat__value" id="statOutOfStock">0</span>
+          <span class="admin-stat__label">товарів немає в наявності</span>
+        </div>
+        <div class="admin-stat admin-stat--warning">
+          <span class="admin-stat__value" id="statLowStock">0</span>
+          <span class="admin-stat__label">товарів залишилось мало</span>
+        </div>
+        <div class="admin-stat">
+          <span class="admin-stat__value" id="statNewOrders">0</span>
+          <span class="admin-stat__label">нових замовлень</span>
+        </div>
+        <div class="admin-stat">
+          <span class="admin-stat__value" id="statUpcomingBookings">0</span>
+          <span class="admin-stat__label">активних бронювань</span>
+        </div>
+      </section>
+
       <nav class="admin-tabs">
         <button type="button" class="admin-tab is-active" data-tab="categories">
           Категорії
@@ -77,8 +92,13 @@
 
       <!-- ---------------- CATEGORIES TAB ---------------- -->
       <section class="admin-tab-panel is-active" id="categoriesPanel">
-        <details class="admin-create-box">
-          <summary>+ Додати категорію</summary>
+        <details class="admin-create-box" id="categoryFormBox">
+          <summary id="categoryFormSummary">+ Додати категорію</summary>
+
+          <div class="admin-editing-banner is-hidden" id="categoryEditingBanner">
+            Редагування категорії: <strong id="categoryEditingName"></strong>
+            <button type="button" id="cancelCategoryEditButton">Скасувати редагування</button>
+          </div>
 
           <form class="admin-form" id="createCategoryForm">
             <label>Назва <input type="text" name="name" required /></label>
@@ -99,8 +119,8 @@
             <label>
               Група каталогу
               <select name="display_group">
-                <option value="products">products</option>
-                <option value="seedlings">seedlings</option>
+                <option value="products">Товари</option>
+                <option value="seedlings">Саджанці</option>
               </select>
             </label>
 
@@ -108,7 +128,13 @@
               >Порядок сортування
               <input type="number" name="sort_order" value="0"
             /></label>
-            <label>URL обкладинки <input type="text" name="image_url" /></label>
+
+            <label>
+              URL обкладинки
+              <input type="text" name="image_url" id="categoryImageUrlInput" />
+            </label>
+            <img class="admin-image-preview is-hidden" id="categoryImagePreview" alt="Прев'ю обкладинки категорії" />
+
             <label>URL іконки <input type="text" name="icon_url" /></label>
 
             <label class="admin-checkbox">
@@ -117,7 +143,9 @@
 
             <span class="admin-error" id="createCategoryError"></span>
 
-            <button type="submit">Створити категорію</button>
+            <div class="admin-form-actions">
+              <button type="submit" id="createCategorySubmitButton">Створити категорію</button>
+            </div>
           </form>
         </details>
 
@@ -127,79 +155,64 @@
           </button>
         </div>
 
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Назва</th>
-              <th>Slug</th>
-              <th>Група</th>
-              <th>Порядок</th>
-              <th>Активна</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="categoriesTableBody"></tbody>
-        </table>
+        <div class="admin-table-wrapper">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Назва</th>
+                <th>Slug</th>
+                <th>Група</th>
+                <th>Порядок</th>
+                <th>Активна</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="categoriesTableBody"></tbody>
+          </table>
+        </div>
       </section>
 
       <!-- ---------------- PRODUCTS TAB ---------------- -->
       <section class="admin-tab-panel" id="productsPanel">
-        <details class="admin-create-box">
-          <summary>+ Додати товар</summary>
+        <details class="admin-create-box" id="productFormBox">
+          <summary id="productFormSummary">+ Додати товар</summary>
+
+          <div class="admin-editing-banner is-hidden" id="productEditingBanner">
+            Редагування товару: <strong id="productEditingName"></strong>
+            <button type="button" id="cancelProductEditButton">Скасувати редагування</button>
+          </div>
 
           <form class="admin-form" id="createProductForm">
+            <!-- ==================== ОСНОВНІ ПОЛЯ (потрібні щодня) ==================== -->
+
             <label>Назва <input type="text" name="title" required /></label>
+
+            <label>
+              Категорія
+              <select name="category_id" id="categorySelect" required>
+                <option value="" disabled selected>— Оберіть категорію —</option>
+                <option value="none">— без категорії —</option>
+              </select>
+            </label>
+
             <label>Опис <input type="text" name="description" /></label>
+
             <label
               >Ціна (грн)
               <input type="number" name="price" min="0" step="0.01" required
             /></label>
-            <label
-              >Slug (необов'язково)
-              <input type="text" name="slug" placeholder="автоматично з назви"
-            /></label>
-            <label>Alt (для зображення) <input type="text" name="alt" /></label>
-
-            <label>
-              Категорія
-              <select name="category_id" id="categorySelect" required></select>
-            </label>
-
-            <label>
-              Група каталогу
-              <select name="display_group">
-                <option value="products">products</option>
-                <option value="seedlings">seedlings</option>
-              </select>
-            </label>
-
-            <label>
-              Тип товару
-              <select name="product_type">
-                <option value="physical">physical</option>
-                <option value="ticket">ticket</option>
-              </select>
-            </label>
-
-            <label>
-              Режим ціни (лише для ticket)
-              <select name="pricing_mode">
-                <option value="">—</option>
-                <option value="person">person</option>
-                <option value="hour">hour</option>
-              </select>
-            </label>
 
             <label
-              >Залишок на складі <input type="number" name="stock" min="0"
+              >Залишок на складі
+              <input type="number" name="stock" min="0"
             /></label>
-            <label
-              >Порядок сортування
-              <input type="number" name="sort_order" value="0"
-            /></label>
-            <label>URL зображення <input type="text" name="image_url" /></label>
-            <label>URL іконки <input type="text" name="icon_url" /></label>
+
+            <label>
+              URL зображення
+              <input type="text" name="image_url" id="productImageUrlInput" />
+            </label>
+            <img class="admin-image-preview is-hidden" id="productImagePreview" alt="Прев'ю зображення товару" />
 
             <label class="admin-checkbox">
               <input type="checkbox" name="is_active" checked /> Активний
@@ -207,34 +220,92 @@
 
             <span class="admin-error" id="createProductError"></span>
 
-            <button type="submit">Створити товар</button>
+            <!-- ==================== ДОДАТКОВІ / ТЕХНІЧНІ ПОЛЯ ==================== -->
+            <details class="admin-advanced-fields">
+              <summary>Додаткові налаштування</summary>
+
+              <label
+                >Slug (необов'язково)
+                <input type="text" name="slug" placeholder="автоматично з назви"
+              /></label>
+              <label>Артикул (SKU) <input type="text" name="sku" /></label>
+              <label>Alt (для зображення) <input type="text" name="alt" /></label>
+              <label>URL іконки <input type="text" name="icon_url" /></label>
+
+              <label>
+                Група каталогу
+                <select name="display_group">
+                  <option value="products">Товари</option>
+                  <option value="seedlings">Саджанці</option>
+                </select>
+              </label>
+
+              <label>
+                Тип товару
+                <select name="product_type">
+                  <option value="physical">Фізичний товар</option>
+                  <option value="ticket">Квиток</option>
+                </select>
+              </label>
+
+              <label>
+                Режим ціни (лише для квитка)
+                <select name="pricing_mode">
+                  <option value="">—</option>
+                  <option value="person">За особу</option>
+                  <option value="hour">За годину</option>
+                </select>
+              </label>
+
+              <label
+                >Порядок сортування
+                <input type="number" name="sort_order" value="0"
+              /></label>
+            </details>
+
+            <div class="admin-form-actions">
+              <button type="submit" id="createProductSubmitButton">Створити товар</button>
+            </div>
           </form>
         </details>
 
         <div class="admin-toolbar">
+          <input
+            type="text"
+            id="productSearchInput"
+            class="admin-search-input"
+            placeholder="Пошук товару за назвою..."
+          />
           <button type="button" id="refreshProductsButton">
             Оновити список
           </button>
-          <span class="admin-note"
-            >Показані лише активні товари (публічний GET /products).</span
-          >
         </div>
 
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Назва</th>
-              <th>Категорія</th>
-              <th>Група</th>
-              <th>Ціна</th>
-              <th>Склад</th>
-              <th>Активний</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="productsTableBody"></tbody>
-        </table>
+        <div class="admin-table-wrapper">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th class="admin-sortable" data-sort="title">
+                  Назва <span class="admin-sort-arrow"></span>
+                </th>
+                <th class="admin-sortable" data-sort="category">
+                  Категорія <span class="admin-sort-arrow"></span>
+                </th>
+                <th>Група</th>
+                <th class="admin-sortable" data-sort="price">
+                  Ціна <span class="admin-sort-arrow"></span>
+                </th>
+                <th class="admin-sortable" data-sort="stock">
+                  Склад <span class="admin-sort-arrow"></span>
+                </th>
+                <th>Активний</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="productsTableBody"></tbody>
+          </table>
+        </div>
       </section>
 
       <!-- ---------------- ORDERS TAB ---------------- -->
@@ -243,21 +314,23 @@
           <button type="button" id="refreshOrdersButton">Оновити список</button>
         </div>
 
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Код</th>
-              <th>Клієнт</th>
-              <th>Телефон</th>
-              <th>Сума</th>
-              <th>Статус</th>
-              <th>Оплата</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="ordersTableBody"></tbody>
-        </table>
+        <div class="admin-table-wrapper">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Код</th>
+                <th>Клієнт</th>
+                <th>Телефон</th>
+                <th>Сума</th>
+                <th>Статус</th>
+                <th>Оплата</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="ordersTableBody"></tbody>
+          </table>
+        </div>
       </section>
 
       <!-- ---------------- BOOKINGS TAB ---------------- -->
@@ -268,29 +341,72 @@
           </button>
         </div>
 
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Код</th>
-              <th>Клієнт</th>
-              <th>Телефон</th>
-              <th>Квиток</th>
-              <th>Дата</th>
-              <th>Час</th>
-              <th>Відвідувачів</th>
-              <th>Сума</th>
-              <th>Статус</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="bookingsTableBody"></tbody>
-        </table>
+        <div class="admin-table-wrapper">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Код</th>
+                <th>Клієнт</th>
+                <th>Телефон</th>
+                <th>Квиток</th>
+                <th>Дата</th>
+                <th>Час</th>
+                <th>Відвідувачів</th>
+                <th>Сума</th>
+                <th>Статус</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="bookingsTableBody"></tbody>
+          </table>
+        </div>
       </section>
+    </section>
+
+    <!-- ======================== СПІЛЬНІ МОДАЛКИ (user-message.js) ======================== -->
+
+    <section
+      class="modal user-message-modal"
+      id="userMessageModal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="userMessageModalTitle"
+      aria-describedby="userMessageModalText"
+      aria-hidden="true"
+    >
+      <div class="modal__container user-message-modal__container">
+        <button class="modal__close user-message-modal__close" type="button" aria-label="Закрити"></button>
+        <div class="user-message-modal__icon" aria-hidden="true"></div>
+        <h2 class="user-message-modal__title" id="userMessageModalTitle"></h2>
+        <p class="user-message-modal__text" id="userMessageModalText"></p>
+        <button class="modal-button user-message-modal__ok" type="button">Гаразд</button>
+      </div>
+    </section>
+
+    <section
+      class="modal confirm-modal"
+      id="confirmModal"
+      role="alertdialog"
+      aria-modal="true"
+      aria-labelledby="confirmModalTitle"
+      aria-describedby="confirmModalMessage"
+      aria-hidden="true"
+    >
+      <div class="modal__container confirm-modal__container">
+        <button class="modal__close confirm-modal__close" type="button" aria-label="Закрити"></button>
+        <h2 class="confirm-modal__title" id="confirmModalTitle"></h2>
+        <p class="confirm-modal__message" id="confirmModalMessage"></p>
+        <div class="confirm-modal__actions">
+          <button type="button" class="confirm-modal__cancel">Скасувати</button>
+          <button type="button" class="confirm-modal__confirm">Підтвердити</button>
+        </div>
+      </div>
     </section>
 
     <script src="/frontend/JS/config.js"></script>
     <script src="/frontend/JS/api.js"></script>
+    <script src="/frontend/JS/user-message.js"></script>
     <script src="admin.js"></script>
   </body>
 </html>

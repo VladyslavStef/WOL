@@ -5,6 +5,8 @@
     --text-color: #31293A;
     --bg-cards: #E9E6EF;
     --error-color: #9c3d3d;
+    --success-color: #2F7D42;
+    --warning-color: #A5710A;
 }
 
 * { box-sizing: border-box; }
@@ -17,6 +19,10 @@ body {
 }
 
 .is-hidden { display: none !important; }
+
+h1, summary{
+ font-size: 2.1rem;   
+}
 
 /* ---------- LOGIN ---------- */
 
@@ -42,14 +48,14 @@ body {
     display: flex;
     flex-direction: column;
     gap: 0.3rem;
-    font-size: 0.9rem;
+    font-size: 2.1rem;
 }
 
 .admin-login-form input {
     padding: 0.6rem 0.8rem;
     border: 1px solid #ccc;
     border-radius: 0.5rem;
-    font-size: 1rem;
+    font-size: 2.1rem;
 }
 
 .admin-login-form button {
@@ -59,11 +65,16 @@ body {
     border-radius: 0.5rem;
     background: var(--primary-color);
     color: var(--text-color);
-    font-size: 1rem;
+    font-size: 2.1rem;
     cursor: pointer;
 }
 
-/* ---------- DASHBOARD ---------- */
+.admin-login-form button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ---------- DASHBOARD HEADER ---------- */
 
 .admin-header {
     display: flex;
@@ -81,10 +92,86 @@ body {
     cursor: pointer;
 }
 
+/* ---------- СТАН КАТАЛОГУ (сезонне вимкнення) ---------- */
+
+.admin-catalog-status {
+    margin: 1.5rem 2rem 0;
+    padding: 1.2rem 1.8rem;
+    background: white;
+    border-radius: 0.7rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.admin-catalog-status__info {
+    font-size: 2.1rem;
+}
+
+.admin-catalog-status__hint {
+    flex-basis: 100%;
+    margin: 0;
+    font-size: 2.1rem;
+    opacity: 0.75;
+}
+
+.admin-catalog-status__toggle {
+    padding: 0.6rem 1.4rem;
+    border: none;
+    border-radius: 0.5rem;
+    background: var(--primary-color);
+    color: var(--text-color);
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.admin-catalog-status__toggle:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ---------- DASHBOARD STATS ---------- */
+
+.admin-dashboard-stats {
+    margin: 1rem 2rem 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: 1rem;
+}
+
+.admin-stat {
+    background: white;
+    border-radius: 0.7rem;
+    padding: 1.2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border-left: 0.4rem solid var(--bg-cards);
+}
+
+.admin-stat--danger { border-left-color: var(--error-color); }
+.admin-stat--warning { border-left-color: var(--warning-color); }
+
+.admin-stat__value {
+    font-size: 2.2rem;
+    font-weight: bold;
+}
+
+.admin-stat__label {
+    font-size: 2.1rem;
+    opacity: 0.75;
+}
+
+/* ---------- TABS ---------- */
+
 .admin-tabs {
     display: flex;
+    flex-wrap: wrap;
     gap: 0.5rem;
-    padding: 1rem 2rem 0;
+    padding: 1.5rem 2rem 0;
 }
 
 .admin-tab {
@@ -93,7 +180,7 @@ body {
     background: var(--bg-cards);
     border-radius: 0.5rem 0.5rem 0 0;
     cursor: pointer;
-    font-size: 1rem;
+    font-size: 2.1rem;
 }
 
 .admin-tab.is-active {
@@ -110,6 +197,8 @@ body {
     display: block;
 }
 
+/* ---------- CREATE / EDIT BOX ---------- */
+
 .admin-create-box {
     background: white;
     border-radius: 0.7rem;
@@ -122,18 +211,45 @@ body {
     font-weight: bold;
 }
 
+/* ---------- EDITING BANNER (Пункт 2/3) ---------- */
+
+.admin-editing-banner {
+    margin-top: 1rem;
+    padding: 0.8rem 1.2rem;
+    background: #FFF4DA;
+    border: 1px solid #F0D28B;
+    border-radius: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 2.1rem;
+}
+
+.admin-editing-banner button {
+    margin-left: auto;
+    padding: 0.4rem 0.9rem;
+    border: none;
+    border-radius: 0.4rem;
+    background: white;
+    cursor: pointer;
+}
+
+/* ---------- FORM ---------- */
+
 .admin-form {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
     gap: 1rem;
     margin-top: 1rem;
+    align-items: start;
 }
 
 .admin-form label {
     display: flex;
     flex-direction: column;
     gap: 0.3rem;
-    font-size: 0.9rem;
+    font-size: 2.1rem;
 }
 
 .admin-form input,
@@ -149,18 +265,66 @@ body {
     gap: 0.5rem !important;
 }
 
-.admin-form button {
+/* Технічні/додаткові поля (Пункт 3) — своя міні-сітка всередині <details>,
+   щоб не ламати вирівнювання основного блоку. */
+.admin-advanced-fields {
     grid-column: 1 / -1;
-    padding: 0.7rem;
+    background: var(--neutral-bg);
+    border-radius: 0.5rem;
+    padding: 0.8rem 1.2rem 1.2rem;
+}
+
+.admin-advanced-fields summary {
+    cursor: pointer;
+    font-size: 2.1rem;
+    padding: 0.4rem 0;
+    color: var(--footer-color);
+}
+
+.admin-advanced-fields > label {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+    margin-top: 0.8rem;
+}
+
+.admin-form-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 1rem;
+}
+
+.admin-form button,
+.admin-form-actions button {
+    padding: 0.7rem 1.5rem;
     border: none;
     border-radius: 0.5rem;
     background: var(--primary-color);
     cursor: pointer;
-    font-size: 1rem;
+    font-size: 2.1rem;
 }
+
+.admin-form button:disabled,
+.admin-form-actions button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+/* ---------- IMAGE PREVIEW (Пункт 3) ---------- */
+
+.admin-image-preview {
+    width: 8rem;
+    height: 8rem;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    border: 1px solid var(--bg-cards);
+    background: var(--neutral-bg);
+}
+
+/* ---------- TOOLBAR / SEARCH (Пункт 6) ---------- */
 
 .admin-toolbar {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 1rem;
     margin-bottom: 1rem;
@@ -174,23 +338,40 @@ body {
     cursor: pointer;
 }
 
+.admin-search-input {
+    flex: 1 1 20rem;
+    max-width: 28rem;
+    padding: 0.55rem 0.9rem;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    font-size: 2.1rem;
+}
+
 .admin-note {
-    font-size: 0.85rem;
+    font-size: 2.1rem;
     opacity: 0.7;
 }
 
 .admin-error {
     display: block;
     color: var(--error-color);
-    font-size: 0.85rem;
+    font-size: 2.1rem;
     min-height: 1.2rem;
+}
+
+/* ---------- TABLE ---------- */
+
+.admin-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 0.7rem;
 }
 
 .admin-table {
     width: 100%;
+    min-width: 60rem;
     border-collapse: collapse;
     background: white;
-    border-radius: 0.7rem;
     overflow: hidden;
 }
 
@@ -199,11 +380,50 @@ body {
     padding: 0.7rem 1rem;
     border-bottom: 1px solid var(--bg-cards);
     text-align: left;
-    font-size: 0.9rem;
+    font-size: 2.1rem;
+    white-space: nowrap;
 }
 
 .admin-table th {
     background: var(--bg-cards);
+}
+
+/* ---------- SORTING (Пункт 7) ---------- */
+
+.admin-sortable {
+    cursor: pointer;
+    user-select: none;
+}
+
+.admin-sortable:hover {
+    background: #DED8EA;
+}
+
+.admin-sort-arrow {
+    display: inline-block;
+    width: 1rem;
+    font-weight: bold;
+}
+
+/* ---------- LOW STOCK / STATUS BADGES ---------- */
+
+.admin-badge {
+    display: inline-block;
+    padding: 0.15rem 0.6rem;
+    border-radius: 1rem;
+    font-size: 2.1rem;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.admin-badge--warning {
+    background: #F7EBD3;
+    color: var(--warning-color);
+}
+
+.admin-badge--danger {
+    background: #F3DEDE;
+    color: var(--error-color);
 }
 
 .admin-table button {
@@ -212,6 +432,7 @@ body {
     border-radius: 0.4rem;
     cursor: pointer;
     margin-right: 0.3rem;
+    white-space: nowrap;
 }
 
 .admin-table select {
@@ -228,33 +449,89 @@ body {
     background: var(--primary-color);
 }
 
-/* ------------- CATLOGUE STATUS ------------- */
+/* ---------- CUSTOM CONFIRM MODAL (Пункт 5) ---------- */
+/* Побудовано на тому самому каркасі .modal/.modal__container/.modal__close,
+   що й user-message-modal.css — нова overlay-система тут не створюється. */
 
-.admin-catalog-status {
-    margin: 1.5rem 2rem 0;
-    padding: 1.2rem 1.8rem;
-    background: white;
-    border-radius: 0.7rem;
-    display: flex;
-    flex-wrap: wrap;
+.confirm-modal__container {
+    max-width: 46rem;
+    height: auto;
+    max-height: none;
+    padding: 3.5rem 3rem;
+    text-align: center;
     align-items: center;
-    gap: 1rem 2rem;
+    gap: 1rem;
 }
-.admin-catalog-status__info { font-size: 1.05rem; }
-.admin-catalog-status__hint {
-    flex-basis: 100%;
+
+.confirm-modal__title {
+    font-size: 2.1rem;
     margin: 0;
-    font-size: 0.85rem;
-    opacity: 0.75;
 }
-.admin-catalog-status__toggle {
-    padding: 0.6rem 1.2rem;
+
+.confirm-modal__message {
+    margin: 0;
+    font-size: 2.1rem;
+    line-height: 1.5;
+    color: var(--text-color);
+}
+
+.confirm-modal__actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.confirm-modal__actions button {
+    padding: 0.7rem 1.6rem;
     border: none;
     border-radius: 0.5rem;
-    background: var(--primary-color);
+    font-size: 2.1rem;
     cursor: pointer;
 }
-.admin-catalog-status__message {
-    font-size: 0.85rem;
-    color: var(--footer-color);
+
+.confirm-modal__actions button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+.confirm-modal__cancel {
+    background: var(--bg-cards);
+    color: var(--text-color);
+}
+
+.confirm-modal__confirm {
+    background: var(--error-color);
+    color: white;
+}
+
+/* ---------- MOBILE (Частина 10 попереднього аудиту) ---------- */
+
+@media (max-width: 640px) {
+    .admin-header,
+    .admin-catalog-status,
+    .admin-dashboard-stats,
+    .admin-tabs,
+    .admin-tab-panel {
+        margin-left: 0;
+        margin-right: 0;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .admin-form {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-form-actions button,
+    .admin-toolbar button,
+    .admin-table button,
+    .confirm-modal__actions button,
+    .admin-catalog-status__toggle {
+        min-height: 2.75rem; /* зручніше влучити пальцем */
+    }
+
+    .admin-search-input {
+        max-width: none;
+        flex-basis: 100%;
+    }
 }

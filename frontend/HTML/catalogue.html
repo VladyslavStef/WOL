@@ -29,14 +29,18 @@
       href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="/frontend/CSS/responsive-catalogue.css"/>
     <title>Catalogue</title>
-    <!-- FIX: product-data.js більше не потрібен — товари тепер тягнуться з бекенду -->
   </head>
   <body>
     <header class="header">
       <nav class="navbar">
         <div class="navbar__container">
-          <img src="/frontend/IMG/LOGO.svg" alt="logo" class="logo" />
+  <picture class="logo">
+  <source media="(max-width: 768px)" srcset="../IMG/Group5.png">
+  
+  <img src="/frontend/IMG/LOGO.svg" alt="logo"/>
+</picture>
           <ul class="navbar__list">
             <li class="navbar__list-item">
               <a href="main.html" class="navbar__list-link">Головна</a>
@@ -67,6 +71,16 @@
             <img src="/frontend/IMG/koshyk.png" alt="shop" class="shop" />
             <span class="basket-count">0</span>
           </button>
+<button
+    class="navbar__burger"
+    type="button"
+    aria-label="Відкрити меню"
+    aria-expanded="false"
+>
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
         </div>
       </nav>
     </header>
@@ -117,6 +131,11 @@
         aria-hidden="true"
       >
         <div class="modal__container catalog-closed-modal__container">
+          <img
+            src="/frontend/IMG/Layer 1.png"
+            alt=""
+            class="modal__bg basket-bg"
+          />
           <button
             class="modal__close catalog-closed-modal__close"
             type="button"
@@ -134,6 +153,36 @@
           </p>
         </div>
       </section>
+
+      <section
+        class="modal user-message-modal"
+        id="userMessageModal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="userMessageModalTitle"
+        aria-describedby="userMessageModalText"
+        aria-hidden="true"
+      >
+        <div class="modal__container user-message-modal__container">
+          <img
+            src="/frontend/IMG/Layer 1.png"
+            alt=""
+            class="modal__bg basket-bg"
+          />
+          <button
+            class="modal__close user-message-modal__close"
+            type="button"
+            aria-label="Закрити"
+          ></button>
+          <div class="user-message-modal__icon" aria-hidden="true"></div>
+          <h2 class="user-message-modal__title" id="userMessageModalTitle"></h2>
+          <p class="user-message-modal__text" id="userMessageModalText"></p>
+          <button class="modal-button user-message-modal__ok" type="button">
+            Гаразд
+          </button>
+        </div>
+      </section>
+
       <section class="modal modal-basket">
         <div class="modal__container modal-basket__container">
           <!-- СПІЛЬНИЙ ФОН МОДАЛКИ -->
@@ -753,8 +802,10 @@
     <script src="/frontend/JS/config.js"></script>
     <script src="/frontend/JS/api.js"></script>
     <script src="/frontend/JS/catalogue-state.js"></script>
+    <script src="/frontend/JS/user-message.js"></script>
     <script src="/frontend/JS/category-groups.js"></script>
     <script src="/frontend/JS/catalogue.js"></script>
+    <script src="/frontend/JS/responsive.js"></script>
     <script src="/frontend/JS/basket.js"></script>
     <script src="/frontend/JS/booking.js"></script>
   </body>

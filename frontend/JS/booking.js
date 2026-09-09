@@ -7,10 +7,6 @@ const BOOKING_MAX_VISITORS = 30;
 // ========================================
 // TICKETS
 // ========================================
-// FIX: раніше тут була захардкоджена ціна/pricingMode. Тепер лишається лише
-// презентаційна інформація (картинка, опис, доступні часові слоти), а id
-// товару, ціна та pricingMode підтягуються з бекенду при завантаженні —
-// щоб ціна на сайті завжди відповідала базі даних.
 
 const bookingTicketTemplates = [
   {
@@ -53,20 +49,7 @@ const bookingTicketTemplates = [
   },
 ];
 
-// Заповнюється в initBooking() після завантаження товарів з бекенду.
 let bookingTickets = [];
-
-// ========================================
-// AVAILABILITY (реальні дані з бекенду)
-// ========================================
-// FIX: раніше тут були захардкоджені Set з номерами днів місяця
-// (bookingBusyDays) і назвами часових проміжків (bookingBusyTimes),
-// що взагалі не залежало від реальних бронювань і навіть мало логічну
-// помилку — перевірка йшла тільки по числу дня, тобто "5-те число
-// будь-якого місяця" вважалось зайнятим у КОЖНОМУ місяці.
-// Тепер зайняті дати запитуються з бекенду окремо для кожного квитка
-// (GET /booking/busy-dates?product_id=...) і зберігаються як рядки
-// формату YYYY-MM-DD, щоб коректно порівнювати дати з різних місяців.
 
 let bookingBusyDatesSet = new Set();
 
@@ -360,16 +343,13 @@ const renderBookingTickets = function () {
 
       bookingSelectedType.textContent = `${ticket.time} · ${ticket.description}`;
 
-      // FIX: тягнемо реальні зайняті дати саме для цього
-      // квитка перед показом календаря, замість
-      // захардкодженого списку.
       bookingBusyDatesSet = new Set();
 
       try {
         const response = await fetchBusyDates(ticket.productId);
         bookingBusyDatesSet = new Set(response.busyDates || []);
       } catch (error) {
-        console.error("Не вдалося завантажити зайняті дати:", error.message);
+        console.error("Не вдалося завантажити зайняті дати:", error);
       }
 
       renderBookingCalendar();
@@ -531,9 +511,6 @@ const renderBookingTimes = function () {
       button.classList.add("is-selected");
     }
 
-    // FIX: часові проміжки більше не блокуються окремим списком —
-    // якщо дата обрана, вона за визначенням вільна (недоступні дати
-    // вже відфільтровані в календарі), тож усі часи на ній доступні.
     if (limitReached && !isSelected) {
       button.disabled = true;
     }
@@ -541,13 +518,9 @@ const renderBookingTimes = function () {
     button.addEventListener("click", () => {
       const index = bookingState.times.indexOf(time);
 
-      // Якщо вже вибраний —
-      // прибираємо його
-
       if (index !== -1) {
         bookingState.times.splice(index, 1);
       } else {
-        // Максимум 3
 
         if (bookingState.times.length >= 3) {
           bookingTimeError.textContent =
@@ -594,15 +567,9 @@ const calculateBookingTotal = function () {
     return 0;
   }
 
-  // Денний:
-  // 200 грн за одну людину
-
   if (bookingState.ticket.pricingMode === "person") {
     return bookingState.ticket.priceValue * bookingState.quantity;
   }
-
-  // Вечірній:
-  // 500 грн за кожну обрану годину
 
   return bookingState.ticket.priceValue * bookingState.times.length;
 };
@@ -710,10 +677,6 @@ const renderBookingConfirmation = function () {
   bookingConfirmationPhone.textContent = bookingState.phone;
 
   bookingConfirmationTotal.textContent = total + " грн";
-
-  // ========================================
-  // DATA READY FOR BACKEND
-  // ========================================
 
   pendingBooking = {
     ticket: {
@@ -880,9 +843,16 @@ document.addEventListener("keydown", (event) => {
 
 // ========================================
 // FINAL ACTION
-// FIX: раніше тут був лише console.log — бронювання ніколи не долітало
-// до бекенду. Тепер реальний виклик POST /booking.
 // ========================================
+// FIX (user messages): alert() замінено на showUserMessage(). Раніше тут
+// одразу після alert() викликався closeBooking() — тепер цей виклик
+// прибрано: showUserMessage() сам ховає модалку бронювання і сам керує
+// блокуванням скролу тіла, а передчасний closeBooking() достроково зняв
+// би body.classList("modal-open"), поки success-повідомлення ще
+// показане. Модалка бронювання просто лишається схованою під
+// повідомленням (не відновлюється, restoreUnderlyingModal не передано) —
+// той самий кінцевий результат, що й раніше, без проміжного "миготіння"
+// скролу.
 
 let isSubmittingBooking = false;
 
@@ -915,13 +885,23 @@ bookingConfirmationAction.addEventListener("click", async () => {
 
     const result = await createBooking(payload);
 
-    alert(`Бронювання оформлено!\nНомер бронювання: ${result.booking_code}`);
+    showUserMessage({
+      type: "success",
+      message: `Бронювання успішно оформлено!\nНомер бронювання: ${result.booking_code}`
+    });
 
     pendingBooking = null;
-
-    closeBooking();
   } catch (error) {
-    alert(`Не вдалося оформити бронювання: ${error.message}`);
+    console.error("Не вдалося оформити бронювання:", error);
+
+    showUserMessage({
+      type: "error",
+      message: toUserFriendlyErrorMessage(
+        error,
+        "Не вдалося оформити бронювання. Перевірте з'єднання з інтернетом і спробуйте ще раз."
+      ),
+      restoreUnderlyingModal: true
+    });
   } finally {
     isSubmittingBooking = false;
     bookingConfirmationAction.disabled = false;
@@ -930,8 +910,7 @@ bookingConfirmationAction.addEventListener("click", async () => {
 });
 
 // ========================================
-// INIT: тягнемо квитки з бекенду (ціна, id, pricingMode),
-// об'єднуємо зі статичними даними шаблону (картинка, слоти, опис)
+// INIT: тягнемо квитки з бекенду
 // ========================================
 
 const initBooking = async function () {
@@ -966,7 +945,7 @@ const initBooking = async function () {
   } catch (error) {
     console.error(
       "Не вдалося завантажити квитки для бронювання:",
-      error.message,
+      error,
     );
   }
 };

@@ -5,13 +5,29 @@
 // Підключати ПІСЛЯ config.js.
 
 const apiRequest = async function (path, options = {}) {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {}),
-    },
-  });
+  let response;
+
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...(options.headers || {}),
+      },
+    });
+  } catch (networkError) {
+    // FIX (Етап 10): справжній мережевий збій (сервер недоступний, немає
+    // інтернету) — fetch() кидає технічну помилку на кшталт "Failed to
+    // fetch". Технічний текст лишається розробнику через console.error;
+    // покупцю показуємо лише прапорець isNetworkError — саме його читає
+    // toUserFriendlyErrorMessage() (user-message.js), щоб підставити
+    // зрозумілий текст замість "Failed to fetch".
+    console.error("Мережева помилка запиту до API:", path, networkError);
+
+    const friendlyError = new Error("Немає з'єднання з сервером. Перевірте інтернет і спробуйте ще раз.");
+    friendlyError.isNetworkError = true;
+    throw friendlyError;
+  }
 
   let data = null;
 
