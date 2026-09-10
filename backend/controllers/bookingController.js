@@ -23,8 +23,7 @@ const generateBookingCode = () => {
 };
 
 exports.createBooking = async (req, res) => {
-  console.log(req.body);
-
+  
   const {
     customer_name,
     customer_phone,
