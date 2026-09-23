@@ -31,8 +31,19 @@ module.exports = (req, res, next) => {
     const token = parts[1];
 
     // 3. Звіряємо токен із нашим секретним ключем сервера
+    //
+    // FIX (SECURITY): явно обмежуємо дозволений алгоритм підпису до
+    // HS256 — того самого, яким authController.js підписує токен
+    // (jwt.sign(..., JWT_SECRET, {expiresIn:"12h"}) за замовчуванням
+    // використовує HS256, узгодженість збережена). Без explicit
+    // algorithms-обмеження бібліотека покладається на дефолтну
+    // поведінку — явне обмеження прибирає будь-яку залежність від
+    // майбутніх змін дефолтів бібліотеки (захист від algorithm-
+    // confusion атак).
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET, {
+            algorithms: ["HS256"]
+        });
         req.admin = decoded;
         next();
     } catch (error) {

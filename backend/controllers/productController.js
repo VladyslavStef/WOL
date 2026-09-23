@@ -27,22 +27,6 @@ function mapProduct(p) {
         isActive: p.is_active
     };
 }
-
-// ==========================================
-// 1a. READ: публічна вітрина (тільки активні)
-// FIX: раніше SELECT посилався на неіснучу колонку products.category —
-// звідси "Помилка READ products: стовпця category не існує". Тепер
-// беремо реальні колонки category_id/alt і мапимо у camelCase.
-//
-// FIX (stock): публічна вітрина тепер приховує physical-товари з
-// stock <= 0 (або stock IS NULL — тобто "склад ніколи не був заповнений").
-// Квитки (product_type = 'ticket') НЕ мають фізичного складу і завжди
-// проходять цей фільтр незалежно від значення stock — їхня доступність
-// контролюється окремою booking-логікою (busy dates), яку тут не чіпаємо.
-// Це ЄДИНЕ місце, де визначається "доступний товар" для публічного API —
-// каталог, головна сторінка і кошик підтягують дані саме звідси, тож
-// правило не дублюється по компонентах.
-// ==========================================
 exports.getAllProducts = async (req, res) => {
     try {
         const result = await pool.query(`
@@ -61,16 +45,6 @@ exports.getAllProducts = async (req, res) => {
     }
 };
 
-// ==========================================
-// 1b. READ: адмінська вітрина (активні + неактивні)
-// FIX: раніше адмінка ходила на публічний GET /products (WHERE is_active=true)
-// і губила деактивовані товари без можливості їх повернути.
-//
-// НАВМИСНО: адмінська вітрина НЕ фільтрує за stock — адмін повинен бачити
-// і редагувати товари незалежно від того, скільки їх на складі (включно
-// зі stock = 0), інакше повернути товар у продаж після поповнення складу
-// було б неможливо.
-// ==========================================
 exports.getAllProductsAdmin = async (req, res) => {
     try {
         const result = await pool.query(`
@@ -125,9 +99,13 @@ exports.createProduct = async (req, res) => {
         return res.status(400).json({ success: false, message: "Неправильний режим ціноутворення. Дозволено: 'person' або 'hour'" });
     }
 
-    let productStock = stock !== undefined ? parseInt(stock) : null;
-    if (productStock !== null && productStock < 0) {
-        return res.status(400).json({ success: false, message: "Кількість на складі не може бути від'ємною" });
+    let productStock = null;
+    if (stock !== undefined && stock !== null && stock !== "") {
+        const parsedStock = Number(stock);
+        if (!Number.isInteger(parsedStock) || parsedStock < 0) {
+            return res.status(400).json({ success: false, message: "Кількість на складі повинна бути цілим невід'ємним числом" });
+        }
+        productStock = parsedStock;
     }
 
     // FIX: category_id — реальна FK-колонка, замінює стару текстову category
@@ -209,11 +187,6 @@ exports.updateProduct = async (req, res) => {
                 return res.status(400).json({ success: false, message: "Некоректний ідентифікатор категорії" });
             }
         }
-
-        // FIX (stock): дозволяємо явно встановити stock = 0 (наприклад, коли
-        // адмін хоче тимчасово зняти товар з продажу без деактивації).
-        // stock !== undefined перевіряє саме "поле передано у запиті",
-        // а не "поле truthy" — інакше 0 сприймалось би як "не передано".
         let newStock = existing.stock;
         if (stock !== undefined) {
             newStock = stock !== null ? parseInt(stock) : null;

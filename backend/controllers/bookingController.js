@@ -23,7 +23,9 @@ const generateBookingCode = () => {
 };
 
 exports.createBooking = async (req, res) => {
-  
+  // FIX (SECURITY — debug logging): цей рядок логував ПІБ і телефон
+  // клієнта у server-логи при кожній спробі бронювання. Видалено —
+  // нижче деструктуризація req.body не залежала від цього рядка.
   const {
     customer_name,
     customer_phone,
@@ -189,6 +191,14 @@ exports.createBooking = async (req, res) => {
     const bookingCode = generateBookingCode();
 
     // 1. Запис у головну таблицю BOOKINGS (враховуючи всі нові поля)
+    //
+    // FIX (RACE CONDITION): паралельні запити на ту саму
+    // (product_id, booking_date) тепер ловляться атомарно на рівні БД
+    // через partial unique index uq_bookings_product_date_active
+    // (див. migrations/001_booking_date_unique_index.sql). Валідація
+    // "чи дата вільна" на рівні JS до транзакції була б недостатньою —
+    // два одночасні запити могли б обидва пройти таку перевірку до
+    // того, як хтось із них встигне зробити INSERT.
     const bookingQuery = `
             INSERT INTO bookings (
                 booking_code, product_id, customer_name, customer_phone, 
@@ -237,6 +247,18 @@ exports.createBooking = async (req, res) => {
     });
   } catch (error) {
     await client.query("ROLLBACK");
+
+    // FIX (RACE CONDITION): друга з двох одночасних спроб забронювати
+    // ту саму дату для того самого продукту впаде саме на цьому
+    // constraint — перетворюємо технічний 23505 у зрозуміле повідомлення
+    // замість generic 500.
+    if (error.code === "23505" && error.constraint === "uq_bookings_product_date_active") {
+      return res.status(409).json({
+        success: false,
+        message: "На жаль, цю дату щойно забронювали. Оберіть, будь ласка, іншу дату.",
+      });
+    }
+
     console.error("Помилка виконання транзакції:", error.message);
     return res.status(500).json({
       success: false,

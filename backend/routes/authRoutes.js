@@ -1,8 +1,15 @@
- const express = require("express");
- const router = express.Router();
- const { login } = require("../controllers/authController");
- const loginRateLimit = require("../middleware/loginRateLimit");
+const express = require("express");
+const router = express.Router();
+const { login } = require("../controllers/authController");
 
- router.post("/login", loginRateLimit, login);
+const { createRateLimiter } = require("../middleware/rateLimit");
 
- module.exports = router;
+const loginRateLimit = createRateLimiter({
+    windowMs: 15 * 60 * 1000, // 15 хвилин
+    max: 10,
+    message: "Забагато спроб входу. Спробуйте через 15 хвилин.",
+});
+
+router.post("/login", loginRateLimit, login);
+
+module.exports = router;

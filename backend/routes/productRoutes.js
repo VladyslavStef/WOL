@@ -10,8 +10,13 @@ const {
 
 const adminAuth = require("../middleware/authSecurity");
 
+// FIX (SECURITY): no-store на адмінському списку товарів (не критично
+// чутливо, як замовлення/бронювання, але містить внутрішні дані —
+// stock, sku тощо — застосовано для узгодженості з orders/bookings).
+const noStoreCache = require("../middleware/noStoreCache");
+
 router.get("/", getAllProducts);
-router.get("/admin", adminAuth, getAllProductsAdmin); // FIX: адмінка бачить і неактивні товари
+router.get("/admin", adminAuth, noStoreCache, getAllProductsAdmin); // FIX: адмінка бачить і неактивні товари
 
 router.post("/", adminAuth, createProduct);
 router.put("/:id", adminAuth, updateProduct);

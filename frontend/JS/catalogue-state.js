@@ -95,26 +95,50 @@ const guardCatalogAction = async function (action) {
 // ----------------------------
 // ВІЗУАЛЬНИЙ "READ-ONLY" СТАН СТОРІНКИ КАТАЛОГУ
 // ----------------------------
-// Той самий підхід і при завантаженні сторінки з уже вимкненим каталогом,
-// і коли каталог вимикають, поки користувач уже на сторінці (Частина 3
-// задачі) — UI не видаляється з DOM, а лише блокується візуально й
-// функціонально (pointer-events: none), щоб не "стрибав" layout.
+// FIX (BUG: catalog_enabled вимикав товари на головній): .sell —
+// та сама CSS-назва використовується і на catalogue.html (секція
+// повного каталогу), і на main.html (секція "НАШІ ТОП ПРОДУКТИ").
+// Без цієї перевірки document.querySelector(".sell") знаходив би
+// "перший-ліпший" .sell на поточній сторінці — на main.html це
+// помилково вимикало (pointer-events:none, сіре) топ-товари, хоча
+// вони мають лишатись доступними для перегляду навіть при закритому
+// каталозі (закритий лише сам АКТ КУПІВЛІ, не перегляд).
+//
+// isOnFullCataloguePage() визначає "це справжня сторінка каталогу?"
+// за вже наявним у розмітці, УНІКАЛЬНИМ для неї маркером —
+// .sell__decor-holder рендериться лише на catalogue.html (main.html
+// використовує окрему, іншу за назвою декорацію .sell__decor). Жоден
+// CSS-клас і жодна розмітка тут НЕ перейменовується й НЕ додається —
+// це суто JS-side уточнення області дії вже існуючої функції.
+//
+// Модалка "Лаванда спить" відкривається завжди, незалежно від сторінки
+// — спроба реально купити (додати в кошик/оформити) з ГОЛОВНОЇ сторінки
+// теж має коректно показати це повідомлення, лише саму секцію
+// топ-товарів більше не блокуємо візуально.
+
+const isOnFullCataloguePage = function () {
+    return Boolean(document.querySelector(".sell__decor-holder"));
+};
 
 const applyCatalogBlockedState = function () {
-    const catalogSection = document.querySelector(".sell");
-    const heroButtons = document.querySelector(".hero__button-container");
+    if (isOnFullCataloguePage()) {
+        const catalogSection = document.querySelector(".sell");
+        if (catalogSection) catalogSection.classList.add("is-catalog-blocked");
+    }
 
-    if (catalogSection) catalogSection.classList.add("is-catalog-blocked");
+    const heroButtons = document.querySelector(".hero__button-container");
     if (heroButtons) heroButtons.classList.add("is-catalog-blocked");
 
     openCatalogClosedModal();
 };
 
 const removeCatalogBlockedState = function () {
-    const catalogSection = document.querySelector(".sell");
-    const heroButtons = document.querySelector(".hero__button-container");
+    if (isOnFullCataloguePage()) {
+        const catalogSection = document.querySelector(".sell");
+        if (catalogSection) catalogSection.classList.remove("is-catalog-blocked");
+    }
 
-    if (catalogSection) catalogSection.classList.remove("is-catalog-blocked");
+    const heroButtons = document.querySelector(".hero__button-container");
     if (heroButtons) heroButtons.classList.remove("is-catalog-blocked");
 };
 
@@ -159,7 +183,10 @@ const startCatalogStatusPolling = function () {
 // ----------------------------
 // Один селектор ловить будь-яке посилання на catalogue.html з будь-якої
 // сторінки сайту — перевірку не потрібно дублювати окремо в main.js чи
-// catalogue.js для кожної конкретної кнопки/лінка.
+// catalogue.js для кожної конкретної кнопки/лінка. Це навмисно НЕ
+// зачіпається цим патчем — посилання на сам каталог мають лишатись
+// заблокованими з будь-якої сторінки (включно з головною), це коректна,
+// уже наявна поведінка.
 
 const guardCatalogEntryPoints = function () {
 

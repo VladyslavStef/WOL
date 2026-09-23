@@ -11,6 +11,22 @@ const generateOrderCode = () => {
   return `WOL-${randomPart}`;
 };
 
+const orderBusinessError = function (message) {
+  const error = new Error(message);
+  error.isOrderBusinessError = true;
+  return error;
+};
+
+const MAX_ORDER_ITEM_QUANTITY = 999;
+
+const isValidOrderQuantity = function (quantity) {
+  return (
+    Number.isInteger(quantity) &&
+    quantity > 0 &&
+    quantity <= MAX_ORDER_ITEM_QUANTITY
+  );
+};
+
 // ==========================================
 // 1. READ: Отримання всіх замовлень з їхніми товарами (Адмінка)
 // ==========================================
@@ -107,20 +123,6 @@ exports.createOrder = async (req, res) => {
   try {
     await client.query("BEGIN");
 
-    // ------------------------------------------------------------
-    // FIX (catalog_enabled): БЕКЕНД — остаточний захист від продажу
-    // товарів каталогу, поки catalog_enabled = false. Це навмисно НЕ
-    // те саме, що products.is_active/categories.is_active — це окремий,
-    // глобальний бізнес-стан "магазин тимчасово не приймає нові
-    // замовлення через каталог", який зберігається в site_settings.
-    //
-    // Перевірка виконується ПЕРШОЮ, всередині тієї самої транзакції, ще
-    // до будь-якої роботи з товарами/stock — якщо каталог закрито,
-    // жоден рядок в orders/ordered_products не створюється і жоден
-    // stock не списується. Booking (bookings/booking_times) навмисно
-    // НЕ зачіпається цією перевіркою — це окремий бізнес-процес
-    // (відвідування поля), не завʼязаний на продаж товарів каталогу.
-    // ------------------------------------------------------------
     const catalogStatusRes = await client.query(
       "SELECT catalog_enabled FROM site_settings WHERE id = 1",
     );
@@ -147,8 +149,10 @@ exports.createOrder = async (req, res) => {
     for (const item of items) {
       const { product_id, quantity } = item;
 
-      if (!product_id || !quantity || quantity <= 0) {
-        throw new Error("Некоректні дані товару або кількості в кошику");
+      if (!product_id || !isValidOrderQuantity(quantity)) {
+        throw orderBusinessError(
+          "Некоректні дані товару або кількості в кошику",
+        );
       }
 
       const productRes = await client.query(
@@ -157,13 +161,15 @@ exports.createOrder = async (req, res) => {
       );
 
       if (productRes.rows.length === 0) {
-        throw new Error(`Товар з ID ${product_id} не знайдено в системі`);
+        throw orderBusinessError(
+          `Товар з ID ${product_id} не знайдено в системі`,
+        );
       }
 
       const product = productRes.rows[0];
 
       if (!product.is_active) {
-        throw new Error(
+        throw orderBusinessError(
           `Товар "${product.title}" наразі недоступний для замовлення`,
         );
       }
@@ -172,7 +178,7 @@ exports.createOrder = async (req, res) => {
         product.product_type === "physical" &&
         (product.stock === null || product.stock < quantity)
       ) {
-        throw new Error(
+        throw orderBusinessError(
           `Недостатньо товару "${product.title}" на складі. Доступно: ${product.stock || 0} шт.`,
         );
       }
@@ -235,7 +241,7 @@ exports.createOrder = async (req, res) => {
         );
 
         if (stockUpdateRes.rows.length === 0) {
-          throw new Error(
+          throw orderBusinessError(
             `Товар "${item.product_title}" щойно розкупили — на складі вже недостатньо. Оновіть кошик і спробуйте ще раз.`,
           );
         }
@@ -253,16 +259,23 @@ exports.createOrder = async (req, res) => {
     });
   } catch (error) {
     await client.query("ROLLBACK");
+
     console.error(
       "Помилка оформлення замовлення (Транзакція скасована):",
-      error.message,
+      error,
     );
-    return res
-      .status(400)
-      .json({
+
+    if (error.isOrderBusinessError) {
+      return res.status(400).json({
         success: false,
-        message: error.message || "Помилка сервера при оформленні замовлення",
+        message: error.message,
       });
+    }
+
+    return res.status(500).json({
+      success: false,
+      message: "Не вдалося оформити замовлення. Спробуйте ще раз пізніше.",
+    });
   } finally {
     client.release();
   }

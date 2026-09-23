@@ -1,3 +1,20 @@
+// FIX (SECURITY — XSS): checkoutItems/orderConfirmationItems раніше
+// вставляли item.product.title / item.name напряму в innerHTML. Товар
+// зі шкідливим title (напр. <img src=x onerror=...>) виконався б у
+// браузері покупця під час перегляду кошика/чекауту. Локальна копія
+// вже наявного в admin.js паттерну escapeHtml — не імпортується звідти
+// напряму (різні сторінки/скрипти), тож дублюється тут як мінімальний,
+// ізольований фікс без нової залежності. Не змінює зовнішній вигляд —
+// лише екранує спецсимволи перед вставкою в HTML.
+const escapeHtmlForBasket = function (value) {
+    if (value === null || value === undefined) return "";
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+};
+
 // FIX (stock): реальний product.stock — єдине джерело істини для
 // максимальної кількості товару в кошику, замість жорсткого MAX_QUANTITY.
 const getMaxQuantity = function (product) {
@@ -352,6 +369,8 @@ const renderItems = function () {
         };
 
 
+        // NOTE (не XSS-ризик): це вже .textContent, а не innerHTML —
+        // безпечно й без змін.
         itemName.textContent =
             item.product.title;
 
@@ -539,11 +558,14 @@ const renderCheckout = function () {
         total += itemTotal;
 
 
+        // FIX (XSS): item.product.title екранується перед вставкою в
+        // innerHTML — раніше товар зі шкідливим title міг виконати
+        // довільний JS у браузері покупця саме тут.
         checkoutItems.innerHTML += `
             <div class="checkout-item">
 
                 <span class="checkout-item__name">
-                    ${item.product.title}
+                    ${escapeHtmlForBasket(item.product.title)}
                 </span>
 
                 <span class="checkout-item__quantity">
@@ -576,11 +598,14 @@ const renderOrderConfirmation =
 
         orderData.items.forEach((item) => {
 
+            // FIX (XSS): item.name (це той самий product.title, знятий
+            // сервером у відповідь на замовлення) так само екранується
+            // перед вставкою в innerHTML.
             orderConfirmationItems.innerHTML += `
                 <div class="order-confirmation__item">
 
                     <span class="order-confirmation__item-name">
-                        ${item.name}
+                        ${escapeHtmlForBasket(item.name)}
                     </span>
 
                     <span class="order-confirmation__item-quantity">

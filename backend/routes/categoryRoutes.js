@@ -10,8 +10,12 @@ const {
 
 const adminAuth = require("../middleware/authSecurity");
 
+// FIX (SECURITY): no-store на адмінському списку категорій — для
+// узгодженості з рештою admin GET-ендпоінтів.
+const noStoreCache = require("../middleware/noStoreCache");
+
 router.get("/", getAllCategories);                     // публічно — для каталогу
-router.get("/admin", adminAuth, getAllCategoriesAdmin); // адмінка — активні+неактивні
+router.get("/admin", adminAuth, noStoreCache, getAllCategoriesAdmin); // адмінка — активні+неактивні
 router.post("/", adminAuth, createCategory);
 router.put("/:id", adminAuth, updateCategory);
 router.delete("/:id", adminAuth, deleteCategory);

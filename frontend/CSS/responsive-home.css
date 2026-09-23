@@ -301,9 +301,20 @@
        -------------------------------------------------------- */
 
   .sell__article-nav,
-  .sell__article-nav--previous,
-  .sell__icon-holder {
+  .sell__article-nav--previous {
     opacity: 1;
+  }
+
+  /* FIX (CSS patch — responsive card icons): decorative icon overlay
+     (.sell__icon-holder / .sell__article-icon, з icon_url) прибирається
+     на responsive — лишається основне зображення товару
+     (.hydrolat-image), назва, ціна і стрілки навігації. Абсолютне
+     позиціювання .sell__icon-holder означає, що воно й раніше не
+     займало місця в layout-потоці — display:none тут нічого не
+     зсуває й не залишає порожніх відступів. Desktop (normalize.css)
+     не зачіпається — правило лише всередині цього media query. */
+  .sell__icon-holder {
+    display: none;
   }
 
   /* --------------------------------------------------------
@@ -793,9 +804,20 @@
        -------------------------------------------------------- */
 
   .sell__article-nav,
-  .sell__article-nav--previous,
-  .sell__icon-holder {
+  .sell__article-nav--previous {
     opacity: 1;
+  }
+
+  /* FIX (CSS patch — responsive card icons): decorative icon overlay
+     (.sell__icon-holder / .sell__article-icon, з icon_url) прибирається
+     на responsive — лишається основне зображення товару
+     (.hydrolat-image), назва, ціна і стрілки навігації. Абсолютне
+     позиціювання .sell__icon-holder означає, що воно й раніше не
+     займало місця в layout-потоці — display:none тут нічого не
+     зсуває й не залишає порожніх відступів. Desktop (normalize.css)
+     не зачіпається — правило лише всередині цього media query. */
+  .sell__icon-holder {
+    display: none;
   }
 
   /* --------------------------------------------------------
@@ -1210,4 +1232,3 @@
   }
 
 }
-
