@@ -633,8 +633,7 @@
   order: 1;
 
   width: 100%;
-  margin: 0;
-  padding: 1.6rem;
+  padding: 0.8rem 1.2rem;
 
   box-sizing: border-box;
   justify-content: center;
@@ -654,8 +653,8 @@
 
   width: 100%;
   max-width: 58rem;
-  margin: 1.6rem auto 0;
-  padding: 0 1.6rem;
+  margin: 0.8rem auto 0;
+  padding: 0 1.2rem;
 
   box-sizing: border-box;
   color: var(--text-color);
@@ -667,8 +666,8 @@
   order: 4;
 
   width: 100%;
-  margin: 1.6rem auto;
-  padding: 0 1.6rem;
+  margin: 0.8rem auto;
+  padding: 0 1.2rem;
 
   box-sizing: border-box;
   align-items: center;
