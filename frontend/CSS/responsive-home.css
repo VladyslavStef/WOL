@@ -584,10 +584,8 @@
 .slider__photos {
   order: 2;
   position: relative;
-
   width: 100%;
-  aspect-ratio: 4 / 3;
-
+  aspect-ratio: 1905 / 630;
   overflow: hidden;
   background: transparent;
 }
