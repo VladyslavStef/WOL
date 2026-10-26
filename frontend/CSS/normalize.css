@@ -2178,6 +2178,30 @@ body.modal-open {
     max-height: none;
   }
 
+  .modal-booking__container {
+  height: calc(100dvh - 2rem);
+}
+
+.booking-type-view {
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+
+  align-items: stretch;
+  padding-bottom: 3rem;
+}
+
+.booking-type-view .booking-view__title,
+.booking-type-view .booking-view__subtitle,
+.booking-type-view .booking-heading__decor {
+  align-self: center;
+}
+
+.booking-tickets-list {
+  width: 100%;
+}
+
   .modal__close,
   .close {
     top: 2rem;
