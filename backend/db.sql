@@ -22,11 +22,17 @@
 -- ============================================================
 -- ЧАСТИНА 1: СХЕМА
 -- ============================================================
-
 BEGIN;
 
 CREATE TABLE IF NOT EXISTS admin (
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,CREATE TABLE IF NOT EXISTS site_settings (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS site_settings (
     id SMALLINT PRIMARY KEY CHECK (id = 1),
     catalog_enabled BOOLEAN NOT NULL DEFAULT TRUE,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -35,13 +41,6 @@ CREATE TABLE IF NOT EXISTS admin (
 INSERT INTO site_settings (id, catalog_enabled)
 VALUES (1, TRUE)
 ON CONFLICT (id) DO NOTHING;
-    name TEXT NOT NULL UNIQUE,
-    password_hash TEXT NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-
 
 CREATE TABLE IF NOT EXISTS categories (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
