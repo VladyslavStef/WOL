@@ -220,6 +220,12 @@ CREATE TRIGGER trg_orders_updated_at BEFORE UPDATE ON orders FOR EACH ROW EXECUT
 DROP TRIGGER IF EXISTS trg_bookings_updated_at ON bookings;
 CREATE TRIGGER trg_bookings_updated_at BEFORE UPDATE ON bookings FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 
+DROP TRIGGER IF EXISTS trg_site_settings_updated_at ON site_settings;
+CREATE TRIGGER trg_site_settings_updated_at
+BEFORE UPDATE ON site_settings
+FOR EACH ROW
+EXECUTE FUNCTION set_updated_at();
+
 COMMIT;
 
 
@@ -297,6 +303,10 @@ BEGIN
     -- ==========================================================
     INSERT INTO products (slug, title, description, price, image_url, category_id, product_type, pricing_mode, display_group, sort_order, is_active, created_by_admin_id) VALUES ('dennyi-kvytok', 'Денний квиток', 'Денні загальні відвідування', 200, '/frontend/IMG/Layer 3.png', NULL, 'ticket', 'person', 'products', 0, true, v_admin_id);
     INSERT INTO products (slug, title, description, price, image_url, category_id, product_type, pricing_mode, display_group, sort_order, is_active, created_by_admin_id) VALUES ('vechirniy-kvytok', 'Вечірній квиток', 'Індивідуальне відвідування', 500, '/frontend/IMG/Layer 2.png', NULL, 'ticket', 'hour', 'products', 1, true, v_admin_id);
+
+    UPDATE products
+        SET stock = 100
+        WHERE product_type = 'physical' AND stock IS NULL;
 
     RAISE NOTICE 'Сідинг завершено.';
 END $$;
