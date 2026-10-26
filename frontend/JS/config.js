@@ -8,5 +8,5 @@
 const isLocalDev = ["localhost", "127.0.0.1"].includes(window.location.hostname);
 
 const API_BASE_URL = isLocalDev
-    ? "http://localhost:3000"
-    : "https://api.ЗАМІНИ-НА-СВІЙ-ДОМЕН.com"; // TODO перед деплоєм
+  ? "http://localhost:3000"
+  : "";
