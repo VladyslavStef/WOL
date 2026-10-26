@@ -582,7 +582,7 @@
 
 /* Фото зверху */
 .slider__photos {
-  order: 1;
+  order: 2;
   position: relative;
 
   width: 100%;
@@ -625,34 +625,54 @@
 
 /* Текст під фото */
 .slider__textholder {
-  order: 2;
-  position: relative;
+  display: contents;
+}
 
-  left: auto;
-  top: auto;
-  transform: none;
+/* Заголовок над фото */
+.slider__textholder-heading {
+  order: 1;
+
+  width: 100%;
+  margin: 0;
+  padding: 1.6rem;
+
+  box-sizing: border-box;
+  justify-content: center;
+
+  font-size: 2.6rem;
+  color: var(--text-color);
+  text-align: center;
+}
+
+.slider__textholder-header {
+  margin: 0;
+}
+
+/* Опис під фото */
+.slider__textholder-paragraph {
+  order: 3;
 
   width: 100%;
   max-width: 58rem;
-  margin: 0 auto;
-  padding: 2.4rem 2rem 0;
+  margin: 1.6rem auto 0;
+  padding: 0 1.6rem;
 
   box-sizing: border-box;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-
   color: var(--text-color);
   text-align: center;
-
-  z-index: 2;
 }
 
-.slider__textholder-heading {
-  justify-content: center;
-  font-size: 2.6rem;
+/* Контакти під описом */
+.slider__textholder-contacts {
+  order: 4;
+
+  width: 100%;
+  margin: 1.6rem auto;
+  padding: 0 1.6rem;
+
+  box-sizing: border-box;
+  align-items: center;
+  color: var(--text-color);
   text-align: center;
 }
 
@@ -663,12 +683,6 @@
   color: var(--text-color);
   text-align: center;
   overflow-wrap: break-word;
-}
-
-.slider__textholder-contacts {
-  align-items: center;
-  color: var(--text-color);
-  text-align: center;
 }
 
   /* --------------------------------------------------
