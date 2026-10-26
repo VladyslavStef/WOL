@@ -2771,6 +2771,7 @@ body.modal-open {
   color: #fbf9fb;
   max-height: 69.7rem;
   overflow: hidden;
+  position: relative;
 }
 
 .footer__container {
@@ -2834,3 +2835,12 @@ body.modal-open {
   top: 6rem;
   right: -5rem;
 }
+
+.rights{
+  font-size: var(--card-font-size);
+  position: absolute;
+  top:95%;
+  right: 37%;
+  opacity: 0.65;
+}
+

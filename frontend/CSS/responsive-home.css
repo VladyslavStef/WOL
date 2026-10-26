@@ -305,14 +305,6 @@
     opacity: 1;
   }
 
-  /* FIX (CSS patch — responsive card icons): decorative icon overlay
-     (.sell__icon-holder / .sell__article-icon, з icon_url) прибирається
-     на responsive — лишається основне зображення товару
-     (.hydrolat-image), назва, ціна і стрілки навігації. Абсолютне
-     позиціювання .sell__icon-holder означає, що воно й раніше не
-     займало місця в layout-потоці — display:none тут нічого не
-     зсуває й не залишає порожніх відступів. Desktop (normalize.css)
-     не зачіпається — правило лише всередині цього media query. */
   .sell__icon-holder {
     display: none;
   }
@@ -695,7 +687,30 @@
     display: none;
   }
 
+    .rights {
+    position: static;
+    display: block;
 
+    width: 100%;
+
+    padding: 0 1.6rem 2rem;
+
+    box-sizing: border-box;
+
+    text-align: center;
+
+    font-size: 1.4rem;
+    line-height: 1.4;
+
+    right: auto;
+    top: auto;
+  }
+
+  .socials__decor-item,
+  .socials__decor-item--right,
+  .socials__decor-item--left{
+    display: none;
+  }
 }
 
 /* ============================================================
@@ -807,15 +822,6 @@
   .sell__article-nav--previous {
     opacity: 1;
   }
-
-  /* FIX (CSS patch — responsive card icons): decorative icon overlay
-     (.sell__icon-holder / .sell__article-icon, з icon_url) прибирається
-     на responsive — лишається основне зображення товару
-     (.hydrolat-image), назва, ціна і стрілки навігації. Абсолютне
-     позиціювання .sell__icon-holder означає, що воно й раніше не
-     займало місця в layout-потоці — display:none тут нічого не
-     зсуває й не залишає порожніх відступів. Desktop (normalize.css)
-     не зачіпається — правило лише всередині цього media query. */
   .sell__icon-holder {
     display: none;
   }
@@ -896,6 +902,11 @@
   .booking-time-list {
     gap: 0.8rem;
   }
+  
+  .rights {
+    font-size: 1.3rem;
+    padding: 0 1.2rem 1.6rem;
+  }
 }
 
 /* ============================================================
@@ -972,13 +983,12 @@
   .booking-time-list {
     gap: 0.6rem;
   }
-}
 
-/* ============================================================
-   RESPONSIVE — FOOTER
-   Mobile: 320–768px
-   Desktop footer НЕ змінюється.
-   ============================================================ */
+  .rights {
+    font-size: 1.2rem;
+    padding: 0 1rem 1.4rem;
+  }
+}
 
 @media (max-width: 768px) {
   .footer {
@@ -1189,6 +1199,12 @@
     max-width: 5rem;
     max-height: 5rem;
   }
+
+    .socials__decor-item,
+  .socials__decor-item--right,
+  .socials__decor-item--left{
+    display: none;
+  }
 }
 
 /* ============================================================
@@ -1229,6 +1245,12 @@
 
   .foo__deco {
     max-width: 100%;
+  }
+
+    .socials__decor-item,
+  .socials__decor-item--right,
+  .socials__decor-item--left{
+    display: none;
   }
 
 }

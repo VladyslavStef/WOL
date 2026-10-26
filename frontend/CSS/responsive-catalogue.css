@@ -531,6 +531,25 @@ body {
 
     min-width: 0;
   }
+
+  .rights {
+    position: static;
+    display: block;
+
+    width: 100%;
+
+    padding: 0 1.6rem 2rem;
+
+    box-sizing: border-box;
+
+    text-align: center;
+
+    font-size: 1.4rem;
+    line-height: 1.4;
+
+    right: auto;
+    top: auto;
+  }
 }
 
 /* ============================================================
@@ -686,6 +705,11 @@ body {
   .booking-time-list {
     gap: 0.8rem;
   }
+
+  .rights {
+    font-size: 1.3rem;
+    padding: 0 1.2rem 1.6rem;
+  }
 }
 
 /* ============================================================
@@ -757,6 +781,11 @@ body {
 
   .booking-time-list {
     gap: 0.6rem;
+  }
+
+  .rights {
+    font-size: 1.2rem;
+    padding: 0 1rem 1.4rem;
   }
 }
 
