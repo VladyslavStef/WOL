@@ -1275,3 +1275,31 @@
   }
 
 }
+
+/* Кошик — виправлення обрізання на мобільних */
+@media (max-width: 768px) {
+  .modal-basket {
+    padding: 0.6rem;
+  }
+
+  .modal-basket__container,
+  .modal-basket .basket-view,
+  .modal-basket .footer-modal {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .modal-basket .footer-modal {
+    padding: 0 1.2rem 1.2rem;
+  }
+
+  .modal-basket .button-container__button-modal {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    transform: none;
+  }
+}
