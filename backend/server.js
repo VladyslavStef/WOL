@@ -44,7 +44,7 @@ app.get("/admin.html", (req, res) => {
 
 app.use(helmet());
 const corsOrigin = process.env.FRONTEND_ORIGIN
-    ? process.env.frontend.split(",").map((origin) => origin.trim())
+    ? process.env.FRONTEND_ORIGIN.split(",").map((origin) => origin.trim())
     : true;
 app.use(cors({ origin: corsOrigin }));
 app.set("trust proxy", 1);
