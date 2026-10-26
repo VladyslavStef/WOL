@@ -393,9 +393,11 @@
   transform: scaleX(-1);
 }
 
-.socials__heading{
+.socials__heading {
   font-size: var(--secondary-heading);
   max-width: fit-content;
   padding-bottom: 2.6rem;
+  margin-inline: auto;
+  text-align: center;
 }
 
