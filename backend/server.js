@@ -10,7 +10,7 @@ const bookingRoutes = require("./routes/bookingRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const forntend =  path.resolve(__dirname, "../fromtend");
+const frontend =  path.resolve(__dirname, "../fromtend");
 
 console.log("DB_PASSWORD exists:", typeof process.env.DB_PASSWORD);
 
