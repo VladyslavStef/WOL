@@ -1303,3 +1303,10 @@
     transform: none;
   }
 }
+
+/* Відступ перед заголовком соцмереж на мобільних */
+@media (max-width: 768px) {
+  .socials {
+    margin: 8rem 0 2.6rem;
+  }
+}
