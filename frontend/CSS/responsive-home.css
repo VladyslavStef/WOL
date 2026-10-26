@@ -566,17 +566,31 @@
     overflow: hidden;
   }
 
-  .slider__wrapper {
-    width: 100%;
-    height: 42rem;
+.slider__wrapper {
+  width: 100%;
+  height: auto;
+  padding: 0;
 
-    padding: 0;
+  position: relative;
+  overflow: visible;
+  box-sizing: border-box;
+  background: transparent;
 
-    overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
 
-    position: relative;
-    box-sizing: border-box;
-  }
+/* Фото зверху */
+.slider__photos {
+  order: 1;
+  position: relative;
+
+  width: 100%;
+  aspect-ratio: 4 / 3;
+
+  overflow: hidden;
+  background: transparent;
+}
 
 .slider__photos-item {
   position: absolute;
@@ -587,79 +601,75 @@
 
   object-fit: contain;
   object-position: center;
-  background-color: #31293a;
+
+  z-index: 0;
+  background: transparent;
 
   transform: translateX(0);
 }
 
-  .slider__photos-item--out {
-    transform: translateX(-100%);
-  }
+.slider__photos-item--out {
+  transform: translateX(-100%);
+}
 
-  .slider__photos-item--next {
-    transform: translateX(100%);
-  }
+.slider__photos-item--next {
+  transform: translateX(100%);
+}
 
+/* Прибираємо фіолетовий фон і декоративні гілки */
+.slider__gradient,
+.slider__decor,
+.slider__textholder-decor {
+  display: none;
+}
 
-  /* затемнення залишаємо,
-     але воно займає тільки фото */
-  .slider__gradient {
-    position: absolute;
+/* Текст під фото */
+.slider__textholder {
+  order: 2;
+  position: relative;
 
-    inset: 0;
+  left: auto;
+  top: auto;
+  transform: none;
 
-    width: 100%;
-    height: 100%;
-  }
+  width: 100%;
+  max-width: 58rem;
+  margin: 0 auto;
+  padding: 2.4rem 2rem 0;
 
+  box-sizing: border-box;
 
-  /* --------------------------------------------------
-     ТЕКСТ
-     -------------------------------------------------- */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
 
-  .slider__textholder {
-    position: absolute;
+  color: var(--text-color);
+  text-align: center;
 
-    left: 50%;
-    top: 50%;
+  z-index: 2;
+}
 
-    transform: translate(-50%, -50%);
+.slider__textholder-heading {
+  justify-content: center;
+  font-size: 2.6rem;
+  text-align: center;
+}
 
-    width: calc(100% - 3.2rem);
-    max-width: 38rem;
+.slider__textholder-info {
+  width: 100%;
+  max-width: 36rem;
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  color: var(--text-color);
+  text-align: center;
+  overflow-wrap: break-word;
+}
 
-    gap: 1rem;
-
-    text-align: center;
-
-    z-index: 2;
-  }
-
-  .slider__textholder-heading {
-    justify-content: center;
-
-    font-size: 2.6rem;
-    text-align: center;
-  }
-
-  .slider__textholder-info {
-    width: 100%;
-    max-width: 36rem;
-
-    text-align: center;
-
-    overflow-wrap: break-word;
-  }
-
-  .slider__textholder-contacts {
-    align-items: center;
-    text-align: center;
-  }
-
+.slider__textholder-contacts {
+  align-items: center;
+  color: var(--text-color);
+  text-align: center;
+}
 
   /* --------------------------------------------------
      СТРІЛКА
