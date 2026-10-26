@@ -566,19 +566,35 @@
     overflow: hidden;
   }
 
+
 .slider__wrapper {
   width: 100%;
-  height: min(42rem, calc(100dvh - 2rem));
-
+  height: auto;
   padding: 0;
-  overflow: hidden;
+
   position: relative;
+  overflow: visible;
   box-sizing: border-box;
+  background: transparent;
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* Фото зверху */
+.slider__photos {
+  order: 2;
+  position: relative;
+
+  width: 100%;
+  aspect-ratio: 4 / 3;
+
+  overflow: hidden;
+  background: transparent;
 }
 
 .slider__photos-item {
   position: absolute;
-
   inset: 0;
 
   width: 100%;
@@ -587,78 +603,88 @@
   object-fit: contain;
   object-position: center;
 
-  background-color: #31293a;
+  z-index: 0;
+  background: transparent;
 
   transform: translateX(0);
 }
 
-  .slider__photos-item--out {
-    transform: translateX(-100%);
-  }
+.slider__photos-item--out {
+  transform: translateX(-100%);
+}
 
-  .slider__photos-item--next {
-    transform: translateX(100%);
-  }
+.slider__photos-item--next {
+  transform: translateX(100%);
+}
 
+/* Прибираємо фіолетовий фон і декоративні гілки */
+.slider__gradient,
+.slider__decor,
+.slider__textholder-decor {
+  display: none;
+}
 
-  /* затемнення залишаємо,
-     але воно займає тільки фото */
-  .slider__gradient {
-    position: absolute;
+/* Текст під фото */
+.slider__textholder {
+  display: contents;
+}
 
-    inset: 0;
+/* Заголовок над фото */
+.slider__textholder-heading {
+  order: 1;
 
-    width: 100%;
-    height: 100%;
-  }
+  width: 100%;
+  margin: 0;
+  padding: 1.6rem;
 
+  box-sizing: border-box;
+  justify-content: center;
 
-  /* --------------------------------------------------
-     ТЕКСТ
-     -------------------------------------------------- */
+  font-size: 2.6rem;
+  color: var(--text-color);
+  text-align: center;
+}
 
-  .slider__textholder {
-    position: absolute;
+.slider__textholder-header {
+  margin: 0;
+}
 
-    left: 50%;
-    top: 50%;
+/* Опис під фото */
+.slider__textholder-paragraph {
+  order: 3;
 
-    transform: translate(-50%, -50%);
+  width: 100%;
+  max-width: 58rem;
+  margin: 1.6rem auto 0;
+  padding: 0 1.6rem;
 
-    width: calc(100% - 3.2rem);
-    max-width: 38rem;
+  box-sizing: border-box;
+  color: var(--text-color);
+  text-align: center;
+}
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+/* Контакти під описом */
+.slider__textholder-contacts {
+  order: 4;
 
-    gap: 1rem;
+  width: 100%;
+  margin: 1.6rem auto;
+  padding: 0 1.6rem;
 
-    text-align: center;
+  box-sizing: border-box;
+  align-items: center;
+  color: var(--text-color);
+  text-align: center;
+}
 
-    z-index: 2;
-  }
+.slider__textholder-info {
+  width: 100%;
+  max-width: 36rem;
 
-  .slider__textholder-heading {
-    justify-content: center;
-
-    font-size: 2.6rem;
-    text-align: center;
-  }
-
-  .slider__textholder-info {
-    width: 100%;
-    max-width: 36rem;
-
-    text-align: center;
-
-    overflow-wrap: break-word;
-  }
-
-  .slider__textholder-contacts {
-    align-items: center;
-    text-align: center;
-  }
+  color: var(--text-color);
+  text-align: center;
+  overflow-wrap: break-word;
+}
 
 
   /* --------------------------------------------------
