@@ -934,7 +934,7 @@
  .slider__gallery-button {
     order: 5;
     align-self: center;
-    margin: 1.8rem auto 0;
+    margin: 0 auto ;
     padding: 1.2rem 2.4rem;
 
     border-color: var(--text-color);
