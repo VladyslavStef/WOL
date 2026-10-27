@@ -449,6 +449,60 @@ h1, summary{
     background: var(--primary-color);
 }
 
+/* ---------- GALLERY ---------- */
+
+.admin-gallery-note {
+    grid-column: 1 / -1;
+    margin: 0;
+}
+
+.admin-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+    gap: 1.2rem;
+}
+
+.admin-gallery-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    padding: 1rem;
+    background: #fff;
+    border-radius: 0.7rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.admin-gallery-card img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1905 / 630;
+    object-fit: cover;
+    border-radius: 0.45rem;
+    background: var(--bg-cards);
+}
+
+.admin-gallery-card__name {
+    overflow: hidden;
+    color: var(--text-color);
+    font-size: 1.7rem;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.admin-gallery-card__actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.admin-gallery-card__actions button {
+    padding: 0.5rem 0.9rem;
+    border: none;
+    border-radius: 0.4rem;
+    background: #e3b8b8;
+    cursor: pointer;
+}
+
 /* ---------- CUSTOM CONFIRM MODAL (Пункт 5) ---------- */
 /* Побудовано на тому самому каркасі .modal/.modal__container/.modal__close,
    що й user-message-modal.css — нова overlay-система тут не створюється. */
@@ -533,5 +587,9 @@ h1, summary{
     .admin-search-input {
         max-width: none;
         flex-basis: 100%;
+    }
+
+    .admin-gallery-grid {
+        grid-template-columns: 1fr;
     }
 }

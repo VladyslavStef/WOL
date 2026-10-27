@@ -82,6 +82,9 @@
         <button type="button" class="admin-tab" data-tab="products">
           Товари
         </button>
+        <button type="button" class="admin-tab" data-tab="gallery">
+          Галерея
+        </button>
         <button type="button" class="admin-tab" data-tab="orders">
           Замовлення
         </button>
@@ -308,6 +311,37 @@
         </div>
       </section>
 
+      <!-- ---------------- GALLERY TAB ---------------- -->
+      <section class="admin-tab-panel" id="galleryPanel">
+        <details class="admin-create-box" open>
+          <summary>+ Додати фото до галереї</summary>
+          <form class="admin-form" id="galleryUploadForm">
+            <label>
+              Оберіть фото
+              <input
+                type="file"
+                id="galleryPhotoInput"
+                accept="image/jpeg,image/png,image/webp"
+                required
+              />
+            </label>
+            <p class="admin-note admin-gallery-note">
+              JPG, PNG або WebP, до 8 МБ. Фото зберігається в базі даних і не зникне після deploy.
+            </p>
+            <span class="admin-error" id="galleryUploadError"></span>
+            <div class="admin-form-actions">
+              <button type="submit" id="galleryUploadButton">Додати фото</button>
+            </div>
+          </form>
+        </details>
+
+        <div class="admin-toolbar">
+          <button type="button" id="refreshGalleryButton">Оновити список</button>
+        </div>
+
+        <div class="admin-gallery-grid" id="galleryList" aria-live="polite"></div>
+      </section>
+
       <!-- ---------------- ORDERS TAB ---------------- -->
       <section class="admin-tab-panel" id="ordersPanel">
         <div class="admin-toolbar">
@@ -407,6 +441,6 @@
     <script src="/frontend/JS/config.js"></script>
     <script src="/frontend/JS/api.js"></script>
     <script src="/frontend/JS/user-message.js"></script>
-   <script src="/frontend/admin/admin.js"></script>
+    <script src="/frontend/admin/admin.js"></script>
   </body>
 </html>
