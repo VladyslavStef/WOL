@@ -200,21 +200,66 @@
        -------------------------------------------------------- */
 
   .hero {
+    position: relative;
     width: 100%;
     max-width: 100%;
+    min-height: clamp(42rem, 120vw, 56rem);
 
     overflow: hidden;
+    isolation: isolate;
+    background: #cfc2d7;
   }
 
-  .hero__container {
+  .hero::after {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    content: "";
+    pointer-events: none;
+    background:
+      linear-gradient(180deg, rgba(255, 250, 255, 0.03) 24%, rgba(45, 25, 61, 0.54) 100%),
+      linear-gradient(90deg, rgba(255, 250, 255, 0.62) 0%, rgba(255, 250, 255, 0.06) 68%);
+  }
+
+  .hero .logo {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    display: block;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+  }
+
+  .hero__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 65% center;
+  }
+
+  .hero > .hero__container {
+    position: relative;
+    z-index: 1;
     width: 100%;
     max-width: 100%;
+    min-height: clamp(42rem, 120vw, 56rem);
 
-    padding: 3rem 1.6rem 0;
+    padding: 3rem 1.8rem 2.8rem;
 
     box-sizing: border-box;
 
+    justify-content: flex-end;
+    align-items: flex-start;
+
     overflow-wrap: break-word;
+    color: #fff;
+    text-align: left;
+    text-shadow: 0 0.2rem 1.2rem rgba(36, 20, 49, 0.52);
   }
 
   .hero__heading {
@@ -223,6 +268,20 @@
     line-height: 1.15;
 
     overflow-wrap: break-word;
+    color: #fff;
+    text-align: left;
+  }
+
+  .hero__subheading,
+  .hero__handwritten {
+    max-width: 29rem;
+    color: #fff;
+    text-align: left;
+  }
+
+  .hero__handwritten {
+    align-self: flex-end;
+    font-size: 3.1rem;
   }
 
   /* --------------------------------------------------------
@@ -820,7 +879,7 @@
 
   .slider__story-count {
     color: #fff;
-    font-family: "Playfair Display", sans-serif;
+    font-family: "Montserrat", sans-serif;
     font-size: 1.2rem;
     font-weight: 600;
     letter-spacing: 0.08em;
@@ -876,44 +935,14 @@
     overflow-wrap: break-word;
   }
 
- .slider__gallery-button {
+  .slider__gallery-button {
     order: 5;
-    align-self: center;
-    margin: 1.8rem auto 0;
-    padding: 1.2rem 2.4rem;
-
-    border-color: var(--text-color);
-    background-color: var(--primary-color);
-    color: var(--text-color);
-
-    font-size: 1.6rem;
-
-    transform: none;
-    transform-origin: center;
-  }
-
-  /* Без hover на touch: тап не повинен лишати кнопку "залитою" */
-  .slider__gallery-button:hover {
-    transform: none;
+    margin: 1.8rem auto 4rem;
+    border-color: var(--footer-color);
+    background: var(--footer-color);
     color: #fff;
+    font-size: 1.6rem;
   }
-
-  .slider__gallery-button:hover::before {
-    transform: translate(-50%, -50%) scale(0);
-  }
-}
-
-/* Hover-ефект лише там, де hover справді існує (планшети з мишею) */
-@media (max-width: 768px) and (hover: hover) {
-  .slider__gallery-button:hover {
-    transform: scale(1);
-    color: var(--footer-color);
-  }
-
-  .slider__gallery-button:hover::before {
-    transform: translate(-50%, -50%) scale(1);
-  }
-}
 
   .gallery-modal {
     padding: 7rem 1.2rem 2rem;
@@ -940,6 +969,7 @@
   .gallery-modal__nav--next {
     right: 0.8rem;
   }
+}
 
 /* ============================================================
    ≤480px
@@ -1481,4 +1511,91 @@
     display: none;
   }
 
+}
+
+/* Мобільний банер hero */
+@media (max-width: 768px) {
+  .hero {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    min-height: clamp(42rem, 120vw, 56rem);
+    overflow: hidden;
+    isolation: isolate;
+    background: #cfc2d7;
+  }
+
+  .hero::after {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    content: "";
+    pointer-events: none;
+    background:
+      linear-gradient(
+        180deg,
+        rgba(255, 250, 255, 0.03) 24%,
+        rgba(45, 25, 61, 0.54) 100%
+      ),
+      linear-gradient(
+        90deg,
+        rgba(255, 250, 255, 0.62) 0%,
+        rgba(255, 250, 255, 0.06) 68%
+      );
+  }
+
+  .hero .logo {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    display: block;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+  }
+
+  .hero__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 65% center;
+  }
+
+  .hero > .hero__container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 100%;
+    min-height: clamp(42rem, 120vw, 56rem);
+    padding: 3rem 1.8rem 2.8rem;
+    box-sizing: border-box;
+    justify-content: flex-end;
+    align-items: flex-start;
+    color: #fff;
+    text-align: left;
+    text-shadow: 0 0.2rem 1.2rem rgba(36, 20, 49, 0.52);
+  }
+
+  .hero__heading {
+    max-width: 100%;
+    line-height: 1.15;
+    color: #fff;
+    text-align: left;
+  }
+
+  .hero__subheading,
+  .hero__handwritten {
+    max-width: 29rem;
+    color: #fff;
+    text-align: left;
+  }
+
+  .hero__handwritten {
+    align-self: flex-end;
+    font-size: 3.1rem;
+  }
 }
