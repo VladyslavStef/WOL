@@ -118,6 +118,61 @@ const nextSlide = document.querySelector(
     ".slider__photos-item--next"
 );
 
+// ========================================
+// MOBILE PHOTO STORY
+// На телефоні широкі фото можна провести пальцем до кінця, без обрізання.
+// ========================================
+
+const mobileStoryTrack = document.querySelector(".slider__story-track");
+const mobileStoryCount = document.querySelector(".slider__story-count");
+const mobileStoryProgress = document.querySelector(".slider__story-progress-fill");
+const isMobileStory = window.matchMedia("(max-width: 768px)").matches;
+
+if (isMobileStory && mobileStoryTrack) {
+    mobileStoryTrack.innerHTML = allPhotos.map((photo, index) => `
+        <figure class="slider__story-card">
+            <img
+                class="slider__story-image"
+                src="${photo}"
+                alt="Лавандове поле — фото ${index + 1}"
+                ${index > 0 ? 'loading="lazy"' : ""}
+            />
+        </figure>
+    `).join("");
+
+    const storyCards = Array.from(
+        mobileStoryTrack.querySelectorAll(".slider__story-card")
+    );
+
+    const updateMobileStoryMeta = function () {
+        const trackLeft = mobileStoryTrack.getBoundingClientRect().left;
+        let nearestIndex = 0;
+        let nearestDistance = Infinity;
+
+        storyCards.forEach((card, index) => {
+            const distance = Math.abs(card.getBoundingClientRect().left - trackLeft);
+            if (distance < nearestDistance) {
+                nearestDistance = distance;
+                nearestIndex = index;
+            }
+        });
+
+        if (mobileStoryCount) {
+            mobileStoryCount.textContent = `${String(nearestIndex + 1).padStart(2, "0")} / ${String(allPhotos.length).padStart(2, "0")}`;
+        }
+
+        if (mobileStoryProgress) {
+            mobileStoryProgress.style.width = `${((nearestIndex + 1) / allPhotos.length) * 100}%`;
+        }
+    };
+
+    let mobileStoryFrame;
+    mobileStoryTrack.addEventListener("scroll", () => {
+        cancelAnimationFrame(mobileStoryFrame);
+        mobileStoryFrame = requestAnimationFrame(updateMobileStoryMeta);
+    }, { passive: true });
+}
+
 
 // ========================================
 // SAFETY CHECK
@@ -354,5 +409,9 @@ if (
     // START
     // ========================================
 
-    startAutoSlide();
+    // На телефоні працює ручна панорамна галерея вище. Автоперемикання
+    // старого слайдера там не потрібне.
+    if (!isMobileStory) {
+        startAutoSlide();
+    }
 }
