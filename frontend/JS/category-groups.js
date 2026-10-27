@@ -126,6 +126,7 @@ const setupCategoryCard = function (article, category) {
 
     const nextButton = article.querySelector(".sell__article-nav--next");
     const previousButton = article.querySelector(".sell__article-nav--previous");
+    const mediaEl = article.querySelector(".sell__media");
 
     const imageEl = article.querySelector(".hydrolat-image:not(.hydrolat-image--under)");
     const imageNextEl = article.querySelector(".hydrolat-image--under");
@@ -205,6 +206,7 @@ const setupCategoryCard = function (article, category) {
         }
 
         isAnimating = true;
+        mediaEl.classList.add("is-switching");
 
         const targetData = getCategoryCardStateData(category, targetIndex);
 
@@ -222,6 +224,7 @@ const setupCategoryCard = function (article, category) {
                     removeFadeIn();
                     removeFadeOut();
                     updateControls();
+                    mediaEl.classList.remove("is-switching");
                     isAnimating = false;
                 }, 400);
             },
