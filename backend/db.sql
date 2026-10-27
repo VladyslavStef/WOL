@@ -22,6 +22,7 @@
 -- ============================================================
 -- ЧАСТИНА 1: СХЕМА
 -- ============================================================
+
 BEGIN;
 
 CREATE TABLE IF NOT EXISTS admin (
@@ -31,16 +32,6 @@ CREATE TABLE IF NOT EXISTS admin (
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
-
-CREATE TABLE IF NOT EXISTS site_settings (
-    id SMALLINT PRIMARY KEY CHECK (id = 1),
-    catalog_enabled BOOLEAN NOT NULL DEFAULT TRUE,
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-INSERT INTO site_settings (id, catalog_enabled)
-VALUES (1, TRUE)
-ON CONFLICT (id) DO NOTHING;
 
 CREATE TABLE IF NOT EXISTS categories (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -96,6 +87,25 @@ CREATE TABLE IF NOT EXISTS products (
         REFERENCES admin(id) ON DELETE RESTRICT,
     CONSTRAINT fk_products_updated_by_admin FOREIGN KEY (updated_by_admin_id)
         REFERENCES admin(id) ON DELETE SET NULL
+);
+
+-- Фото для галереї лавандового поля. Нові зображення із адмінки
+-- зберігаються в image_data, тому не зникають після Render deploy.
+-- Початкові фото можуть бути посиланнями на вже наявні файли сайту.
+CREATE TABLE IF NOT EXISTS gallery_photos (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    file_name TEXT NOT NULL,
+    mime_type TEXT,
+    image_data BYTEA,
+    source_url TEXT,
+    sort_order INTEGER NOT NULL DEFAULT 0,
+    created_by_admin_id BIGINT REFERENCES admin(id) ON DELETE SET NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT chk_gallery_photo_source CHECK (
+        (image_data IS NOT NULL AND mime_type IS NOT NULL AND source_url IS NULL)
+        OR
+        (image_data IS NULL AND mime_type IS NULL AND source_url IS NOT NULL)
+    )
 );
 
 CREATE TABLE IF NOT EXISTS orders (
@@ -178,6 +188,10 @@ CREATE INDEX IF NOT EXISTS idx_products_category_id ON products(category_id);
 CREATE INDEX IF NOT EXISTS idx_products_active ON products(is_active);
 CREATE INDEX IF NOT EXISTS idx_products_created_by_admin ON products(created_by_admin_id);
 CREATE INDEX IF NOT EXISTS idx_products_display_group ON products(display_group);
+CREATE INDEX IF NOT EXISTS idx_gallery_photos_sort_order ON gallery_photos(sort_order);
+CREATE UNIQUE INDEX IF NOT EXISTS uq_gallery_photos_source_url
+ON gallery_photos(source_url)
+WHERE source_url IS NOT NULL;
 
 CREATE INDEX IF NOT EXISTS idx_orders_created_at ON orders(created_at);
 CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
@@ -219,13 +233,21 @@ CREATE TRIGGER trg_orders_updated_at BEFORE UPDATE ON orders FOR EACH ROW EXECUT
 DROP TRIGGER IF EXISTS trg_bookings_updated_at ON bookings;
 CREATE TRIGGER trg_bookings_updated_at BEFORE UPDATE ON bookings FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 
-DROP TRIGGER IF EXISTS trg_site_settings_updated_at ON site_settings;
-CREATE TRIGGER trg_site_settings_updated_at
-BEFORE UPDATE ON site_settings
-FOR EACH ROW
-EXECUTE FUNCTION set_updated_at();
-
 COMMIT;
+
+-- Початкові 9 фото: це посилання на файли, які вже є у frontend/IMG.
+-- Додані через адмінку фото зберігаються в PostgreSQL як binary data.
+INSERT INTO gallery_photos (file_name, source_url, sort_order) VALUES
+    ('Фото 1', '/frontend/IMG/1.png', 0),
+    ('Фото 2', '/frontend/IMG/2.png', 1),
+    ('Фото 3', '/frontend/IMG/3.png', 2),
+    ('Фото 4', '/frontend/IMG/4.png', 3),
+    ('Фото 5', '/frontend/IMG/5.png', 4),
+    ('Фото 6', '/frontend/IMG/6.png', 5),
+    ('Фото 7', '/frontend/IMG/7.png', 6),
+    ('Фото 8', '/frontend/IMG/8.png', 7),
+    ('Фото 9', '/frontend/IMG/9.png', 8)
+ON CONFLICT DO NOTHING;
 
 
 -- ============================================================
@@ -302,10 +324,6 @@ BEGIN
     -- ==========================================================
     INSERT INTO products (slug, title, description, price, image_url, category_id, product_type, pricing_mode, display_group, sort_order, is_active, created_by_admin_id) VALUES ('dennyi-kvytok', 'Денний квиток', 'Денні загальні відвідування', 200, '/frontend/IMG/Layer 3.png', NULL, 'ticket', 'person', 'products', 0, true, v_admin_id);
     INSERT INTO products (slug, title, description, price, image_url, category_id, product_type, pricing_mode, display_group, sort_order, is_active, created_by_admin_id) VALUES ('vechirniy-kvytok', 'Вечірній квиток', 'Індивідуальне відвідування', 500, '/frontend/IMG/Layer 2.png', NULL, 'ticket', 'hour', 'products', 1, true, v_admin_id);
-
-    UPDATE products
-        SET stock = 100
-        WHERE product_type = 'physical' AND stock IS NULL;
 
     RAISE NOTICE 'Сідинг завершено.';
 END $$;

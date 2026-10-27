@@ -4,6 +4,7 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const bookingRoutes = require("./routes/bookingRoutes");
+const { initialiseGallerySchema } = require("./utils/gallerySchema");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -44,7 +45,7 @@ app.get("/admin.html", (req, res) => {
 
 app.use(helmet());
 const corsOrigin = process.env.FRONTEND_ORIGIN
-    ? process.env.FRONTEND_ORIGIN.split(",").map((origin) => origin.trim())
+    ? process.env.frontend.split(",").map((origin) => origin.trim())
     : true;
 app.use(cors({ origin: corsOrigin }));
 app.set("trust proxy", 1);
@@ -62,6 +63,7 @@ app.use("/categories", require("./routes/categoryRoutes"));
 app.use("/orders", require("./routes/orderRoutes"));
 app.use("/auth", require("./routes/authRoutes"));
 app.use("/settings", require("./routes/settingsRoutes"));
+app.use("/gallery", require("./routes/galleryRoutes"));
 
 app.use(helmet({
     contentSecurityPolicy: {
@@ -91,6 +93,21 @@ app.use((err, req, res, next) => {
     });
 });
 
-app.listen(PORT, "0.0.0.0", () =>
- { console.log(`Server started on port ${PORT}`);
- });
+const startServer = function () {
+    app.listen(PORT, "0.0.0.0", () => {
+        console.log(`Server started on port ${PORT}`);
+    });
+};
+
+// Do not accept requests until the gallery table and the first nine images
+// are ready. A database outage is still logged and the rest of the server
+// starts, matching the pre-existing application behaviour.
+initialiseGallerySchema()
+    .then(() => {
+        console.log("Галерея готова до роботи");
+        startServer();
+    })
+    .catch((error) => {
+        console.error("Помилка ініціалізації галереї:", error.message);
+        startServer();
+    });
