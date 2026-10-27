@@ -74,6 +74,10 @@ const fetchAllCategories = function () {
   return apiRequest("/categories", { method: "GET" });
 };
 
+const fetchGalleryPhotos = function () {
+  return apiRequest("/gallery", { method: "GET" });
+};
+
 // ----------------------------
 // PUBLIC: СТАН КАТАЛОГУ
 // ----------------------------
@@ -178,6 +182,31 @@ const adminUpdateProduct = function (productId, payload) {
 
 const adminDeleteProduct = function (productId) {
   return adminRequest(`/products/${productId}`, { method: "DELETE" });
+};
+
+// ----------------------------
+// ADMIN: ГАЛЕРЕЯ
+// ----------------------------
+
+const adminGetGalleryPhotos = function () {
+  return adminRequest("/gallery", { method: "GET" });
+};
+
+const adminUploadGalleryPhoto = function (file) {
+  return adminRequest("/gallery", {
+    method: "POST",
+    headers: {
+      // apiRequest normally sends JSON. Here we deliberately replace it with
+      // the real image MIME type so Express can read the binary file.
+      "Content-Type": file.type,
+      "X-File-Name": encodeURIComponent(file.name)
+    },
+    body: file
+  });
+};
+
+const adminDeleteGalleryPhoto = function (photoId) {
+  return adminRequest(`/gallery/${photoId}`, { method: "DELETE" });
 };
 
 // ----------------------------

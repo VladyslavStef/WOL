@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>WOL — Адмін-панель</title>
+    <!-- Підключаємо normalize.css заради ГОТОВОЇ модальної системи
+         (.modal/.modal__container/.modal__close/is-open), яку вже
+         використовує сайт покупця — не дублюємо ці правила в admin.css. -->
     <link rel="stylesheet" href="/frontend/CSS/normalize.css" />
     <link rel="stylesheet" href="/frontend/CSS/user-message-modal.css" />
-    <link rel="stylesheet" href="admin.css"/>
+    <link rel="stylesheet" href="/frontend/admin/admin.css" />
   </head>
   <body>
     <!-- ======================== LOGIN ======================== -->
@@ -78,6 +81,9 @@
         </button>
         <button type="button" class="admin-tab" data-tab="products">
           Товари
+        </button>
+        <button type="button" class="admin-tab" data-tab="gallery">
+          Галерея
         </button>
         <button type="button" class="admin-tab" data-tab="orders">
           Замовлення
@@ -305,6 +311,37 @@
         </div>
       </section>
 
+      <!-- ---------------- GALLERY TAB ---------------- -->
+      <section class="admin-tab-panel" id="galleryPanel">
+        <details class="admin-create-box" open>
+          <summary>+ Додати фото до галереї</summary>
+          <form class="admin-form" id="galleryUploadForm">
+            <label>
+              Оберіть фото
+              <input
+                type="file"
+                id="galleryPhotoInput"
+                accept="image/jpeg,image/png,image/webp"
+                required
+              />
+            </label>
+            <p class="admin-note admin-gallery-note">
+              JPG, PNG або WebP, до 8 МБ. Фото зберігається в базі даних і не зникне після deploy.
+            </p>
+            <span class="admin-error" id="galleryUploadError"></span>
+            <div class="admin-form-actions">
+              <button type="submit" id="galleryUploadButton">Додати фото</button>
+            </div>
+          </form>
+        </details>
+
+        <div class="admin-toolbar">
+          <button type="button" id="refreshGalleryButton">Оновити список</button>
+        </div>
+
+        <div class="admin-gallery-grid" id="galleryList" aria-live="polite"></div>
+      </section>
+
       <!-- ---------------- ORDERS TAB ---------------- -->
       <section class="admin-tab-panel" id="ordersPanel">
         <div class="admin-toolbar">
@@ -404,6 +441,6 @@
     <script src="/frontend/JS/config.js"></script>
     <script src="/frontend/JS/api.js"></script>
     <script src="/frontend/JS/user-message.js"></script>
-    <script src="admin.js"></script>
+    <script src="/frontend/admin/admin.js"></script>
   </body>
 </html>

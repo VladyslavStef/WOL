@@ -13,6 +13,7 @@ const logoutButton = document.getElementById("logoutButton");
 const tabs = document.querySelectorAll(".admin-tab");
 const categoriesPanel = document.getElementById("categoriesPanel");
 const productsPanel = document.getElementById("productsPanel");
+const galleryPanel = document.getElementById("galleryPanel");
 const ordersPanel = document.getElementById("ordersPanel");
 const bookingsPanel = document.getElementById("bookingsPanel");
 
@@ -62,6 +63,17 @@ const productsTableBody = document.getElementById("productsTableBody");
 const productSearchInput = document.getElementById("productSearchInput");
 
 // ========================================
+// DOM: галерея
+// ========================================
+
+const galleryUploadForm = document.getElementById("galleryUploadForm");
+const galleryPhotoInput = document.getElementById("galleryPhotoInput");
+const galleryUploadError = document.getElementById("galleryUploadError");
+const galleryUploadButton = document.getElementById("galleryUploadButton");
+const refreshGalleryButton = document.getElementById("refreshGalleryButton");
+const galleryList = document.getElementById("galleryList");
+
+// ========================================
 // DOM: замовлення / бронювання
 // ========================================
 
@@ -80,6 +92,7 @@ let editingCategoryId = null;
 
 let categoriesCache = [];
 let productsCache = [];
+let galleryPhotosCache = [];
 let ordersCache = [];
 let bookingsCache = [];
 
@@ -239,6 +252,7 @@ const showDashboard = async function () {
     loadCatalogStatus();
     loadCategories();
     loadProducts();
+    loadGalleryPhotos();
     loadOrders();
     loadBookings();
 };
@@ -308,6 +322,7 @@ tabs.forEach((tab) => {
 
         categoriesPanel.classList.toggle("is-active", target === "categories");
         productsPanel.classList.toggle("is-active", target === "products");
+        galleryPanel.classList.toggle("is-active", target === "gallery");
         ordersPanel.classList.toggle("is-active", target === "orders");
         bookingsPanel.classList.toggle("is-active", target === "bookings");
     });
@@ -957,6 +972,129 @@ createProductForm.addEventListener("submit", async (event) => {
 });
 
 refreshProductsButton.addEventListener("click", loadProducts);
+
+
+// ========================================
+// ГАЛЕРЕЯ
+// ========================================
+
+const renderGalleryPhotos = function (photos) {
+    galleryList.replaceChildren();
+
+    if (photos.length === 0) {
+        const emptyState = document.createElement("p");
+        emptyState.className = "admin-note";
+        emptyState.textContent = "У галереї поки немає фото.";
+        galleryList.append(emptyState);
+        return;
+    }
+
+    photos.forEach((photo) => {
+        const card = document.createElement("article");
+        card.className = "admin-gallery-card";
+
+        const image = document.createElement("img");
+        image.src = photo.imageUrl;
+        image.alt = photo.fileName || "Фото галереї";
+        image.loading = "lazy";
+
+        const name = document.createElement("span");
+        name.className = "admin-gallery-card__name";
+        name.textContent = `${photo.sortOrder + 1}. ${photo.fileName || "Фото"}`;
+
+        const actions = document.createElement("div");
+        actions.className = "admin-gallery-card__actions";
+
+        const deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.textContent = "Видалити";
+        deleteButton.addEventListener("click", () => {
+            showConfirmModal({
+                title: "Видалити фото?",
+                message: `«${photo.fileName || "Це фото"}» буде прибрано з усіх слайдерів сайту.`,
+                confirmText: "Видалити",
+                cancelText: "Скасувати",
+                onConfirm: async () => {
+                    try {
+                        await adminDeleteGalleryPhoto(photo.id);
+                        closeConfirmModal();
+                        showUserMessage({ type: "success", message: "Фото видалено з галереї." });
+                        loadGalleryPhotos();
+                    } catch (error) {
+                        console.error("Не вдалося видалити фото:", error);
+                        showUserMessage({
+                            type: "error",
+                            message: toUserFriendlyErrorMessage(error, "Не вдалося видалити фото. Спробуйте ще раз.")
+                        });
+                    }
+                }
+            });
+        });
+
+        actions.append(deleteButton);
+        card.append(image, name, actions);
+        galleryList.append(card);
+    });
+};
+
+const loadGalleryPhotos = async function () {
+    galleryList.innerHTML = '<p class="admin-note">Завантаження фото...</p>';
+
+    try {
+        const response = await adminGetGalleryPhotos();
+        galleryPhotosCache = response.data || [];
+        renderGalleryPhotos(galleryPhotosCache);
+    } catch (error) {
+        console.error("Не вдалося завантажити галерею:", error);
+        galleryList.innerHTML = '<p class="admin-error">Не вдалося завантажити фото галереї.</p>';
+    }
+};
+
+galleryUploadForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    galleryUploadError.textContent = "";
+
+    const file = galleryPhotoInput.files[0];
+
+    if (!file) {
+        galleryUploadError.textContent = "Оберіть фото для завантаження.";
+        return;
+    }
+
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+
+    if (!allowedTypes.includes(file.type)) {
+        galleryUploadError.textContent = "Підтримуються лише JPG, PNG або WebP.";
+        return;
+    }
+
+    if (file.size > 8 * 1024 * 1024) {
+        galleryUploadError.textContent = "Фото має бути до 8 МБ.";
+        return;
+    }
+
+    const originalText = galleryUploadButton.textContent;
+    galleryUploadButton.disabled = true;
+    galleryUploadButton.textContent = "Завантажуємо...";
+
+    try {
+        await adminUploadGalleryPhoto(file);
+        galleryUploadForm.reset();
+        showUserMessage({ type: "success", message: "Фото додано до галереї." });
+        loadGalleryPhotos();
+    } catch (error) {
+        console.error("Не вдалося додати фото:", error);
+        galleryUploadError.textContent = toUserFriendlyErrorMessage(
+            error,
+            "Не вдалося додати фото. Спробуйте ще раз."
+        );
+    } finally {
+        galleryUploadButton.disabled = false;
+        galleryUploadButton.textContent = originalText;
+    }
+});
+
+refreshGalleryButton.addEventListener("click", loadGalleryPhotos);
 
 
 // ========================================

@@ -609,36 +609,6 @@
           </div>
         </article>
       </template>
-
-      <section
-        class="modal catalog-closed-modal"
-        id="catalogClosedModal"
-        aria-hidden="true"
-      >
-        <div class="modal__container catalog-closed-modal__container">
-          <img
-            src="/frontend/IMG/Layer 1.png"
-            alt=""
-            class="modal__bg basket-bg"
-          />
-          <button
-            class="modal__close catalog-closed-modal__close"
-            type="button"
-            aria-label="Закрити"
-          ></button>
-
-          <img
-            src="/frontend/IMG/lavender-sleeping.png"
-            alt="Лаванда спить"
-            class="catalog-closed-modal__image"
-          />
-
-          <p class="catalog-closed-modal__text">
-            Лаванда спить, завітайте пізніше
-          </p>
-        </div>
-      </section>
-      
       <section class="hero">
         <picture class="logo">
           <source
@@ -918,6 +888,9 @@
                 >wonderoflavender@gmail.com</span
               >
             </div>
+            <button type="button" class="slider__gallery-button" id="openGalleryButton">
+              Переглянути галерею
+            </button>
           </div>
           <button class="slider__button">
             <img
@@ -938,8 +911,6 @@
               class="slider__photos-item slider__photos-item--next"
             />
           </div>
-
-          <!-- Мобільна галерея: заповнюється фотографіями через main.js. -->
           <div class="slider__story" aria-label="Галерея лавандового поля">
             <div class="slider__story-track"></div>
             <div class="slider__story-meta" aria-hidden="true">
@@ -968,6 +939,27 @@
         <behold-widget feed-id="1ZtLwLSbVKgQJIQYzXJz"></behold-widget>
       </section>
     </main>
+
+    <section
+      class="gallery-modal"
+      id="galleryModal"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Галерея лавандового поля"
+      aria-hidden="true"
+    >
+      <button type="button" class="gallery-modal__close" aria-label="Закрити галерею">×</button>
+      <button type="button" class="gallery-modal__nav gallery-modal__nav--previous" aria-label="Попереднє фото">
+        <img src="/frontend/IMG/arrow.svg" alt="" />
+      </button>
+      <figure class="gallery-modal__figure">
+        <img class="gallery-modal__image" id="galleryModalImage" src="" alt="" />
+        <figcaption class="gallery-modal__caption" id="galleryModalCounter">01 / 09</figcaption>
+      </figure>
+      <button type="button" class="gallery-modal__nav gallery-modal__nav--next" aria-label="Наступне фото">
+        <img src="/frontend/IMG/arrow.svg" alt="" />
+      </button>
+    </section>
     <footer class="footer">
       <div class="footer__container">
         <img src="/frontend/IMG/Author.png" alt="auth" class="author" />
@@ -981,7 +973,7 @@
             />
             <span class="introduce__textholder-greeting">Привіт, я Тетяна</span>
             <p class="introduce__textholder-paragraph">
-              Ми&nbsp;з&nbsp;моєю сім&rsquo;єю - власники лавандового поля
+              Ми&nbsp;з&nbsp;моєю сім&rsquo;єю власники лавандового поля
               та&nbsp;бренду Wonder of&nbsp;lavender (Лавандове диво).
             </p>
             <p class="introduce__textholder-paragraph">

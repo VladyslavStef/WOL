@@ -566,213 +566,100 @@
     overflow: hidden;
   }
 
-.slider__wrapper {
-  width: 100%;
-  height: auto;
-  padding: 0;
+  .slider__wrapper {
+    width: 100%;
+    height: 42rem;
 
-  position: relative;
-  overflow: visible;
-  box-sizing: border-box;
-  background: transparent;
+    padding: 0;
 
-  display: flex;
-  flex-direction: column;
-}
+    overflow: hidden;
 
-/* Фото зверху */
-.slider__photos {
-  order: 2;
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1905 / 630;
-  overflow: hidden;
-  background: transparent;
-}
+    position: relative;
+    box-sizing: border-box;
+  }
 
-/* Фото-сторіс лише для телефону. Оригінальні фото мають широкий
-   горизонтальний формат, тому вони не обрізаються: їх можна провести
-   пальцем від лівого до правого краю. */
-.slider__story {
-  order: 2;
-  position: relative;
-  display: block;
-  width: 100%;
-  height: 25rem;
-  overflow: hidden;
-  background: #f5f2f6;
-}
+  .slider__photos-item {
+    position: absolute;
 
-.slider__story-track {
-  display: flex;
-  gap: 0.8rem;
-  width: 100%;
-  height: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scroll-snap-type: x proximity;
-  scroll-behavior: smooth;
-  overscroll-behavior-x: contain;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  touch-action: pan-x;
-}
+    inset: 0;
 
-.slider__story-track::-webkit-scrollbar {
-  display: none;
-}
+    width: 100%;
+    height: 100%;
 
-.slider__story-card {
-  flex: 0 0 auto;
-  width: auto;
-  height: 100%;
-  margin: 0;
-  scroll-snap-align: start;
-}
+    object-fit: cover;
+    object-position: center;
 
-.slider__story-image {
-  display: block;
-  width: auto;
-  max-width: none;
-  height: 100%;
-  object-fit: contain;
-}
+    transform: translateX(0);
+  }
 
-.slider__story-meta {
-  position: absolute;
-  right: 1.2rem;
-  bottom: 1.2rem;
-  left: 1.2rem;
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-  pointer-events: none;
-}
+  .slider__photos-item--out {
+    transform: translateX(-100%);
+  }
 
-.slider__story-count {
-  color: #fff;
-  font-size: 1.2rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-shadow: 0 0.1rem 0.5rem rgba(0, 0, 0, 0.5);
-  white-space: nowrap;
-}
+  .slider__photos-item--next {
+    transform: translateX(100%);
+  }
 
-.slider__story-progress {
-  display: block;
-  flex: 1;
-  height: 0.3rem;
-  overflow: hidden;
-  border-radius: 99rem;
-  background: rgba(255, 255, 255, 0.48);
-}
 
-.slider__story-progress-fill {
-  display: block;
-  width: 11.111%;
-  height: 100%;
-  border-radius: inherit;
-  background: #fff;
-  transition: width 0.25s ease;
-}
+  /* затемнення залишаємо,
+     але воно займає тільки фото */
+  .slider__gradient {
+    position: absolute;
 
-/* На телефоні показуємо керовану пальцем фото-історію замість старого
-   автоматичного слайдера. */
-.slider__photos {
-  display: none;
-}
+    inset: 0;
 
-.slider__photos-item {
-  position: absolute;
-  inset: 0;
+    width: 100%;
+    height: 100%;
+  }
 
-  width: 100%;
-  height: 100%;
 
-  object-fit: contain;
-  object-position: center;
+  /* --------------------------------------------------
+     ТЕКСТ
+     -------------------------------------------------- */
 
-  z-index: 0;
-  background: transparent;
+  .slider__textholder {
+    position: absolute;
 
-  transform: translateX(0);
-}
+    left: 50%;
+    top: 50%;
 
-.slider__photos-item--out {
-  transform: translateX(-100%);
-}
+    transform: translate(-50%, -50%);
 
-.slider__photos-item--next {
-  transform: translateX(100%);
-}
+    width: calc(100% - 3.2rem);
+    max-width: 38rem;
 
-/* Прибираємо фіолетовий фон і декоративні гілки */
-.slider__gradient,
-.slider__decor,
-.slider__textholder-decor {
-  display: none;
-}
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
-/* Текст під фото */
-.slider__textholder {
-  display: contents;
-}
+    gap: 1rem;
 
-/* Заголовок над фото */
-.slider__textholder-heading {
-  order: 1;
+    text-align: center;
 
-  width: 100%;
-  padding: 0.8rem 1.2rem;
+    z-index: 2;
+  }
 
-  box-sizing: border-box;
-  justify-content: center;
+  .slider__textholder-heading {
+    justify-content: center;
 
-  font-size: 2.6rem;
-  color: var(--text-color);
-  text-align: center;
-}
+    font-size: 2.6rem;
+    text-align: center;
+  }
 
-.slider__textholder-header {
-  margin: 0;
-}
+  .slider__textholder-info {
+    width: 100%;
+    max-width: 36rem;
 
-/* Опис під фото */
-.slider__textholder-paragraph {
-  order: 3;
+    text-align: center;
 
-  width: 100%;
-  max-width: 58rem;
-  margin: 0.8rem auto 0;
-  padding: 0 1.2rem;
+    overflow-wrap: break-word;
+  }
 
-  box-sizing: border-box;
-  color: var(--text-color);
-  text-align: center;
-}
+  .slider__textholder-contacts {
+    align-items: center;
+    text-align: center;
+  }
 
-/* Контакти під описом */
-.slider__textholder-contacts {
-  order: 4;
-
-  width: 100%;
-  margin: 0.8rem auto;
-  padding: 0 1.2rem;
-
-  box-sizing: border-box;
-  align-items: center;
-  color: var(--text-color);
-  text-align: center;
-}
-
-.slider__textholder-info {
-  width: 100%;
-  max-width: 36rem;
-
-  color: var(--text-color);
-  text-align: center;
-  overflow-wrap: break-word;
-}
 
   /* --------------------------------------------------
      СТРІЛКА
@@ -823,6 +710,205 @@
   .socials__decor-item--right,
   .socials__decor-item--left{
     display: none;
+  }
+
+  /* --------------------------------------------------
+     МОБІЛЬНА ФОТО-ГАЛЕРЕЯ
+     -------------------------------------------------- */
+
+  .slider {
+    overflow: visible;
+  }
+
+  .slider__wrapper {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    background: transparent;
+  }
+
+  .slider__gradient,
+  .slider__decor,
+  .slider__textholder-decor {
+    display: none;
+  }
+
+  .slider__textholder {
+    position: static;
+    display: contents;
+    width: auto;
+    max-width: none;
+    transform: none;
+    color: inherit;
+    text-align: center;
+  }
+
+  .slider__textholder-heading {
+    order: 1;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 0.8rem 1.2rem;
+    box-sizing: border-box;
+    color: var(--text-color);
+  }
+
+  .slider__textholder-header {
+    margin: 0;
+  }
+
+  .slider__photos,
+  .slider__button {
+    display: none;
+  }
+
+  .slider__story {
+    position: relative;
+    display: block;
+    order: 2;
+    width: 100%;
+    height: 25rem;
+    overflow: hidden;
+    background: #f5f2f6;
+  }
+
+  .slider__story-track {
+    display: flex;
+    gap: 0.8rem;
+    width: 100%;
+    height: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    touch-action: pan-x pinch-zoom;
+  }
+
+  .slider__story-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .slider__story-card {
+    flex: 0 0 auto;
+    width: auto;
+    height: 100%;
+    aspect-ratio: 1905 / 630;
+    margin: 0;
+  }
+
+  .slider__story-image {
+    display: block;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .slider__story-meta {
+    position: absolute;
+    right: 1.2rem;
+    bottom: 1.2rem;
+    left: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    pointer-events: none;
+  }
+
+  .slider__story-count {
+    color: #fff;
+    font-family: "Montserrat", sans-serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-shadow: 0 0.1rem 0.5rem rgba(0, 0, 0, 0.55);
+    white-space: nowrap;
+  }
+
+  .slider__story-progress {
+    display: block;
+    flex: 1;
+    height: 0.3rem;
+    overflow: hidden;
+    border-radius: 99rem;
+    background: rgba(255, 255, 255, 0.48);
+  }
+
+  .slider__story-progress-fill {
+    display: block;
+    width: 11.111%;
+    height: 100%;
+    border-radius: inherit;
+    background: #fff;
+    transition: width 0.25s ease;
+  }
+
+  .slider__textholder-paragraph {
+    order: 3;
+    width: 100%;
+    max-width: 58rem;
+    margin: 0.8rem auto 0;
+    padding: 0 1.2rem;
+    box-sizing: border-box;
+    color: var(--text-color);
+    text-align: center;
+  }
+
+  .slider__textholder-contacts {
+    order: 4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin: 0.8rem auto;
+    padding: 0 1.2rem;
+    box-sizing: border-box;
+    color: var(--text-color);
+  }
+
+  .slider__textholder-info {
+    width: 100%;
+    max-width: 36rem;
+    color: var(--text-color);
+    overflow-wrap: break-word;
+  }
+
+  .slider__gallery-button {
+    order: 5;
+    margin: 1.8rem auto 4rem;
+    border-color: var(--footer-color);
+    background: var(--footer-color);
+    color: #fff;
+    font-size: 1.6rem;
+  }
+
+  .gallery-modal {
+    padding: 7rem 1.2rem 2rem;
+  }
+
+  .gallery-modal__image {
+    max-height: calc(100dvh - 12rem);
+  }
+
+  .gallery-modal__close {
+    top: 1.2rem;
+    right: 1.2rem;
+  }
+
+  .gallery-modal__nav {
+    width: 4.4rem;
+    height: 4.4rem;
+  }
+
+  .gallery-modal__nav--previous {
+    left: 0.8rem;
+  }
+
+  .gallery-modal__nav--next {
+    right: 0.8rem;
   }
 }
 
@@ -1366,39 +1452,4 @@
     display: none;
   }
 
-}
-
-/* Кошик — виправлення обрізання на мобільних */
-@media (max-width: 768px) {
-  .modal-basket {
-    padding: 0.6rem;
-  }
-
-  .modal-basket__container,
-  .modal-basket .basket-view,
-  .modal-basket .footer-modal {
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-    box-sizing: border-box;
-  }
-
-  .modal-basket .footer-modal {
-    padding: 0 1.2rem 1.2rem;
-  }
-
-  .modal-basket .button-container__button-modal {
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-    box-sizing: border-box;
-    transform: none;
-  }
-}
-
-/* Відступ перед заголовком соцмереж на мобільних */
-@media (max-width: 768px) {
-  .socials {
-    margin: 8rem 0 2.6rem;
-  }
 }

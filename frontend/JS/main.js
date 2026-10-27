@@ -11,29 +11,23 @@ const pickTopCategories = function (allCategories) {
         .filter((category) => category.displayGroup === "products")
         .slice()
         .sort((a, b) => a.sortOrder - b.sortOrder);
-
     const picked = [];
     const usedIds = new Set();
 
     PREFERRED_TOP_SLUGS.forEach((slug) => {
-        const found = productCategories.find((category) => category.slug === slug);
-
-        if (found && !usedIds.has(found.id)) {
-            picked.push(found);
-            usedIds.add(found.id);
-        }
-    });
-
-    for (const category of productCategories) {
-        if (picked.length >= TOP_PRODUCTS_CARD_COUNT) {
-            break;
-        }
-
-        if (!usedIds.has(category.id)) {
+        const category = productCategories.find((item) => item.slug === slug);
+        if (category && !usedIds.has(category.id)) {
             picked.push(category);
             usedIds.add(category.id);
         }
-    }
+    });
+
+    productCategories.forEach((category) => {
+        if (picked.length < TOP_PRODUCTS_CARD_COUNT && !usedIds.has(category.id)) {
+            picked.push(category);
+            usedIds.add(category.id);
+        }
+    });
 
     return picked.slice(0, TOP_PRODUCTS_CARD_COUNT);
 };
@@ -45,12 +39,10 @@ const initTopProducts = async function () {
 
         articleAll.forEach((article, index) => {
             const category = topCategories[index];
-
             if (!category) {
                 article.remove();
                 return;
             }
-
             setupCategoryCard(article, category);
         });
     } catch (error) {
@@ -64,7 +56,7 @@ initTopProducts();
 // PHOTO GALLERY
 // ========================================
 
-const allPhotos = [
+const fallbackPhotos = [
     "/frontend/IMG/1.png",
     "/frontend/IMG/2.png",
     "/frontend/IMG/3.png",
@@ -76,218 +68,44 @@ const allPhotos = [
     "/frontend/IMG/9.png"
 ];
 
-const mobileQuery = window.matchMedia("(max-width: 768px)");
+let allPhotos = [...fallbackPhotos];
+const mobileGalleryQuery = window.matchMedia("(max-width: 768px)");
 
-// Цей стиль додається самим main.js. Тому не потрібно редагувати HTML або CSS.
-const addMobileStoryStyles = function () {
-    if (document.getElementById("mobile-photo-story-styles")) {
-        return;
+const loadGalleryPhotos = async function () {
+    try {
+        const response = await fetchGalleryPhotos();
+        const photoUrls = (response.data || [])
+            .map((photo) => photo.imageUrl)
+            .filter(Boolean);
+
+        if (photoUrls.length > 0) {
+            return photoUrls;
+        }
+    } catch (error) {
+        // Until the database migration reaches the server, the old gallery
+        // continues to work with the existing nine static photos.
+        console.warn("Не вдалося завантажити фото з бази:", error.message);
     }
 
-    const style = document.createElement("style");
-    style.id = "mobile-photo-story-styles";
-    style.textContent = `
-        @media (max-width: 768px) {
-            .slider__wrapper {
-                display: flex !important;
-                flex-direction: column !important;
-                width: 100% !important;
-                height: auto !important;
-                min-height: 0 !important;
-                padding: 0 !important;
-                overflow: visible !important;
-                background: transparent !important;
-            }
-
-            .slider__gradient,
-            .slider__decor,
-            .slider__textholder-decor {
-                display: none !important;
-            }
-
-            .slider__textholder {
-                position: static !important;
-                display: contents !important;
-                width: auto !important;
-                max-width: none !important;
-                transform: none !important;
-                color: inherit !important;
-                text-align: center !important;
-            }
-
-            .slider__textholder-heading {
-                order: 1;
-                display: flex !important;
-                justify-content: center !important;
-                width: 100% !important;
-                padding: 0.8rem 1.2rem !important;
-                box-sizing: border-box !important;
-                color: var(--text-color) !important;
-                text-align: center !important;
-            }
-
-            .slider__textholder-header {
-                margin: 0 !important;
-            }
-
-            .slider__story {
-                order: 2;
-                position: relative;
-                display: block !important;
-                width: 100% !important;
-                height: 25rem !important;
-                overflow: hidden !important;
-                background: #f5f2f6;
-            }
-
-            .slider__story-track {
-                display: flex !important;
-                gap: 0.8rem;
-                width: 100% !important;
-                height: 100% !important;
-                overflow-x: auto !important;
-                overflow-y: hidden !important;
-                overscroll-behavior-x: contain;
-                -webkit-overflow-scrolling: touch;
-                scrollbar-width: none;
-                touch-action: pan-x pinch-zoom;
-            }
-
-            .slider__story-track::-webkit-scrollbar {
-                display: none;
-            }
-
-            .slider__story-card {
-                flex: 0 0 auto !important;
-                width: auto !important;
-                height: 100% !important;
-                aspect-ratio: 1905 / 630;
-                margin: 0 !important;
-            }
-
-            .slider__story-image {
-                display: block !important;
-                width: 100% !important;
-                max-width: none !important;
-                height: 100% !important;
-                object-fit: cover !important;
-            }
-
-            .slider__story-meta {
-                position: absolute;
-                right: 1.2rem;
-                bottom: 1.2rem;
-                left: 1.2rem;
-                display: flex;
-                align-items: center;
-                gap: 0.9rem;
-                pointer-events: none;
-            }
-
-            .slider__story-count {
-                color: #fff;
-                font-family: Montserrat, sans-serif;
-                font-size: 1.2rem;
-                font-weight: 600;
-                letter-spacing: 0.08em;
-                text-shadow: 0 0.1rem 0.5rem rgba(0, 0, 0, 0.55);
-                white-space: nowrap;
-            }
-
-            .slider__story-progress {
-                display: block;
-                flex: 1;
-                height: 0.3rem;
-                overflow: hidden;
-                border-radius: 99rem;
-                background: rgba(255, 255, 255, 0.48);
-            }
-
-            .slider__story-progress-fill {
-                display: block;
-                width: 11.111%;
-                height: 100%;
-                border-radius: inherit;
-                background: #fff;
-                transition: width 0.25s ease;
-            }
-
-            .slider__photos,
-            .slider__button {
-                display: none !important;
-            }
-
-            .slider__textholder-paragraph {
-                order: 3;
-                width: 100% !important;
-                max-width: 58rem !important;
-                margin: 0.8rem auto 0 !important;
-                padding: 0 1.2rem !important;
-                box-sizing: border-box;
-                color: var(--text-color) !important;
-                text-align: center !important;
-            }
-
-            .slider__textholder-contacts {
-                order: 4;
-                display: flex !important;
-                flex-direction: column !important;
-                align-items: center !important;
-                width: 100% !important;
-                margin: 0.8rem auto !important;
-                padding: 0 1.2rem !important;
-                box-sizing: border-box;
-                color: var(--text-color) !important;
-                text-align: center !important;
-            }
-
-            .slider__textholder-info {
-                width: 100%;
-                max-width: 36rem;
-                color: var(--text-color) !important;
-                overflow-wrap: break-word;
-            }
-        }
-    `;
-
-    document.head.append(style);
+    return [...fallbackPhotos];
 };
 
-const createMobileStory = function () {
-    if (!mobileQuery.matches) {
+// ========================================
+// MOBILE STORY: wide photos can be dragged all the way to either edge.
+// ========================================
+
+const initMobileStory = function () {
+    if (!mobileGalleryQuery.matches) {
         return false;
     }
 
-    const sliderWrapper = document.querySelector(".slider__wrapper");
+    const track = document.querySelector(".slider__story-track");
+    const count = document.querySelector(".slider__story-count");
+    const progress = document.querySelector(".slider__story-progress-fill");
 
-    if (!sliderWrapper) {
+    if (!track) {
         return false;
     }
-
-    addMobileStoryStyles();
-
-    let story = sliderWrapper.querySelector(".slider__story");
-
-    if (!story) {
-        story = document.createElement("div");
-        story.className = "slider__story";
-        story.setAttribute("aria-label", "Галерея лавандового поля");
-        sliderWrapper.append(story);
-    }
-
-    story.innerHTML = `
-        <div class="slider__story-track" aria-label="Проведіть пальцем, щоб подивитися всі фото"></div>
-        <div class="slider__story-meta" aria-hidden="true">
-            <span class="slider__story-count">01 / ${String(allPhotos.length).padStart(2, "0")}</span>
-            <span class="slider__story-progress">
-                <span class="slider__story-progress-fill"></span>
-            </span>
-        </div>
-    `;
-
-    const track = story.querySelector(".slider__story-track");
-    const count = story.querySelector(".slider__story-count");
-    const progress = story.querySelector(".slider__story-progress-fill");
 
     track.innerHTML = allPhotos.map((photo, index) => `
         <figure class="slider__story-card">
@@ -302,103 +120,117 @@ const createMobileStory = function () {
 
     const cards = Array.from(track.querySelectorAll(".slider__story-card"));
 
-    const updateMeta = function () {
+    const updateStoryMeta = function () {
         const trackLeft = track.getBoundingClientRect().left;
         let closestIndex = 0;
         let closestDistance = Infinity;
 
         cards.forEach((card, index) => {
             const distance = Math.abs(card.getBoundingClientRect().left - trackLeft);
-
             if (distance < closestDistance) {
                 closestDistance = distance;
                 closestIndex = index;
             }
         });
 
-        count.textContent = `${String(closestIndex + 1).padStart(2, "0")} / ${String(allPhotos.length).padStart(2, "0")}`;
-        progress.style.width = `${((closestIndex + 1) / allPhotos.length) * 100}%`;
+        if (count) {
+            count.textContent = `${String(closestIndex + 1).padStart(2, "0")} / ${String(allPhotos.length).padStart(2, "0")}`;
+        }
+
+        if (progress) {
+            progress.style.width = `${((closestIndex + 1) / allPhotos.length) * 100}%`;
+        }
     };
 
+    // The couple on the first wide photo is at approximately 46% of the
+    // frame. This runs once after the image loads and never resets user swipes.
     const centerFirstPhotoOnce = function () {
         const firstCard = cards[0];
-
-        if (!firstCard || track.clientWidth === 0 || firstCard.scrollWidth === 0) {
+        if (!firstCard || !track.clientWidth || !firstCard.scrollWidth) {
             return;
         }
 
-        // Люди на першому знімку розташовані приблизно на 46% ширини кадру.
-        // Центрування відбувається тільки при відкритті сторінки й не заважає свайпу.
-        const peoplePosition = firstCard.scrollWidth * 0.46;
+        const couplePosition = firstCard.scrollWidth * 0.46;
         const maxScroll = Math.max(0, track.scrollWidth - track.clientWidth);
         track.scrollLeft = Math.min(
             maxScroll,
-            Math.max(0, peoplePosition - track.clientWidth / 2)
+            Math.max(0, couplePosition - track.clientWidth / 2)
         );
-        updateMeta();
+        updateStoryMeta();
     };
 
     const firstImage = cards[0]?.querySelector("img");
-
-    const scheduleInitialPosition = function () {
-        requestAnimationFrame(() => {
-            requestAnimationFrame(centerFirstPhotoOnce);
-        });
+    const scheduleFirstPosition = function () {
+        requestAnimationFrame(() => requestAnimationFrame(centerFirstPhotoOnce));
     };
 
     if (firstImage?.complete && firstImage.naturalWidth > 0) {
-        scheduleInitialPosition();
+        scheduleFirstPosition();
     } else {
-        firstImage?.addEventListener("load", scheduleInitialPosition, { once: true });
+        firstImage?.addEventListener("load", scheduleFirstPosition, { once: true });
     }
 
-    let animationFrame;
-
+    let storyFrame;
     track.addEventListener("scroll", () => {
-        cancelAnimationFrame(animationFrame);
-        animationFrame = requestAnimationFrame(updateMeta);
+        cancelAnimationFrame(storyFrame);
+        storyFrame = requestAnimationFrame(updateStoryMeta);
     }, { passive: true });
 
     return true;
 };
 
-const mobileStoryIsActive = createMobileStory();
-
 // ========================================
-// DESKTOP PHOTO SLIDER
+// DESKTOP SLIDER
 // ========================================
 
-let currentSlideIndex = 0;
-let isSliderAnimating = false;
-let autoSlideInterval = null;
+const initDesktopSlider = function () {
+    const slideButton = document.querySelector(".slider__button");
+    const currentSlide = document.querySelector(
+        ".slider__photos-item:not(.slider__photos-item--next)"
+    );
+    const nextSlide = document.querySelector(".slider__photos-item--next");
 
-const slideButton = document.querySelector(".slider__button");
-const currentSlide = document.querySelector(
-    ".slider__photos-item:not(.slider__photos-item--next)"
-);
-const nextSlide = document.querySelector(".slider__photos-item--next");
+    if (!slideButton || !currentSlide || !nextSlide || allPhotos.length === 0) {
+        return;
+    }
 
-if (
-    !mobileStoryIsActive &&
-    slideButton &&
-    currentSlide &&
-    nextSlide &&
-    allPhotos.length > 0
-) {
+    let currentSlideIndex = 0;
+    let isAnimating = false;
+    let autoSlideInterval = null;
     currentSlide.src = allPhotos[currentSlideIndex];
 
-    const getNextSlideIndex = function () {
+    const getNextIndex = function () {
         return (currentSlideIndex + 1) % allPhotos.length;
     };
 
-    const switchSlide = function () {
-        if (isSliderAnimating) {
+    const finishTransition = function () {
+        if (!isAnimating) {
             return;
         }
 
-        isSliderAnimating = true;
-        const nextIndex = getNextSlideIndex();
-        nextSlide.src = allPhotos[nextIndex];
+        const nextIndex = getNextIndex();
+        currentSlide.classList.add("slider__photos-item--no-transition");
+        nextSlide.classList.add("slider__photos-item--no-transition");
+        currentSlide.src = nextSlide.src;
+        currentSlideIndex = nextIndex;
+        currentSlide.classList.remove("slider__photos-item--out");
+        nextSlide.classList.add("slider__photos-item--next");
+
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+            currentSlide.classList.remove("slider__photos-item--no-transition");
+            nextSlide.classList.remove("slider__photos-item--no-transition");
+        }));
+
+        isAnimating = false;
+    };
+
+    const switchSlide = function () {
+        if (isAnimating) {
+            return;
+        }
+
+        isAnimating = true;
+        nextSlide.src = allPhotos[getNextIndex()];
 
         const startTransition = function () {
             nextSlide.classList.remove("slider__photos-item--next");
@@ -407,37 +239,12 @@ if (
 
         if (nextSlide.complete && nextSlide.naturalWidth > 0) {
             startTransition();
-            return;
+        } else {
+            nextSlide.addEventListener("load", startTransition, { once: true });
+            nextSlide.addEventListener("error", () => {
+                isAnimating = false;
+            }, { once: true });
         }
-
-        nextSlide.addEventListener("load", startTransition, { once: true });
-        nextSlide.addEventListener("error", () => {
-            console.error("Слайдер: не вдалося завантажити", nextSlide.src);
-            isSliderAnimating = false;
-        }, { once: true });
-    };
-
-    const finishTransition = function () {
-        if (!isSliderAnimating) {
-            return;
-        }
-
-        const finishedIndex = getNextSlideIndex();
-        currentSlide.classList.add("slider__photos-item--no-transition");
-        nextSlide.classList.add("slider__photos-item--no-transition");
-        currentSlide.src = nextSlide.src;
-        currentSlideIndex = finishedIndex;
-        currentSlide.classList.remove("slider__photos-item--out");
-        nextSlide.classList.add("slider__photos-item--next");
-
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                currentSlide.classList.remove("slider__photos-item--no-transition");
-                nextSlide.classList.remove("slider__photos-item--no-transition");
-            });
-        });
-
-        isSliderAnimating = false;
     };
 
     currentSlide.addEventListener("transitionend", (event) => {
@@ -446,16 +253,99 @@ if (
         }
     });
 
-    const startAutoSlide = function () {
+    const restartAutoSlide = function () {
         clearInterval(autoSlideInterval);
         autoSlideInterval = setInterval(switchSlide, 4000);
     };
 
     slideButton.addEventListener("click", () => {
-        clearInterval(autoSlideInterval);
         switchSlide();
-        startAutoSlide();
+        restartAutoSlide();
     });
 
-    startAutoSlide();
-}
+    restartAutoSlide();
+};
+
+// ========================================
+// FULL-SCREEN GALLERY MODAL
+// ========================================
+
+const initGalleryModal = function () {
+    const modal = document.getElementById("galleryModal");
+    const openButton = document.getElementById("openGalleryButton");
+    const closeButton = modal?.querySelector(".gallery-modal__close");
+    const previousButton = modal?.querySelector(".gallery-modal__nav--previous");
+    const nextButton = modal?.querySelector(".gallery-modal__nav--next");
+    const image = document.getElementById("galleryModalImage");
+    const counter = document.getElementById("galleryModalCounter");
+
+    if (!modal || !openButton || !closeButton || !previousButton || !nextButton || !image || !counter) {
+        return;
+    }
+
+    let activeIndex = 0;
+    let lastFocusedElement = null;
+
+    const renderModalPhoto = function () {
+        image.src = allPhotos[activeIndex];
+        image.alt = `Лавандове поле — фото ${activeIndex + 1}`;
+        counter.textContent = `${String(activeIndex + 1).padStart(2, "0")} / ${String(allPhotos.length).padStart(2, "0")}`;
+    };
+
+    const closeModal = function () {
+        modal.classList.remove("is-open");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("gallery-modal-open");
+        lastFocusedElement?.focus();
+    };
+
+    const move = function (direction) {
+        activeIndex = (activeIndex + direction + allPhotos.length) % allPhotos.length;
+        renderModalPhoto();
+    };
+
+    openButton.addEventListener("click", () => {
+        if (allPhotos.length === 0) {
+            return;
+        }
+        lastFocusedElement = document.activeElement;
+        activeIndex = 0;
+        renderModalPhoto();
+        modal.classList.add("is-open");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.classList.add("gallery-modal-open");
+        closeButton.focus();
+    });
+
+    closeButton.addEventListener("click", closeModal);
+    previousButton.addEventListener("click", () => move(-1));
+    nextButton.addEventListener("click", () => move(1));
+    modal.addEventListener("click", (event) => {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+
+    document.addEventListener("keydown", (event) => {
+        if (!modal.classList.contains("is-open")) {
+            return;
+        }
+        if (event.key === "Escape") closeModal();
+        if (event.key === "ArrowLeft") move(-1);
+        if (event.key === "ArrowRight") move(1);
+    });
+};
+
+const initPhotoGallery = async function () {
+    allPhotos = await loadGalleryPhotos();
+
+    if (mobileGalleryQuery.matches) {
+        initMobileStory();
+    } else {
+        initDesktopSlider();
+    }
+
+    initGalleryModal();
+};
+
+initPhotoGallery();
