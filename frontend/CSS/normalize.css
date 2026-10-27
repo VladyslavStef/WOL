@@ -2654,7 +2654,8 @@ body.modal-open {
 
 .hydrolat-image {
   position: relative;
-  transition: opacity 0.4s ease;
+  transition: opacity 0.4s ease, filter 0.35s ease;
+  filter: blur(0);  
   opacity: 1;
   width: 100%;
   height: 100%;
@@ -2768,24 +2769,32 @@ body.modal-open {
 }
 
 /* --------- sell hover -------- */
-.sell__media:hover .sell__article-nav--previous {
-  opacity: 1;
-}
-
-.sell__media:hover .hydrolat-image {
+/* Блюр під час зміни товару: сам плавно зникає разом з анімацією. */
+.sell__media.is-switching .hydrolat-image {
   filter: blur(0.5rem);
 }
 
-.sell__media:hover .sell__article-nav {
-  opacity: 1;
-}
+/* Hover тільки для комп'ютерної мишки — не залипає на телефоні */
+@media (hover: hover) and (pointer: fine) {
+  .sell__media:hover .sell__article-nav--previous {
+    opacity: 1;
+  }
 
-.sell__media:hover .sell__icon-holder {
-  opacity: 1;
-}
+  .sell__media:hover .hydrolat-image {
+    filter: blur(0.5rem);
+  }
 
-.sell__media:hover::before {
-  opacity: 0.67;
+  .sell__media:hover .sell__article-nav {
+    opacity: 1;
+  }
+
+  .sell__media:hover .sell__icon-holder {
+    opacity: 1;
+  }
+
+  .sell__media:hover::before {
+    opacity: 0.67;
+  }
 }
 
 /* ---- footer ----- */

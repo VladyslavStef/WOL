@@ -560,7 +560,7 @@
   SLIDER
    ============================================================ */
 
-       .slider {
+     .slider {
     width: 100%;
     margin-top: 2rem;
     overflow: hidden;
@@ -588,6 +588,98 @@
   aspect-ratio: 1905 / 630;
   overflow: hidden;
   background: transparent;
+}
+
+/* Фото-сторіс лише для телефону. Оригінальні фото мають широкий
+   горизонтальний формат, тому вони не обрізаються: їх можна провести
+   пальцем від лівого до правого краю. */
+.slider__story {
+  order: 2;
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 25rem;
+  overflow: hidden;
+  background: #f5f2f6;
+}
+
+.slider__story-track {
+  display: flex;
+  gap: 0.8rem;
+  width: 100%;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x proximity;
+  scroll-behavior: smooth;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  touch-action: pan-x;
+}
+
+.slider__story-track::-webkit-scrollbar {
+  display: none;
+}
+
+.slider__story-card {
+  flex: 0 0 auto;
+  width: auto;
+  height: 100%;
+  margin: 0;
+  scroll-snap-align: start;
+}
+
+.slider__story-image {
+  display: block;
+  width: auto;
+  max-width: none;
+  height: 100%;
+  object-fit: contain;
+}
+
+.slider__story-meta {
+  position: absolute;
+  right: 1.2rem;
+  bottom: 1.2rem;
+  left: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  pointer-events: none;
+}
+
+.slider__story-count {
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-shadow: 0 0.1rem 0.5rem rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+}
+
+.slider__story-progress {
+  display: block;
+  flex: 1;
+  height: 0.3rem;
+  overflow: hidden;
+  border-radius: 99rem;
+  background: rgba(255, 255, 255, 0.48);
+}
+
+.slider__story-progress-fill {
+  display: block;
+  width: 11.111%;
+  height: 100%;
+  border-radius: inherit;
+  background: #fff;
+  transition: width 0.25s ease;
+}
+
+/* На телефоні показуємо керовану пальцем фото-історію замість старого
+   автоматичного слайдера. */
+.slider__photos {
+  display: none;
 }
 
 .slider__photos-item {
@@ -681,7 +773,6 @@
   text-align: center;
   overflow-wrap: break-word;
 }
-
 
   /* --------------------------------------------------
      СТРІЛКА
