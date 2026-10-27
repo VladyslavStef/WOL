@@ -157,6 +157,31 @@ if (isMobileStory && mobileStoryTrack) {
             }
         });
 
+        const centerFirstStoryPhoto = function () {
+    const firstCard = storyCards[0];
+    if (!firstCard) {
+        return;
+    }
+
+    mobileStoryTrack.scrollLeft = Math.max(
+        0,
+        (firstCard.scrollWidth - mobileStoryTrack.clientWidth) / 2
+    );
+    updateMobileStoryMeta();
+};
+
+const firstStoryImage = storyCards[0]?.querySelector("img");
+
+if (firstStoryImage?.complete && firstStoryImage.naturalWidth > 0) {
+    requestAnimationFrame(centerFirstStoryPhoto);
+} else {
+    firstStoryImage?.addEventListener(
+        "load",
+        centerFirstStoryPhoto,
+        { once: true }
+    );
+}
+
         if (mobileStoryCount) {
             mobileStoryCount.textContent = `${String(nearestIndex + 1).padStart(2, "0")} / ${String(allPhotos.length).padStart(2, "0")}`;
         }
