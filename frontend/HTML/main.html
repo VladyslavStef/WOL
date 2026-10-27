@@ -139,6 +139,33 @@
       </template>
 
       <section
+        class="modal catalog-closed-modal"
+        id="catalogClosedModal"
+        aria-hidden="true"
+      >
+        <div class="modal__container catalog-closed-modal__container">
+          <img
+            src="/frontend/IMG/Layer 1.png"
+            alt=""
+            class="modal__bg basket-bg"
+          />
+          <button
+            class="modal__close catalog-closed-modal__close"
+            type="button"
+            aria-label="Закрити"
+          ></button>
+          <img
+            src="/frontend/IMG/lavender-sleeping.png"
+            alt="Лаванда спить"
+            class="catalog-closed-modal__image"
+          />
+          <p class="catalog-closed-modal__text">
+            Лаванда спить, завітайте пізніше
+          </p>
+        </div>
+      </section>
+
+      <section
         class="modal user-message-modal"
         id="userMessageModal"
         role="dialog"
@@ -950,14 +977,14 @@
     >
       <button type="button" class="gallery-modal__close" aria-label="Закрити галерею">×</button>
       <button type="button" class="gallery-modal__nav gallery-modal__nav--previous" aria-label="Попереднє фото">
-        <img src="/frontend/IMG/arrow__gallery.png" alt="" />
+        <img src="/frontend/IMG/arrow.svg" alt="" />
       </button>
       <figure class="gallery-modal__figure">
         <img class="gallery-modal__image" id="galleryModalImage" src="" alt="" />
         <figcaption class="gallery-modal__caption" id="galleryModalCounter">01 / 09</figcaption>
       </figure>
       <button type="button" class="gallery-modal__nav gallery-modal__nav--next" aria-label="Наступне фото">
-        <img src="/frontend/IMG/arrow__gallery.png" alt="" />
+        <img src="/frontend/IMG/arrow.svg" alt="" />
       </button>
     </section>
     <footer class="footer">
