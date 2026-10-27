@@ -26,7 +26,6 @@ const PREFERRED_TOP_SLUGS = ["hydrolats", "oils", "soaps"];
 const TOP_PRODUCTS_CARD_COUNT = 3;
 
 const pickTopCategories = function (allCategories) {
-
     const productCategories = allCategories
         .filter((category) => category.displayGroup === "products")
         .slice()
@@ -38,6 +37,7 @@ const pickTopCategories = function (allCategories) {
     // 1. Пріоритетні категорії — якщо доступні
     PREFERRED_TOP_SLUGS.forEach((slug) => {
         const found = productCategories.find((category) => category.slug === slug);
+
         if (found && !usedIds.has(found.id)) {
             picked.push(found);
             usedIds.add(found.id);
@@ -50,9 +50,11 @@ const pickTopCategories = function (allCategories) {
         if (picked.length >= TOP_PRODUCTS_CARD_COUNT) {
             break;
         }
+
         if (usedIds.has(category.id)) {
             continue;
         }
+
         picked.push(category);
         usedIds.add(category.id);
     }
@@ -61,15 +63,12 @@ const pickTopCategories = function (allCategories) {
 };
 
 const initTopProducts = async function () {
-
     try {
         const response = await fetchAllCategories();
         const allCategories = response.data || [];
-
         const topCategories = pickTopCategories(allCategories);
 
         articleAll.forEach((article, index) => {
-
             const category = topCategories[index];
 
             if (!category) {
@@ -81,13 +80,13 @@ const initTopProducts = async function () {
 
             setupCategoryCard(article, category);
         });
-
     } catch (error) {
         console.error("Не вдалося завантажити топ-товари:", error.message);
     }
 };
 
 initTopProducts();
+
 // ========================================
 // PHOTO SLIDER
 // ========================================
@@ -109,14 +108,10 @@ let isSliderAnimating = false;
 let autoSlideInterval = null;
 
 const slideButton = document.querySelector(".slider__button");
-
 const currentSlide = document.querySelector(
     ".slider__photos-item:not(.slider__photos-item--next)"
 );
-
-const nextSlide = document.querySelector(
-    ".slider__photos-item--next"
-);
+const nextSlide = document.querySelector(".slider__photos-item--next");
 
 // ========================================
 // MOBILE PHOTO STORY
@@ -129,16 +124,18 @@ const mobileStoryProgress = document.querySelector(".slider__story-progress-fill
 const isMobileStory = window.matchMedia("(max-width: 768px)").matches;
 
 if (isMobileStory && mobileStoryTrack) {
-    mobileStoryTrack.innerHTML = allPhotos.map((photo, index) => `
-        <figure class="slider__story-card">
-            <img
-                class="slider__story-image"
-                src="${photo}"
-                alt="Лавандове поле — фото ${index + 1}"
-                ${index > 0 ? 'loading="lazy"' : ""}
-            />
-        </figure>
-    `).join("");
+    mobileStoryTrack.innerHTML = allPhotos
+        .map((photo, index) => `
+            <figure class="slider__story-card">
+                <img
+                    class="slider__story-image"
+                    src="${photo}"
+                    alt="Лавандове поле — фото ${index + 1}"
+                    ${index > 0 ? 'loading="lazy"' : ""}
+                />
+            </figure>
+        `)
+        .join("");
 
     const storyCards = Array.from(
         mobileStoryTrack.querySelectorAll(".slider__story-card")
@@ -150,37 +147,27 @@ if (isMobileStory && mobileStoryTrack) {
         let nearestDistance = Infinity;
 
         storyCards.forEach((card, index) => {
-            const distance = Math.abs(card.getBoundingClientRect().left - trackLeft);
+            const distance = Math.abs(
+                card.getBoundingClientRect().left - trackLeft
+            );
+
             if (distance < nearestDistance) {
                 nearestDistance = distance;
                 nearestIndex = index;
             }
         });
 
-        const centerFirstStoryPhoto = function () {
-    const firstCard = storyCards[0];
-    if (!firstCard) {
-        return;
-    }
+        const firstStoryImage = storyCards[0]?.querySelector("img");
 
-    mobileStoryTrack.scrollLeft = Math.max(
-        0,
-        (firstCard.scrollWidth - mobileStoryTrack.clientWidth) / 2
-    );
-    updateMobileStoryMeta();
-};
-
-const firstStoryImage = storyCards[0]?.querySelector("img");
-
-if (firstStoryImage?.complete && firstStoryImage.naturalWidth > 0) {
-    requestAnimationFrame(centerFirstStoryPhoto);
-} else {
-    firstStoryImage?.addEventListener(
-        "load",
-        centerFirstStoryPhoto,
-        { once: true }
-    );
-}
+        if (firstStoryImage?.complete && firstStoryImage.naturalWidth > 0) {
+            requestAnimationFrame(centerFirstStoryPhoto);
+        } else {
+            firstStoryImage?.addEventListener(
+                "load",
+                centerFirstStoryPhoto,
+                { once: true }
+            );
+        }
 
         if (mobileStoryCount) {
             mobileStoryCount.textContent = `${String(nearestIndex + 1).padStart(2, "0")} / ${String(allPhotos.length).padStart(2, "0")}`;
@@ -191,119 +178,93 @@ if (firstStoryImage?.complete && firstStoryImage.naturalWidth > 0) {
         }
     };
 
-    let mobileStoryFrame;
-    mobileStoryTrack.addEventListener("scroll", () => {
-        cancelAnimationFrame(mobileStoryFrame);
-        mobileStoryFrame = requestAnimationFrame(updateMobileStoryMeta);
-    }, { passive: true });
-}
+    const centerFirstStoryPhoto = function () {
+        const firstCard = storyCards[0];
 
+        if (!firstCard) {
+            return;
+        }
+
+        mobileStoryTrack.scrollLeft = Math.max(
+            0,
+            (firstCard.scrollWidth - mobileStoryTrack.clientWidth) / 2
+        );
+
+        updateMobileStoryMeta();
+    };
+
+    let mobileStoryFrame;
+
+    mobileStoryTrack.addEventListener(
+        "scroll",
+        () => {
+            cancelAnimationFrame(mobileStoryFrame);
+            mobileStoryFrame = requestAnimationFrame(updateMobileStoryMeta);
+        },
+        { passive: true }
+    );
+}
 
 // ========================================
 // SAFETY CHECK
 // ========================================
 
-if (
-    !slideButton ||
-    !currentSlide ||
-    !nextSlide ||
-    allPhotos.length === 0
-) {
+if (!slideButton || !currentSlide || !nextSlide || allPhotos.length === 0) {
     console.warn("Слайдер: не знайдено необхідні елементи.");
 } else {
-
     // ========================================
     // PRELOAD FIRST IMAGE
     // ========================================
-
     currentSlide.src = allPhotos[currentSlideIndex];
-
 
     // ========================================
     // GET NEXT INDEX
     // ========================================
-
     const getNextSlideIndex = function () {
-
-        return (
-            currentSlideIndex + 1
-        ) % allPhotos.length;
+        return (currentSlideIndex + 1) % allPhotos.length;
     };
-
 
     // ========================================
     // SWITCH SLIDE
     // ========================================
-
     const switchSlide = function () {
-
         if (isSliderAnimating) {
             return;
         }
 
         isSliderAnimating = true;
 
-
-        const nextIndex =
-            getNextSlideIndex();
-
+        const nextIndex = getNextSlideIndex();
 
         // Завантажуємо наступне зображення
-        nextSlide.src =
-            allPhotos[nextIndex];
-
+        nextSlide.src = allPhotos[nextIndex];
 
         // Чекаємо, поки картинка реально завантажиться
         const startTransition = function () {
-
-            nextSlide.classList.remove(
-                "slider__photos-item--next"
-            );
-
-            currentSlide.classList.add(
-                "slider__photos-item--out"
-            );
+            nextSlide.classList.remove("slider__photos-item--next");
+            currentSlide.classList.add("slider__photos-item--out");
         };
 
-
         // Якщо картинка вже в кеші
-        if (
-            nextSlide.complete &&
-            nextSlide.naturalWidth > 0
-        ) {
+        if (nextSlide.complete && nextSlide.naturalWidth > 0) {
             startTransition();
         } else {
-
-            nextSlide.addEventListener(
-                "load",
-                startTransition,
-                { once: true }
-            );
-
+            nextSlide.addEventListener("load", startTransition, { once: true });
             nextSlide.addEventListener(
                 "error",
                 () => {
-
-                    console.error(
-                        "Слайдер: не вдалося завантажити",
-                        nextSlide.src
-                    );
-
+                    console.error("Слайдер: не вдалося завантажити", nextSlide.src);
                     isSliderAnimating = false;
-
                 },
                 { once: true }
             );
         }
     };
 
-
     // ========================================
     // FINISH TRANSITION
     // ========================================
-
     const finishTransition = function () {
-
         /*
          * Якщо transitionend прийшов повторно,
          * не запускаємо завершення ще раз.
@@ -312,39 +273,19 @@ if (
             return;
         }
 
-
-        const finishedIndex =
-            getNextSlideIndex();
-
+        const finishedIndex = getNextSlideIndex();
 
         // Вимикаємо transition
-        currentSlide.classList.add(
-            "slider__photos-item--no-transition"
-        );
-
-        nextSlide.classList.add(
-            "slider__photos-item--no-transition"
-        );
-
+        currentSlide.classList.add("slider__photos-item--no-transition");
+        nextSlide.classList.add("slider__photos-item--no-transition");
 
         // Поточний слайд стає наступним
-        currentSlide.src =
-            nextSlide.src;
-
-
-        currentSlideIndex =
-            finishedIndex;
-
+        currentSlide.src = nextSlide.src;
+        currentSlideIndex = finishedIndex;
 
         // Повертаємо початковий стан
-        currentSlide.classList.remove(
-            "slider__photos-item--out"
-        );
-
-        nextSlide.classList.add(
-            "slider__photos-item--next"
-        );
-
+        currentSlide.classList.remove("slider__photos-item--out");
+        nextSlide.classList.add("slider__photos-item--next");
 
         /*
          * Даємо браузеру застосувати
@@ -352,88 +293,53 @@ if (
          * а потім повертаємо transition.
          */
         requestAnimationFrame(() => {
-
             requestAnimationFrame(() => {
-
-                currentSlide.classList.remove(
-                    "slider__photos-item--no-transition"
-                );
-
-                nextSlide.classList.remove(
-                    "slider__photos-item--no-transition"
-                );
-
+                currentSlide.classList.remove("slider__photos-item--no-transition");
+                nextSlide.classList.remove("slider__photos-item--no-transition");
             });
-
         });
-
 
         isSliderAnimating = false;
     };
 
-
     // ========================================
     // TRANSITION END
     // ========================================
-
-    currentSlide.addEventListener(
-        "transitionend",
-        (event) => {
-
-            /*
-             * Реагуємо тільки на transition
-             * самого currentSlide.
-             */
-            if (
-                event.target !== currentSlide
-            ) {
-                return;
-            }
-
-
-            finishTransition();
+    currentSlide.addEventListener("transitionend", (event) => {
+        /*
+         * Реагуємо тільки на transition
+         * самого currentSlide.
+         */
+        if (event.target !== currentSlide) {
+            return;
         }
-    );
 
+        finishTransition();
+    });
 
     // ========================================
     // AUTO SLIDER
     // ========================================
-
     const startAutoSlide = function () {
-
         clearInterval(autoSlideInterval);
 
-        autoSlideInterval = setInterval(
-            () => {
-                switchSlide();
-            },
-            4000
-        );
+        autoSlideInterval = setInterval(() => {
+            switchSlide();
+        }, 4000);
     };
-
 
     // ========================================
     // BUTTON
     // ========================================
-
-    slideButton.addEventListener(
-        "click",
-        () => {
-
-            clearInterval(autoSlideInterval);
-
-            switchSlide();
-
-            startAutoSlide();
-        }
-    );
-
+    slideButton.addEventListener("click", () => {
+        clearInterval(autoSlideInterval);
+        switchSlide();
+        startAutoSlide();
+    });
 
     // ========================================
     // START
     // ========================================
-
     // На телефоні працює ручна панорамна галерея вище. Автоперемикання
     // старого слайдера там не потрібне.
     if (!isMobileStory) {
