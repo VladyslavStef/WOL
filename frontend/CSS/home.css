@@ -285,21 +285,54 @@
 .slider__gallery-button {
   width: fit-content;
   margin-top: 1.8rem;
-  padding: 1.2rem 2.4rem;
-  border: 0.1rem solid var(--neutral-bg);
-  border-radius: 99rem;
-  background: var(--neutral-bg);
-  color: var(--footer-color);
+  padding: 1.4rem 3rem;
+
+  background-color: var(--primary-color);
+  color: var(--text-color);
+
+  border: 1px solid var(--text-color);
+  border-radius: 2rem;
+
+  font-family: "Playfair Display";
+  font-size: 2.4rem;
+
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
   cursor: pointer;
-  font-family: "Montserrat", sans-serif;
-  font-size: 1.7rem;
-  font-weight: 600;
-  transition: transform 0.2s ease, background-color 0.2s ease;
+
+  transform: scale(0.8);
+  transform-origin: left center;
+
+  transition: transform 0.4s ease-in-out;
+}
+
+.slider__gallery-button::before {
+  content: "";
+
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  width: 200%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+
+  background-color: var(--neutral-bg);
+
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.4s ease;
+
+  z-index: -1;
 }
 
 .slider__gallery-button:hover {
-  transform: translateY(-0.2rem);
-  background: #ffffff;
+  transform: scale(1);
+}
+
+.slider__gallery-button:hover::before {
+  transform: translate(-50%, -50%) scale(1);
 }
 
 .slider__textholder-decor{

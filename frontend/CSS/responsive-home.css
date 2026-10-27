@@ -820,7 +820,7 @@
 
   .slider__story-count {
     color: #fff;
-    font-family: "Montserrat", sans-serif;
+    font-family: "Playfair Display", sans-serif;
     font-size: 1.2rem;
     font-weight: 600;
     letter-spacing: 0.08em;
@@ -876,14 +876,44 @@
     overflow-wrap: break-word;
   }
 
-  .slider__gallery-button {
+ .slider__gallery-button {
     order: 5;
-    margin: 1.8rem auto 4rem;
-    border-color: var(--footer-color);
-    background: var(--footer-color);
-    color: #fff;
+    align-self: center;
+    margin: 1.8rem auto 0;
+    padding: 1.2rem 2.4rem;
+
+    border-color: var(--text-color);
+    background-color: var(--primary-color);
+    color: var(--text-color);
+
     font-size: 1.6rem;
+
+    transform: none;
+    transform-origin: center;
   }
+
+  /* Без hover на touch: тап не повинен лишати кнопку "залитою" */
+  .slider__gallery-button:hover {
+    transform: none;
+    color: #fff;
+  }
+
+  .slider__gallery-button:hover::before {
+    transform: translate(-50%, -50%) scale(0);
+  }
+}
+
+/* Hover-ефект лише там, де hover справді існує (планшети з мишею) */
+@media (max-width: 768px) and (hover: hover) {
+  .slider__gallery-button:hover {
+    transform: scale(1);
+    color: var(--footer-color);
+  }
+
+  .slider__gallery-button:hover::before {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
 
   .gallery-modal {
     padding: 7rem 1.2rem 2rem;
